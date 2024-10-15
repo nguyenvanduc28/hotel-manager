@@ -1,0 +1,60 @@
+.submenu {
+  cursor: pointer;
+  .submenu-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .submenu-container {
+      color: var(--sidebar-title-item);
+      line-height: 48px;
+      display: inline-block;
+      width: 100%;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      .submenu-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        svg {
+          font-size: 24px;
+        }
+      }
+
+      .submenu-title {
+      }
+    }
+    .submenu-arrow-collapse {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      svg {
+        font-size: 24px;
+      }
+    }
+  }
+
+  &:hover {
+    .submenu-container {
+      color: var(--sidebar-title-item--hover);
+    }
+    background: var(--background-color-item--hover);
+  }
+}
+
+.submenu-item-list {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+.show {
+  max-height: 500px;
+  opacity: 1;
+}

@@ -1,0 +1,3 @@
+const authRoutes = {
+    LOGIN: '/login'
+}

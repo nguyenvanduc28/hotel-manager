@@ -1,0 +1,22 @@
+export type HotelInfo = {
+    hotelId: string;
+    name: string;
+    rating: number;
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    latitude: number;
+    longitude: number;
+    phoneNumber: string;
+    email: string;
+    websiteUrl?: string;
+    numberOfRooms: number;
+    checkInTime: number;
+    checkOutTime: number;
+    description: string;
+    logoUrl: string;
+    totalStaff: number;
+    ownerName: string;
+    status: string;
+};

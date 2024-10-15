@@ -1,0 +1,28 @@
+.logoWrapper {
+  height: 50px;
+  text-align: center;
+  box-shadow: 0px -1px 2px 1px rgb(160, 159, 159);
+  padding: 10px;
+  .logo {
+    border-radius: 4px;
+    color: #f9faf8;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .logoImg {
+      height: 100%;
+    }
+    .hotelName {
+      margin-left: 10px;
+      text-transform: uppercase;
+      font-size: 2rem;
+      line-height: 50px;
+      color: inherit;
+    }
+    &:hover {
+      color: var(--sidebar-title-item--hover);
+      background: var(--background-color-item--hover);
+    }
+  }
+}

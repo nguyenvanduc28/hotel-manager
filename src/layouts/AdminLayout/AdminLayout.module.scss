@@ -1,0 +1,14 @@
+.adminLayoutWrapper {
+  display: flex;
+  min-height: 100vh;
+  .sidebarWrapper {
+    min-height: 100%;
+    background-color: #182537;
+    color: #f9faf8;
+  }
+
+  .contentWrapper {
+    width: 100%;
+    border: 1px solid rgb(255, 0, 0);
+  }
+}
