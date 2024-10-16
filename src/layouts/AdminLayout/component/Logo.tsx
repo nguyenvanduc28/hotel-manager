@@ -5,14 +5,14 @@ import { useHotel } from "../../../hooks/useHotel";
 const cx = classNames.bind(styles);
 
 interface LogoProps {
-  isCollapse?: boolean; // Đặt là tùy chọn để mặc định là false
+  isCollapse?: boolean;
 }
 
 const Logo: React.FC<LogoProps> = ({ isCollapse = false }) => {
   const { hotelInfo } = useHotel();
 
   return (
-    <div className={cx("logoWrapper", { collapsed: isCollapse })}>
+    <div className={cx("logoWrapper")}>
       <a href="/">
         <div className={cx("logo")}>
           <img src={hotelInfo?.logoUrl} alt="logo" className={cx("logoImg")} />

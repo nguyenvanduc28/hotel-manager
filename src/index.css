@@ -1,7 +1,10 @@
 :root {
+    --padding-left-sidebar: 10px;
     --sidebar-title-item: #f9faf8;
     --sidebar-title-item--hover: #fff;
-    --background-color-item--hover:#243041;
+    --background-color-item--hover: #243041;
+    --background-hover-button: #e6f4ff;
+    --border-radius: 5px;
 }
 
 html {

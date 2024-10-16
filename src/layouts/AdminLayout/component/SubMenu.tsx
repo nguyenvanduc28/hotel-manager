@@ -36,7 +36,11 @@ const SubMenu: React.FC<SubMenuProp> = ({
           </div>
         </div>
       </li>
-      <ul className={cx("submenu-item-list", openMenu ? "show":"")}>{children}</ul>
+      <ul
+        className={cx("submenu-item-list", openMenu && !isCollapse && "show")}
+      >
+        {children}
+      </ul>
     </>
   );
 };

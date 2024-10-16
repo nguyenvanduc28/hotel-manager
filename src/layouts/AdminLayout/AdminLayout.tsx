@@ -19,7 +19,10 @@ const AdminLayout: React.FC = () => {
         <SideBar isCollapse={isCollapse} />
       </div>
       <div className={cx("contentWrapper")}>
-        <Header />
+        <Header
+          isCollapse={isCollapse}
+          onCollapse={setIsCollapse}
+        />
         <Outlet />
       </div>
     </div>

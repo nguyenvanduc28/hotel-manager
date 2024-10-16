@@ -1,5 +1,4 @@
 .menuWrapper {
-  margin-bottom: 10px;
   width: 100%;
 
   .menuTitle {
@@ -9,7 +8,7 @@
     height: 48px;
     text-transform: uppercase;
     color: var(--sidebar-tile-item);
-    padding-left: 10px;
+    padding-left: var(--padding-left-sidebar);
   }
 
   .menuList {

@@ -1,5 +1,6 @@
 .submenu {
   cursor: pointer;
+  border-radius: var(--border-radius);
   .submenu-wrapper {
     display: flex;
     justify-content: space-between;
@@ -17,7 +18,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 48px;
+        width: 60px;
         height: 48px;
         svg {
           font-size: 24px;
@@ -49,12 +50,10 @@
 
 .submenu-item-list {
   max-height: 0;
-  opacity: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out;
+  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
 .show {
   max-height: 500px;
-  opacity: 1;
 }

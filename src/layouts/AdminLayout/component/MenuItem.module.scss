@@ -1,4 +1,5 @@
 .menuItem {
+  border-radius: var(--border-radius);
   a {
     color: var(--sidebar-title-item);
     line-height: 48px;
@@ -12,7 +13,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 48px;
+      width: 60px;
       height: 48px;
       svg {
         font-size: 24px;

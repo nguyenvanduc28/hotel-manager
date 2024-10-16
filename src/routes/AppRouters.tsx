@@ -2,7 +2,7 @@ import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import AdminLayout from "../layouts/AdminLayout/AdminLayout";
 import { useAuth } from "../hooks/useAuth";
 import NoPermission from "../pages/NoPermission";
-import { AdminRouters } from "./routes";
+import AdminRouters from "./routes";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import { useEffect } from "react";
 import NotFound from "../pages/NotFound";
