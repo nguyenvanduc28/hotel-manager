@@ -2,6 +2,7 @@
   .menubox {
     height: calc(100vh - 130px);
     overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: #888 transparent;
     margin-top: 30px;

@@ -22,7 +22,9 @@ const SubMenu: React.FC<SubMenuProp> = ({
     <>
       <li
         className={cx("submenu")}
-        onClick={() => setOpenMenu((prev) => !prev)}
+        onClick={() => {
+          !isCollapse && setOpenMenu((prev) => !prev);
+        }}
       >
         <div className={cx("submenu-wrapper")}>
           <div className={cx("submenu-container")}>

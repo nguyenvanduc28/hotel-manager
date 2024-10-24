@@ -1,6 +1,6 @@
 import Dashboard from "../pages/AdminPage/Dashboard/Dashboard";
-import Rooms from "../pages/AdminPage/Rooms/Rooms";
-import RoomArrangement from "../pages/AdminPage/RoomArrangement/RoomArrangement";
+import RoomList from "../pages/AdminPage/RoomList/RoomList";
+import RoomType from "../pages/AdminPage/RoomType/RoomType";
 import RoomAmenities from "../pages/AdminPage/RoomAmenities/RoomAmenities";
 import Bookings from "../pages/AdminPage/Bookings/Bookings";
 import Employees from "../pages/AdminPage/Employees/Employees";
@@ -13,101 +13,121 @@ import ReportServiceRevenue from "../pages/AdminPage/Reports/ServiceRevenue/Repo
 import ReportBillRevenue from "../pages/AdminPage/Reports/BillRevenue/ReportBillRevenue";
 import Invoices from "../pages/AdminPage/Invoices/Invoices";
 import HotelSetting from "../pages/AdminPage/HotelSetting/HotelSetting";
-import { Roles } from "../constants/auth/roleConstants";
+import { ROLES } from "../constants/auth/roleConstants";
 import EmployeeRole from "../pages/AdminPage/Employees/EmployeeRole";
 import ServiceUsage from "../pages/AdminPage/Services/ServiceUsage";
+import { ADMIN_PATHS } from "../constants/admin/adminPath";
+import RoomAmenityCreate from "../pages/AdminPage/RoomAmenities/RoomAmenityCreate";
+import RoomTypeCreate from "../pages/AdminPage/RoomType/RoomTypeCreate";
+import RoomListCreate from "../pages/AdminPage/RoomList/RoomListCreate";
 
 export type RouteWrapperProps = {
   path: string;
   element: JSX.Element;
   allowedRoles: string[];
+  children?:RouteWrapperProps[];
 };
 
 const AdminRoutes: RouteWrapperProps[] = [
   {
-    path: "dashboard",
+    path: ADMIN_PATHS.DASHBOARD,
     element: <Dashboard />,
-    allowedRoles: [Roles.ADMIN, Roles.RECEPTIONIST], // Các vai trò có quyền truy cập
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
   {
-    path: "rooms",
-    element: <Rooms />,
-    allowedRoles: [Roles.ADMIN, Roles.STAFF_MANAGER],
+    path: ADMIN_PATHS.ROOM_LIST,
+    element: <RoomList />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
-    path: "room-arrangement",
-    element: <RoomArrangement />,
-    allowedRoles: [Roles.ADMIN, Roles.STAFF_MANAGER],
+    path: ADMIN_PATHS.ROOM_CREATE,
+    element: <RoomListCreate />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
-    path: "room-amenities",
+    path: ADMIN_PATHS.ROOM_TYPE,
+    element: <RoomType />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
+    path: ADMIN_PATHS.ROOM_TYPE_CREATE,
+    element: <RoomTypeCreate />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
+    path: ADMIN_PATHS.ROOM_AMENITIES,
     element: <RoomAmenities />,
-    allowedRoles: [Roles.ADMIN, Roles.STAFF_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
-    path: "bookings",
+    path: ADMIN_PATHS.ROOM_AMENITY_CREATE,
+    element: <RoomAmenityCreate />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
+    path: ADMIN_PATHS.BOOKINGS,
     element: <Bookings />,
-    allowedRoles: [Roles.ADMIN, Roles.RECEPTIONIST],
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
   {
-    path: "employees",
+    path: ADMIN_PATHS.EMPLOYEES,
     element: <Employees />,
-    allowedRoles: [Roles.ADMIN, Roles.STAFF_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
-    path: "roles",
+    path: ADMIN_PATHS.ROLES,
     element: <EmployeeRole />,
-    allowedRoles: [Roles.ADMIN, Roles.STAFF_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
-    path: "customers",
+    path: ADMIN_PATHS.CUSTOMERS,
     element: <Customers />,
-    allowedRoles: [Roles.ADMIN, Roles.CUSTOMER_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_MANAGER],
   },
   {
-    path: "services",
+    path: ADMIN_PATHS.SERVICES,
     element: <Services />,
-    allowedRoles: [Roles.ADMIN, Roles.SERVICE_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.SERVICE_MANAGER],
   },
   {
-    path: "service-usage",
+    path: ADMIN_PATHS.SERVICE_USAGE,
     element: <ServiceUsage />,
-    allowedRoles: [Roles.ADMIN, Roles.SERVICE_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.SERVICE_MANAGER],
   },
   {
-    path: "inventory",
+    path: ADMIN_PATHS.INVENTORY,
     element: <Inventory />,
-    allowedRoles: [Roles.ADMIN, Roles.WAREHOUSE_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.WAREHOUSE_MANAGER],
   },
   {
-    path: "inventory-history",
+    path: ADMIN_PATHS.INVENTORY_HISTORY,
     element: <InventoryHistory />,
-    allowedRoles: [Roles.ADMIN, Roles.WAREHOUSE_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.WAREHOUSE_MANAGER],
   },
   {
-    path: "report-summary",
+    path: ADMIN_PATHS.REPORT_SUMMARY,
     element: <ReportSummary />,
-    allowedRoles: [Roles.ADMIN, Roles.REPORT_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.REPORT_MANAGER],
   },
   {
-    path: "report-service-revenue",
+    path: ADMIN_PATHS.REPORT_SERVICE_REVENUE,
     element: <ReportServiceRevenue />,
-    allowedRoles: [Roles.ADMIN, Roles.REPORT_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.REPORT_MANAGER],
   },
   {
-    path: "report-bill-revenue",
+    path: ADMIN_PATHS.REPORT_BILL_REVENUE,
     element: <ReportBillRevenue />,
-    allowedRoles: [Roles.ADMIN, Roles.REPORT_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.REPORT_MANAGER],
   },
   {
-    path: "invoices",
+    path: ADMIN_PATHS.INVOICES,
     element: <Invoices />,
-    allowedRoles: [Roles.ADMIN, Roles.INVOICE_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.INVOICE_MANAGER],
   },
   {
-    path: "hotel-setting",
+    path: ADMIN_PATHS.HOTEL_SETTING,
     element: <HotelSetting />,
-    allowedRoles: [Roles.ADMIN, Roles.HOTEL_INFO_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.HOTEL_INFO_MANAGER],
   },
 ];
 

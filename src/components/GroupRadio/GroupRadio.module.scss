@@ -1,0 +1,55 @@
+.radio-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+
+  .title {
+    font-family: "SVN-Gilroy", Arial, Helvetica, sans-serif;
+    line-height: 2.4rem;
+    font-size: 1.6rem;
+  }
+
+  .radio-group {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    .radio-input {
+      margin-right: 0.8rem;
+      appearance: none;
+      width: 1.6rem;
+      height: 1.6rem;
+      border: 1px solid #c4cdd5;
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      transition: border 0.2s cubic-bezier(0.64, 0, 0.35, 1);
+
+      &:checked {
+        border-color: #007bff;
+      }
+
+      &:checked::before {
+        content: "";
+        width: 1rem;
+        height: 1rem;
+        background-color: #007bff;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+      }
+    }
+  }
+}

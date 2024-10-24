@@ -1,0 +1,19 @@
+.button-save {
+  display: flex;
+  justify-content: flex-end;
+}
+.box {
+  display: flex;
+  gap: 2rem;
+  .box-item {
+    flex: 1;
+  }
+}
+.divider {
+    margin-top: 2rem;
+  margin-bottom: 1.6rem;
+}
+
+.tab {
+  margin-bottom: 1rem;
+}

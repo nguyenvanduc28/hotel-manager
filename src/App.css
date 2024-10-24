@@ -1,5 +1,6 @@
 body {
-  font-family: 'CustomFont', 'Arial', sans-serif;
+  /* font-family: 'CustomFont', 'Arial', sans-serif; */
+  font-family: 'SVN-Gilroy', 'Arial', sans-serif;
   line-height: 1.6;
   background-color: #ffffff;
   font-size: 1.4rem !important;
@@ -23,4 +24,11 @@ a {
 
 ul li {
   list-style: none;
+}
+
+.datagrid-cell {
+  
+}
+.datagrid-header {
+
 }

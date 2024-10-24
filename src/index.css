@@ -1,20 +1,69 @@
 :root {
-    --padding-left-sidebar: 10px;
-    --sidebar-title-item: #f9faf8;
-    --sidebar-title-item--hover: #fff;
-    --background-color-item--hover: #243041;
-    --background-hover-button: #e6f4ff;
-    --border-radius: 5px;
+  --padding-left-sidebar: 10px;
+  --sidebar-title-item: #f9faf8;
+  --sidebar-title-item--hover: #fff;
+  --background-color-item--hover: #243041;
+  --background-hover-button: #e6f4ff;
+  --border-radius: 5px;
 }
 
 html {
-    font-size: 62.5%;
+  font-size: 62.5%;
 }
 
 
 @font-face {
-    font-family: 'CustomFont';
-    src: url('./utils/KFOmCnqEu92Fr1Mu4mxK.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'CustomFont';
+  src: url('./fonts/KFOmCnqEu92Fr1Mu4mxK.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* /////////////// */
+@font-face {
+  font-family: 'SVN-Gilroy Thin';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./fonts/svn-gilroy_regular.ttf);
+  font-display: 'Swap'
+}
+
+@font-face {
+  font-family: 'SVN-Gilroy Light';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(./fonts/svn-gilroy_regular.ttf)
+}
+
+@font-face {
+  font-family: 'SVN-Gilroy';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(./fonts/svn-gilroy_medium.ttf)
+}
+
+@font-face {
+  font-family: 'SVN-Gilroy Med';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(./fonts/svn-gilroy_med.ttf)
+}
+
+@font-face {
+  font-family: 'SVN-Gilroy Semi';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(./fonts/svn-gilroy_semibold.ttf)
+}
+
+@font-face {
+  font-family: 'SVN-Gilroy Bold';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(./fonts/svn-gilroy_semibold.ttf)
 }
