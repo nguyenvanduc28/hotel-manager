@@ -19,7 +19,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
     if (!loading) {
       if (!user) {
         navigate("/login");
-      } else if (!user.roles.some((role) => roles.includes(role))) {
+      } else if (!user.roles.some((role) => roles.includes(role.name))) {
         navigate("/no-permission");
       }
     }

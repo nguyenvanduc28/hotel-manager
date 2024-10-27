@@ -1,13 +1,14 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "../types/auth";
 import { useNavigate } from "react-router-dom";
-import { Roles } from "../constants/auth/roleConstants";
+import { login as loginApi, verifyToken } from "../apis/authApis/authApis"; 
+import { Roles } from "../constants/admin/constants"; 
 
-type UserWithToken = User & { accessToken: string; refreshToken: string };
+type UserWithToken = User & { token: string };
 
 interface AuthContextType {
   user: UserWithToken | null;
-  loading: boolean; // Thêm trạng thái loading
+  loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("token");
     if (token) {
       checkToken(token).then((user) => {
         if (user) {
@@ -36,11 +37,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (username: string, password: string) => {
-    // TODO: Gọi API đăng nhập
-    localStorage.setItem("user", JSON.stringify(userMock));
-    localStorage.setItem("accessToken", userMock.accessToken);
-    localStorage.setItem("refreshToken", userMock.refreshToken);
-    setUser(userMock);
+    setLoading(true);
+    try {
+      const data = await loginApi( {username, password} );
+      
+      const { token, user } = data;
+      
+      const userWithToken = { ...user, token };
+
+      setUser(userWithToken);
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userWithToken));
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Đăng nhập thất bại:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
@@ -51,44 +66,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkToken = async (token: string): Promise<UserWithToken | null> => {
     try {
-      // TODO
-      if (token) return userMock;
-      return null;
-    } catch (e) {
-      console.error("Error checking token:", e);
-      return null;
+        const data = await verifyToken({ token });
+        
+        if (data) {
+            const userData: UserWithToken = data;
+            return userData;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error checking token:", error);
+        return null;
     }
-  };
+};
+
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
 
 export default AuthContext;
-
-
-const userMock: UserWithToken = {
-  userId: "U12345",
-  name: "Nguyen Van A",
-  dateOfBirth: 789840000000,
-  gender: "Male",
-  nationalId: "VN123456789",
-  phoneNumber: "+84123456789",
-  email: "nguyenvana@example.com",
-  address: "123 Nguyen Trai, Hanoi, Vietnam",
-  startDate: "2024-01-01",
-  status: "Active",
-  profilePictureUrl: "https://example.com/profile-pic.jpg",
-  emergencyContactName: "Tran Thi B",
-  emergencyContactRelationship: "Sister",
-  emergencyContactPhone: "+84123456788",
-  notes: "Loves coffee and traveling.",
-  positionName: "Manager",
-  hotelId: "H98765",
-  roles: ["ADMIN", "receptionist"],
-  accessToken: "mock accessToken",
-  refreshToken: "mock refreshToken",
-};

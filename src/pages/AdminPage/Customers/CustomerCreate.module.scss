@@ -1,0 +1,17 @@
+.button-save {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.divider {
+  margin-top: 2rem;
+  margin-bottom: 1.6rem;
+}
+
+.box {
+  display: flex;
+  gap: 2rem;
+  .box-item {
+    flex: 1;
+  }
+}

@@ -27,20 +27,33 @@ export const GENDERS = {
 } as const;
 
 export const EMPLOYEE_STATUS = {
-    ACTIVE: "Đang làm việc", 
-    INACTIVE: "Đã nghỉ việc", 
-    ON_LEAVE: "Đang nghỉ phép", 
-    PROBATION: "Đang thử việc", 
+    ACTIVE: "Đang làm việc",
+    INACTIVE: "Đã nghỉ việc",
+    ON_LEAVE: "Đang nghỉ phép",
+    PROBATION: "Đang thử việc",
 } as const;
 
 export type RoomStatus = typeof ROOM_STATUS[keyof typeof ROOM_STATUS];
 export type Roles = typeof ROLES[keyof typeof ROLES];
 
 export const EQUIPMENT_STATUS = {
-    WORKING: 'Đang hoạt động',          // Thiết bị hoạt động bình thường
-    OUT_OF_ORDER: 'Cần sửa chữa', // Thiết bị hỏng, cần sửa chữa
-    REPLACED: 'Đang hỏng',        // Thiết bị đã được thay thế
-  } as const;
-  
-  export type EquipmentStatus = typeof EQUIPMENT_STATUS[keyof typeof EQUIPMENT_STATUS];
-  
+    AVAILABLE: 'AVAILABLE',          // Thiết bị hoạt động bình thường
+    OUT_OF_SERVICE: 'OUT_OF_SERVICE', // Thiết bị hỏng, cần sửa chữa
+    MAINTENANCE: 'MAINTENANCE',        // Thiết bị đã được thay thế
+} as const;
+
+export type EquipmentStatus = typeof EQUIPMENT_STATUS[keyof typeof EQUIPMENT_STATUS];
+
+
+export enum BOOKING_STATUS {
+    Pending = "Đang chờ",
+    Confirmed = "Đã xác nhận",
+    CheckedIn = "Đã nhận phòng",
+    CheckedOut = "Đã trả phòng",
+    Canceled = "Đã hủy",
+    NoShow = "Không đến",
+    Completed = "Đã hoàn tất",
+    AwaitingPayment = "Đang chờ thanh toán",
+    Refunded = "Đã hoàn tiền",
+}
+export type BookingStatus = typeof BOOKING_STATUS[keyof typeof BOOKING_STATUS];

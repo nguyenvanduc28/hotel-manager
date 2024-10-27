@@ -1,13 +1,15 @@
+import { useEffect, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Container from "../../../components/Container/Container";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
 import styles from "./RoomType.module.scss";
 import classNames from "classnames/bind";
 import Search from "../../../components/Search/Search";
 import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
 import { useNavigate } from "react-router-dom";
+import { getRoomTypes } from "../../../apis/roomApis/roomApis";
+
 const cx = classNames.bind(styles);
 
 const columns: GridColDef[] = [
@@ -43,7 +45,7 @@ const columns: GridColDef[] = [
     renderCell: (params) => <span>{params ? params.row.description : ""}</span>,
   },
   {
-    field: "single_bed_count",
+    field: "singleBedCount",
     headerName: "Giường đơn",
     flex: 2,
     filterable: false,
@@ -52,11 +54,11 @@ const columns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Giường đơn</span>,
     renderCell: (params) => (
-      <span>{params ? params.row.single_bed_count : ""}</span>
+      <span>{params ? params.row.singleBedCount : ""}</span>
     ),
   },
   {
-    field: "double_bed_count",
+    field: "doubleBedCount",
     headerName: "Giường đôi",
     flex: 2,
     filterable: false,
@@ -65,11 +67,11 @@ const columns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Giường đôi</span>,
     renderCell: (params) => (
-      <span>{params ? params.row.double_bed_count : ""}</span>
+      <span>{params ? params.row.doubleBedCount : ""}</span>
     ),
   },
   {
-    field: "extra_bed_available",
+    field: "extrabedavailable",
     headerName: "Giường phụ",
     flex: 2,
     filterable: false,
@@ -79,12 +81,12 @@ const columns: GridColDef[] = [
     renderHeader: () => <span>Giường phụ</span>,
     renderCell: (params) => (
       <span>
-        {params ? (params.row.extra_bed_available ? "Có" : "Không") : ""}
+        {params ? (params.row.extrabedavailable ? "Có" : "Không") : ""}
       </span>
     ),
   },
   {
-    field: "size",
+    field: "sizeRange",
     headerName: "Diện tích (m²)",
     flex: 2,
     filterable: false,
@@ -92,10 +94,10 @@ const columns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Diện tích (m²)</span>,
-    renderCell: (params) => <span>{params ? params.row.size : ""}</span>,
+    renderCell: (params) => <span>{params ? params.row.sizeRange : ""}</span>,
   },
   {
-    field: "max_occupancy",
+    field: "maxOccupancy",
     headerName: "Số người tối đa",
     flex: 2,
     filterable: false,
@@ -104,11 +106,11 @@ const columns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Số người tối đa</span>,
     renderCell: (params) => (
-      <span>{params ? params.row.max_occupancy : ""}</span>
+      <span>{params ? params.row.maxOccupancy : ""}</span>
     ),
   },
   {
-    field: "base_price_per_night",
+    field: "basePricePerNight",
     headerName: "Giá cơ bản / đêm",
     flex: 2,
     filterable: false,
@@ -117,48 +119,43 @@ const columns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Giá cơ bản / đêm</span>,
     renderCell: (params) => (
-      <span>{params ? params.row.base_price_per_night : ""}</span>
+      <span>{params ? params.row.basePricePerNight : ""}</span>
     ),
   },
 ];
 
-const data = [
-  {
-    id: 1,
-    name: "Phòng tiêu chuẩn",
-    description: "Phòng tiêu chuẩn có đầy đủ tiện nghi.",
-    single_bed_count: 1,
-    double_bed_count: 1,
-    extra_bed_available: true,
-    size: 25,
-    max_occupancy: 3,
-    base_price_per_night: 500000,
-  },
-  {
-    id: 2,
-    name: "Phòng Deluxe",
-    description: "Phòng rộng rãi với tầm nhìn đẹp.",
-    single_bed_count: 0,
-    double_bed_count: 2,
-    extra_bed_available: true,
-    size: 35,
-    max_occupancy: 4,
-    base_price_per_night: 800000,
-  },
-  // Thêm nhiều phòng khác vào đây
-];
-
 const RoomType = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRoomTypes = async () => {
+      try {
+        const roomTypes = await getRoomTypes();
+        setData(roomTypes);
+      } catch (error) {
+        console.error("Failed to fetch room types:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoomTypes();
+  }, []);
+
   const handleAddRoomType = () => {
     navigate("/admin/" + ADMIN_PATHS.ROOM_TYPE_CREATE);
   };
+
   const handleSearch = (input: any) => {
     console.log(input);
   };
+
   const handleRowClick = (e: any) => {
     console.log(e);
   };
+
   return (
     <Container
       fullscreen
@@ -178,17 +175,21 @@ const RoomType = () => {
           <Search placeholder="Tìm kiếm loại phòng" onSearch={handleSearch} />
         </div>
         <div className={cx("list")}>
-          <DataGrid
-            style={{ fontSize: "1.4rem" }}
-            className={cx("data")}
-            rows={data}
-            columns={columns}
-            rowCount={data.length}
-            disableColumnSorting={true}
-            onRowClick={handleRowClick}
-            rowSelection={false}
-            hideFooterPagination={true}
-          />
+          {loading ? (
+            <p>Đang tải dữ liệu...</p>
+          ) : (
+            <DataGrid
+              style={{ fontSize: "1.4rem" }}
+              className={cx("data")}
+              rows={data}
+              columns={columns}
+              rowCount={data.length}
+              disableColumnSorting={true}
+              onRowClick={handleRowClick}
+              rowSelection={false}
+              hideFooterPagination={true}
+            />
+          )}
         </div>
       </div>
     </Container>

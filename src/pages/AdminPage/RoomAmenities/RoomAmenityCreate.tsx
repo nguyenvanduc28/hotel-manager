@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "../../../components/Container/Container";
 import Button from "../../../components/Button/Button";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
@@ -14,6 +14,13 @@ import OptionItem from "../../../components/OptionBar/OptionItem";
 import { ConsumableForm, EquipmentForm } from "../../../types/forms";
 import SelectContainer from "../../../components/Select/SelectContainer";
 import { ConsumableCategories, EquipmentCategory } from "../../../types/hotel";
+import {
+  createConsumable,
+  createEquipment,
+  getConsumableCategories,
+  getEquipmentCategories,
+} from "../../../apis/roomApis/roomApis"; // Nhớ import hàm API
+import { useNavigate } from "react-router-dom";
 
 type RoomAmenityCreateProps = {};
 const cx = classNames.bind(styles);
@@ -22,42 +29,51 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
   const [tab, setTab] = useState<string>("consumable");
   const [consumable, setConsumable] = useState<ConsumableForm>({
     id: 0,
-    name: undefined,
-    consumableCategoryId: 0,
+    name: "",
+    consumableCategory: { id: 0, name: "", description: "" },
     price: 0,
+    room: undefined,
     quantity: 1,
     unit: "sản phẩm",
     barcode: undefined,
     expiryDate: undefined,
-    description: undefined,
+    description: "",
   });
+
   const [equipment, setEquipment] = useState<EquipmentForm>({
     id: 0,
-    name: undefined,
-    equipmentCategoryId: 0,
+    name: "",
+    equipmentCategory: { id: 0, name: "", description: "" },
+    room: undefined,
     barcode: undefined,
     installationDate: undefined,
-    status: EQUIPMENT_STATUS.WORKING,
-    description: undefined,
+    status: EQUIPMENT_STATUS.AVAILABLE,
+    description: "",
   });
+
   const [consumableCategories, setConsumableCategories] = useState<
     ConsumableCategories[]
-  >([
-    { id: 1, name: "Hoa quả", description: "" },
-    { id: 2, name: "Nước ngọt", description: "" },
-    { id: 3, name: "Khăn lau", description: "" },
-    { id: 4, name: "Đồ ăn", description: "" },
-    { id: 5, name: "Nước trái cây", description: "" },
-  ]);
+  >([]);
   const [equipmentCategories, setEquipmentCategories] = useState<
     EquipmentCategory[]
-  >([
-    { id: 1, name: "Tivi", description: "" },
-    { id: 2, name: "Tủ lạnh", description: "" },
-    { id: 3, name: "Bàn", description: "" },
-    { id: 4, name: "Ghế", description: "" },
-    { id: 5, name: "Điều hòa", description: "" },
-  ]);
+  >([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const consumables = await getConsumableCategories();
+        const equipments = await getEquipmentCategories();
+        setConsumableCategories(consumables);
+        setEquipmentCategories(equipments);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh mục:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const handleChange = (key: string, value: any) => {
     if (tab === "consumable") {
       setConsumable((prev) => ({
@@ -72,12 +88,16 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
     }
   };
 
-  // Call API to save amenity
-  const handleSave = () => {
-    if (tab === "consumable") {
-      console.log("Consumable", consumable);
-    } else if (tab === "equipment") {
-      console.log("equipment", equipment);
+  const handleSave = async () => {
+    try {
+      if (tab === "consumable") {
+        await createConsumable(consumable);
+      } else if (tab === "equipment") {
+        await createEquipment(equipment);
+      }
+      navigate(`/admin/${ADMIN_PATHS.ROOM_AMENITIES}`);
+    } catch (error) {
+      console.error("Lưu tiện ích thất bại:", error);
     }
   };
 
@@ -126,19 +146,27 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
         }}
       />
       <SelectContainer
-        title="Loại phòng"
+        title="Danh mục"
         value={
-          tab == "consumable"
-            ? consumable.consumableCategoryId
-            : equipment.equipmentCategoryId
+          tab === "consumable"
+            ? consumable.consumableCategory?.id
+            : equipment.equipmentCategory?.id
         }
         onChange={(value) => {
-          tab == "consumable"
-            ? handleChange("consumableCategoryId", value)
-            : handleChange("equipmentCategoryId", value);
+          if (tab === "consumable") {
+            const selectedCategory = consumableCategories.find(
+              (category) => category.id === value
+            );
+            handleChange("consumableCategory", selectedCategory);
+          } else {
+            const selectedCategory = equipmentCategories.find(
+              (category) => category.id === value
+            );
+            handleChange("equipmentCategory", selectedCategory);
+          }
         }}
         options={
-          tab == "consumable"
+          tab === "consumable"
             ? consumableCategories.map((consumableCate) => ({
                 value: consumableCate.id,
                 label: consumableCate.name,
@@ -213,13 +241,31 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
                 title="Ngày hết hạn"
                 type="date"
                 onChange={(e) => {
-                  const timestamp = new Date(e.target.value).getTime() / 1000; // Chia cho 1000 để chuyển đổi sang giây
+                  const timestamp = new Date(e.target.value).getTime() / 1000;
                   handleChange("expiryDate", timestamp);
                 }}
               />
             </div>
           </div>
         </>
+      )}
+      {tab == "equipment" && (
+        <InputText
+          value={
+            equipment.installationDate
+              ? new Date(equipment.installationDate * 1000)
+                  .toISOString()
+                  .split("T")[0]
+              : ""
+          }
+          variant="inline-group"
+          title="Ngày lắp đặt"
+          type="date"
+          onChange={(e) => {
+            const timestamp = new Date(e.target.value).getTime() / 1000;
+            handleChange("installationDate", timestamp);
+          }}
+        />
       )}
       <div className={cx("divider")}>
         <Divider />
@@ -235,8 +281,8 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
       <div className={cx("button-save")}>
         <Button
           icon={<SaveOutlinedIcon />}
-          content="Lưu"
           onClick={handleSave}
+          content="Lưu"
         />
       </div>
     </Container>

@@ -1,62 +1,95 @@
 import { EquipmentStatus, RoomStatus } from "../constants/admin/constants";
-import { Employee, Role } from "./hotel";
+import { ConsumableCategories, Employee, Genders, Role } from "./hotel";
 
 export type RoomTypeForm = {
-    id?: number;
-    name?: string;
+    id: number;
+    name: string;
     description?: string;
-    single_bed_count?: number;
-    double_bed_count?: number;
-    extra_bed_available?: boolean;
+    singleBedCount?: number;
+    doubleBedCount?: number;
+    extraBedAvailable?: boolean;
     sizeRange?: string;
-    max_occupancy?: number;
-    base_price_per_night?: number;
+    maxOccupancy?: number;
+    basePricePerNight?: number;
+};
+
+export type RoomInfoForm = {
+    id: number;
+    roomNumber: string;
+    floor?: number;
+    size?: number;
+    isAvailable?: boolean;
+    isSmokingAllowed?: boolean;
+    hasPrivateKitchen?: boolean;
+    hasPrivateBathroom?: boolean;
+    hasBalcony?: boolean;
+    hasLakeView?: boolean;
+    hasGardenView?: boolean;
+    hasPoolView?: boolean;
+    hasMountainView?: boolean;
+    hasLandmarkView?: boolean;
+    hasCityView?: boolean;
+    hasRiverView?: boolean;
+    hasCourtyardView?: boolean;
+    hasFreeWifi?: boolean;
+    hasSoundproofing?: boolean;
+    description?: string;
+    images?: string;
+    roomType: RoomTypeForm;
+    consumables?: ConsumableForm[];
+    equipmentList?: EquipmentForm[];
+};
+
+export type EmployeeInfo = Employee & {
+    roles?: Role[];
+};
+
+export type ConsumableCategoriesForm = {
+    id: number;
+    name: string;
+    description?: string;
+};
+
+export type EquipmentCategoryForm = {
+    id: number;
+    name: string;
+    description?: string;
+};
+
+export type ConsumableForm = {
+    id: number;
+    name: string;
+    consumableCategory: ConsumableCategoriesForm;
+    room?: RoomInfoForm;
+    price?: number;
+    quantity?: number;
+    unit?: string;
+    expiryDate?: number;
+    barcode?: string;
+    description?: string;
+};
+
+export type EquipmentForm = {
+    id: number;
+    name: string;
+    equipmentCategory: EquipmentCategoryForm;
+    room?: RoomInfoForm;
+    installationDate?: number;
+    barcode?: string;
+    status?: EquipmentStatus;
+    description?: string;
 };
 
 
-export type RoomInfoForm = {
-    id?: number;
-    roomNumber?: number;
-    floor?: number;
-    isAvailable?: boolean;
-    currentStatus?: RoomStatus;
-    description?: string;
-    isSmokingAllowed?: boolean;
-    lastCleaned?: number;
-    roomTypeId?: number;
-    amenitiesId?: number[];
-}
-export type EmployeeInfo = Employee & {
-    roles?: Role[];
-}
-
-export type ConsumableCategoriesForm = {
-    id?: number;
-    name?:string;
-    description?:string;
-}
-export type EquipmentCategoryForm = {
-    id?: number;
-    name?:string;
-    description?:string;
-}
-export type ConsumableForm = {
-    id?:number;
-    name?:string;
-    consumableCategoryId?:number;
-    price?:number;
-    quantity?:number;
-    unit?:string;
-    barcode?:string;
-    expiryDate?:number;
-    description?:string;
-}
-export type EquipmentForm = {
-    id?:number;
-    name?:string;
-    equipmentCategoryId?:number;
-    barcode?:string;
-    installationDate?:number;
-    status?:EquipmentStatus;
-    description?:string;
+export type CustomerForm = {
+    id: number;
+    name?: string;
+    email?: string;
+    phoneNumber?: string;
+    gender?: Genders;
+    birthDay?: number;
+    nationality?: string;
+    identityNumber?: string;
+    address?: string;
+    notes?: string;
 }

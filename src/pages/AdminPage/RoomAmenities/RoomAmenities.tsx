@@ -11,9 +11,8 @@ import { useNavigate } from "react-router-dom";
 import OptionBar from "../../../components/OptionBar/OptionBar";
 import OptionItem from "../../../components/OptionBar/OptionItem";
 import { StyledChip } from "../../../components/StyledChip/StyledChip";
-import { useState } from "react";
-import { Consumables, Equipments } from "../../../types/hotel";
-import { EQUIPMENT_STATUS } from "../../../constants/admin/constants";
+import { useEffect, useState } from "react";
+import { getConsumables, getEquipment } from "../../../apis/roomApis/roomApis";
 const cx = classNames.bind(styles);
 
 const consumableColumns: GridColDef[] = [
@@ -32,7 +31,7 @@ const consumableColumns: GridColDef[] = [
   {
     field: "barcode",
     headerName: "Mã sản phẩm",
-    flex: 2,
+    flex: 2.5,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
@@ -65,7 +64,7 @@ const consumableColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Đang sử dụng</span>,
-    renderCell: (params) => <span>{params?.row.roomId ? "x" : ""}</span>,
+    renderCell: (params) => <span>{params?.row.room?.id ? "x" : ""}</span>,
   },
   {
     field: "price",
@@ -76,7 +75,12 @@ const consumableColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Giá</span>,
-    renderCell: (params) => <span>{params ? params.row.price + "đ" : ""}</span>,
+    renderCell: (params) => {
+      const price = params ? params.row.price : "";
+      const formattedPrice = new Intl.NumberFormat('vi-VN').format(price);
+      return <span>{formattedPrice} đ</span>;
+  },
+  
   },
   {
     field: "unit",
@@ -91,7 +95,7 @@ const consumableColumns: GridColDef[] = [
   },
   {
     field: "quantity",
-    headerName: "Đơn vị",
+    headerName: "Số lượng",
     flex: 2,
     filterable: false,
     headerClassName: "datagrid-header",
@@ -110,19 +114,34 @@ const consumableColumns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Danh mục</span>,
     renderCell: (params) => (
-      <span>{params ? params.row.consumableCategory.name : ""}</span>
+      <span>{params ? params.row.consumableCategory?.name : ""}</span>
     ),
   },
   {
     field: "expiryDate",
     headerName: "Ngày hết hạn",
-    flex: 2,
+    flex: 3,
     filterable: false,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Ngày hết hạn</span>,
-    renderCell: (params) => <span>{params ? params.row.expiryDate : ""}</span>,
+    renderCell: (params) => {
+      const date = new Date(params ? params.row.expiryDate : 0);
+      return (
+        <span>
+          {params ? date.toLocaleString("vi-VN", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          }) : ""}
+        </span>
+      );
+    },
+    
   },
 ];
 const equipmentColumns: GridColDef[] = [
@@ -174,7 +193,7 @@ const equipmentColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Đang sử dụng</span>,
-    renderCell: (params) => <span>{params?.row.roomId ? "x" : ""}</span>,
+    renderCell: (params) => <span>{params?.row.room?.id ? "x" : ""}</span>,
   },
   {
     field: "installationDate",
@@ -185,22 +204,34 @@ const equipmentColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Ngày lắp đặt</span>,
-    renderCell: (params) => (
-      <span>{params ? params.row.installationDate : ""}</span>
-    ),
+    renderCell: (params) => {
+      const date = new Date(params ? params.row.installationDate : 0);
+      return (
+        <span>
+          {params ? date.toLocaleString("vi-VN", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          }) : ""}
+        </span>
+      );
+    },
   },
 
   {
     field: "equipmentCategory",
-    headerName: "Trạng thái",
+    headerName: "Danh mục",
     flex: 2,
     filterable: false,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
-    renderHeader: () => <span>Trạng thái</span>,
+    renderHeader: () => <span>Danh mục</span>,
     renderCell: (params) => (
-      <span>{params ? params.row.equipmentCategory.name : ""}</span>
+      <span>{params ? params.row.equipmentCategory?.name : ""}</span>
     ),
   },
   {
@@ -216,299 +247,15 @@ const equipmentColumns: GridColDef[] = [
       params ? <StyledChip label={params.row.status} /> : <span></span>,
   },
 ];
-const dataConsumable: Consumables[] = [
-  {
-    id: 1,
-    name: "Chuối",
-    consumableCategory: {
-      id: 1,
-      name: "Trái cây",
-      description: "Các loại trái cây tươi",
-    },
-    roomId: 101,
-    price: 10000,
-    quantity: 5,
-    unit: "quả",
-    barcode: "HH656506",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 2,
-    name: "Nước cam ép",
-    consumableCategory: {
-      id: 2,
-      name: "Đồ uống",
-      description: "Nước giải khát các loại",
-    },
-    roomId: 102,
-    price: 60000,
-    quantity: 10,
-    unit: "lon",
-    barcode: "HH545405",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 3,
-    name: "Bánh mì",
-    consumableCategory: {
-      id: 3,
-      name: "Đồ ăn nhanh",
-      description: "Các loại bánh mì ăn liền",
-    },
-    roomId: undefined, // Không liên kết với phòng
-    price: 15000,
-    quantity: 20,
-    unit: "ổ",
-    barcode: "HH123456",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 4,
-    name: "Nước suối",
-    consumableCategory: {
-      id: 2,
-      name: "Đồ uống",
-      description: "Nước giải khát các loại",
-    },
-    roomId: 103,
-    price: 10000,
-    quantity: 50,
-    unit: "chai",
-    barcode: "HH789012",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 5,
-    name: "Bánh quy",
-    consumableCategory: {
-      id: 3,
-      name: "Đồ ăn nhanh",
-      description: "Các loại bánh kẹo",
-    },
-    roomId: undefined,
-    price: 30000,
-    quantity: 15,
-    unit: "gói",
-    barcode: "HH456789",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 6,
-    name: "Bia lon",
-    consumableCategory: {
-      id: 2,
-      name: "Đồ uống",
-      description: "Nước giải khát các loại",
-    },
-    roomId: 104,
-    price: 45000,
-    quantity: 30,
-    unit: "lon",
-    barcode: "HH852963",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 7,
-    name: "Sữa tươi",
-    consumableCategory: {
-      id: 2,
-      name: "Đồ uống",
-      description: "Các loại sữa tươi",
-    },
-    roomId: undefined,
-    price: 25000,
-    quantity: 25,
-    unit: "hộp",
-    barcode: "HH741852",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 8,
-    name: "Nước ngọt có ga",
-    consumableCategory: {
-      id: 2,
-      name: "Đồ uống",
-      description: "Nước giải khát các loại",
-    },
-    roomId: 105,
-    price: 20000,
-    quantity: 40,
-    unit: "chai",
-    barcode: "HH963852",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 9,
-    name: "Trà xanh đóng chai",
-    consumableCategory: {
-      id: 2,
-      name: "Đồ uống",
-      description: "Trà đóng chai",
-    },
-    roomId: undefined,
-    price: 15000,
-    quantity: 20,
-    unit: "chai",
-    barcode: "HH258963",
-    expiryDate: 1700000000, // timestamp
-  },
-  {
-    id: 10,
-    name: "Bánh ngọt",
-    consumableCategory: {
-      id: 3,
-      name: "Đồ ăn nhanh",
-      description: "Bánh kẹo các loại",
-    },
-    roomId: 106,
-    price: 50000,
-    quantity: 10,
-    unit: "hộp",
-    barcode: "HH369852",
-    expiryDate: 1700000000, // timestamp
-  },
-];
-const dataEquipment: Equipments[] = [
-  {
-    id: 1,
-    name: "Điều hòa",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Các thiết bị điện trong phòng",
-    },
-    roomId: 101,
-    barcode: "EQ001",
-    installationDate: 1673318400, // timestamp
-    status: EQUIPMENT_STATUS.WORKING,
-  },
-  {
-    id: 2,
-    name: "Tủ lạnh",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Các thiết bị điện trong phòng",
-    },
-    roomId: 102,
-    barcode: "EQ002",
-    installationDate: 1668470400, // timestamp
-    status: EQUIPMENT_STATUS.WORKING,
-  },
-  {
-    id: 3,
-    name: "Máy sấy tóc",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Các thiết bị điện nhỏ gọn",
-    },
-    roomId: undefined, // Chưa được lắp vào phòng
-    barcode: "EQ003",
-    installationDate: 1683158400, // timestamp
-    status: EQUIPMENT_STATUS.WORKING,
-  },
-  {
-    id: 4,
-    name: "Tivi",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Các thiết bị điện trong phòng",
-    },
-    roomId: 103,
-    barcode: "EQ004",
-    installationDate: 1680566400, // timestamp
-    status: EQUIPMENT_STATUS.OUT_OF_ORDER,
-  },
-  {
-    id: 5,
-    name: "Bình nước nóng",
-    equipmentCategory: {
-      id: 2,
-      name: "Thiết bị vệ sinh",
-      description: "Thiết bị dùng trong nhà vệ sinh",
-    },
-    roomId: 104,
-    barcode: "EQ005",
-    installationDate: 1670726400, // timestamp
-    status: EQUIPMENT_STATUS.REPLACED,
-  },
-  {
-    id: 6,
-    name: "Đèn ngủ",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Các thiết bị điện nhỏ gọn",
-    },
-    roomId: undefined, // Chưa được lắp vào phòng
-    barcode: "EQ006",
-    installationDate: 1675900800, // timestamp
-    status: EQUIPMENT_STATUS.OUT_OF_ORDER,
-  },
-  {
-    id: 7,
-    name: "Máy lọc không khí",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Các thiết bị làm sạch không khí",
-    },
-    roomId: 105,
-    barcode: "EQ007",
-    installationDate: 1685846400, // timestamp
-    status: EQUIPMENT_STATUS.WORKING,
-  },
-  {
-    id: 8,
-    name: "Lò vi sóng",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Các thiết bị nấu ăn",
-    },
-    roomId: 106,
-    barcode: "EQ008",
-    installationDate: 1675900800, // timestamp
-    status: EQUIPMENT_STATUS.WORKING,
-  },
-  {
-    id: 9,
-    name: "Máy giặt",
-    equipmentCategory: {
-      id: 2,
-      name: "Thiết bị vệ sinh",
-      description: "Thiết bị trong nhà tắm",
-    },
-    roomId: undefined, // Chưa lắp đặt
-    barcode: "EQ009",
-    installationDate: 1668470400, // timestamp
-    status: EQUIPMENT_STATUS.REPLACED,
-  },
-  {
-    id: 10,
-    name: "Quạt trần",
-    equipmentCategory: {
-      id: 1,
-      name: "Thiết bị điện",
-      description: "Thiết bị làm mát không khí",
-    },
-    roomId: 107,
-    barcode: "EQ010",
-    installationDate: 1688470400, // timestamp
-    status: EQUIPMENT_STATUS.OUT_OF_ORDER,
-  },
-];
-
 const RoomAmenities = () => {
   const navigate = useNavigate();
   const handleAddAmenity = () => {
     navigate("/admin/" + ADMIN_PATHS.ROOM_AMENITY_CREATE);
   };
   const [colDef, setColDef] = useState<any>(consumableColumns);
-  const [data, setData] = useState<any>(dataConsumable);
+  
   const [tab, setTab] = useState<any>("consumable");
+  const [data, setData] = useState<any>(null);
   const handleSearch = (input: any) => {
     console.log(input);
   };
@@ -517,14 +264,35 @@ const RoomAmenities = () => {
   };
   const handleSelectConsumableTab = () => {
     setColDef(consumableColumns);
-    setData(dataConsumable);
     setTab("consumable");
+    fetchConsumables();
   };
   const handleSelectEquipmentTab = () => {
     setColDef(equipmentColumns);
-    setData(dataEquipment);
     setTab("equipment");
+    fetchEquipments();
   };
+
+  const fetchConsumables = async () => {
+    try {
+      const data = await getConsumables();
+      setData(data)
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách sản phẩm tiêu hao:", error);
+    }
+  };
+  const fetchEquipments = async () => {
+    try {
+      const data = await getEquipment();
+      setData(data)
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách thiết bị:", error);
+    }
+  };
+  useEffect(() => {
+    fetchConsumables();
+  }, []);
+
   return (
     <Container
       title="Danh sách tiện nghi"

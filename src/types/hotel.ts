@@ -1,4 +1,4 @@
-import {  EMPLOYEE_STATUS, EquipmentStatus, GENDERS, Roles, RoomStatus } from "../constants/admin/constants";
+import {  BookingStatus, EMPLOYEE_STATUS, EquipmentStatus, GENDERS, Roles, RoomStatus } from "../constants/admin/constants";
 
 export type HotelInfo = {
     hotelId: string;
@@ -49,7 +49,7 @@ export type RoomItem = {
     roomNumber?: number;
     floor?: number;
     isAvailable?: boolean;
-    currentStatus?: RoomStatus;
+    
     description?: string;
     lastCleaned?: number;
     isSmokingAllowed?: boolean;
@@ -66,6 +66,7 @@ export type RoomItem = {
     has_courtyard_view?:boolean;
     has_free_wifi?:boolean;
     has_soundproofing?:boolean;
+    size?:number;
 };
 
 export type ConsumableCategories = {
@@ -105,11 +106,13 @@ export type Equipments = {
 
 export type RoomInfo = RoomItem & {
     roomType?: RoomType;
+    consumables?:Consumables[];
+    equipmentList?:Equipments[];
 }
 
 export type Role = {
-    id?: number;
-    name?: Roles;
+    id: number;
+    name: Roles;
 }
 export type Genders = typeof GENDERS[keyof typeof GENDERS];
 export type EmployeeStatus = typeof EMPLOYEE_STATUS[keyof typeof EMPLOYEE_STATUS];
@@ -133,7 +136,7 @@ export type Employee = {
 };
 
 export type Customer = {
-    id?: number;
+    id: number;
     name?: string;
     email?: string;
     nationality?: string;
@@ -144,3 +147,20 @@ export type Customer = {
     notes?: string;
     identityNumber?: string;
 }
+
+export type Booking = {
+    id:number;
+    customer: Customer; 
+    checkInDate?: number; 
+    checkOutDate?: number;
+    estimatedArrivalTime?: number; 
+    bookingDate: number;
+    isGroup?: boolean; 
+    totalCost?: number; 
+    status: BookingStatus; 
+    deposit?: number; 
+    cancellationPolicy?: string; 
+    canceledAt?: number; 
+    isGuaranteed?: boolean; 
+    rooms: RoomInfo[];
+};

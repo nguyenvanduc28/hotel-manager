@@ -20,6 +20,7 @@ import { ADMIN_PATHS } from "../constants/admin/adminPath";
 import RoomAmenityCreate from "../pages/AdminPage/RoomAmenities/RoomAmenityCreate";
 import RoomTypeCreate from "../pages/AdminPage/RoomType/RoomTypeCreate";
 import RoomListCreate from "../pages/AdminPage/RoomList/RoomListCreate";
+import CustomerCreate from "../pages/AdminPage/Customers/CustomerCreate";
 
 export type RouteWrapperProps = {
   path: string;
@@ -82,7 +83,12 @@ const AdminRoutes: RouteWrapperProps[] = [
   {
     path: ADMIN_PATHS.CUSTOMERS,
     element: <Customers />,
-    allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_MANAGER],
+    allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_MANAGER, ROLES.RECEPTIONIST],
+  },
+  {
+    path: ADMIN_PATHS.CUSTOMER_CREATE,
+    element: <CustomerCreate />,
+    allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_MANAGER, ROLES.RECEPTIONIST],
   },
   {
     path: ADMIN_PATHS.SERVICES,

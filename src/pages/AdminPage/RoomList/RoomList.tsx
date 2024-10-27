@@ -9,13 +9,9 @@ import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
 import { useNavigate } from "react-router-dom";
 import { StyledChip } from "../../../components/StyledChip/StyledChip";
 import { RoomInfo } from "../../../types/hotel";
-import {
-  AMENITY_CATEGORY,
-  AMENITY_STATUS,
-  ROOM_STATUS,
-} from "../../../constants/admin/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ShowInfoDialog from "../../../components/ShowInfoDialog/ShowInfoDialog";
+import { getAllRoom } from "../../../apis/roomApis/roomApis";
 const cx = classNames.bind(styles);
 
 const columns: GridColDef[] = [
@@ -63,21 +59,25 @@ const columns: GridColDef[] = [
       <span>{params.row.roomType ? params.row.roomType.name : ""}</span>
     ),
   },
-  {
-    field: "currentStatus",
-    headerName: "Trạng thái",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Trạng thái</span>,
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.currentStatus}
-        color={params.row.currentStatus === ROOM_STATUS.AVAILABLE ? "success" : "error"}
-      />
-    ),
-  },
+  // {
+  //   field: "currentStatus",
+  //   headerName: "Trạng thái",
+  //   flex: 1,
+  //   headerClassName: "datagrid-header",
+  //   cellClassName: "datagrid-cell",
+  //   headerAlign: "left",
+  //   renderHeader: () => <span>Trạng thái</span>,
+  //   renderCell: (params) => (
+  //     <StyledChip
+  //       label={params.row.currentStatus}
+  //       color={
+  //         params.row.currentStatus === ROOM_STATUS.AVAILABLE
+  //           ? "success"
+  //           : "error"
+  //       }
+  //     />
+  //   ),
+  // },
   {
     field: "isAvailable",
     headerName: "Có sẵn",
@@ -93,102 +93,40 @@ const columns: GridColDef[] = [
       />
     ),
   },
-  {
-    field: "lastCleaned",
-    headerName: "Lần dọn dẹp",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Dọn dẹp lần cuối</span>,
-    renderCell: (params) => <span>{new Date(params.row.lastCleaned).toLocaleDateString()}</span>,
-  },
-];
-
-const data: RoomInfo[] = [
-  {
-    id: 1,
-    roomNumber: 101,
-    floor: 1,
-    isAvailable: true,
-    currentStatus: ROOM_STATUS.AVAILABLE,
-    description: "Phòng đôi với view biển.",
-    isSmokingAllowed: false,
-    lastCleaned: 1697884800000, // UNIX timestamp
-    roomType: {
-      id: 1,
-      name: "Deluxe Room",
-      description: "Phòng rộng rãi với tiện nghi hiện đại.",
-      singleBedCount: 1,
-      doubleBedCount: 1,
-      extraBedAvailable: true,
-      size: 35,
-      maxOccupancy: 3,
-      basePricePerNight: 120,
-    },
-    amenities: [
-      {
-        id: 1,
-        name: "TV",
-        quantity: 1,
-        status: AMENITY_STATUS.AVAILABLE,
-        lastChecked: 1697884800000, // UNIX timestamp
-        category: AMENITY_CATEGORY.NON_CONSUMABLE_AMENITIES,
-        unitPrice: 300,
-        description: "TV màn hình phẳng 42 inch.",
-      },
-      {
-        id: 2,
-        name: "Mini Bar",
-        quantity: 1,
-        status: AMENITY_STATUS.AVAILABLE,
-        lastChecked: 1697884800000,
-        category: AMENITY_CATEGORY.CONSUMABLE_AMENITIES,
-        unitPrice: 50,
-        description: "Đầy đủ các loại đồ uống.",
-      },
-    ],
-  },
-  {
-    id: 2,
-    roomNumber: 102,
-    floor: 1,
-    isAvailable: false,
-    currentStatus: ROOM_STATUS.OCCUPIED,
-    description: "Phòng đơn với tiện nghi cơ bản.",
-    isSmokingAllowed: false,
-    lastCleaned: 1697798400000,
-    roomType: {
-      id: 2,
-      name: "Standard Room",
-      description: "Phòng tiêu chuẩn với giường đơn.",
-      singleBedCount: 1,
-      doubleBedCount: 0,
-      extraBedAvailable: false,
-      size: 20,
-      maxOccupancy: 1,
-      basePricePerNight: 80,
-    },
-    amenities: [
-      {
-        id: 3,
-        name: "Điều hòa",
-        quantity: 1,
-        status: AMENITY_STATUS.MAINTENANCE,
-        lastChecked: 1697702000000,
-        category: AMENITY_CATEGORY.NON_CONSUMABLE_AMENITIES,
-        unitPrice: 200,
-        description: "Điều hòa không khí 2 chiều.",
-      },
-    ],
-  },
+  // {
+  //   field: "lastCleaned",
+  //   headerName: "Lần dọn dẹp",
+  //   flex: 1,
+  //   headerClassName: "datagrid-header",
+  //   cellClassName: "datagrid-cell",
+  //   headerAlign: "left",
+  //   renderHeader: () => <span>Dọn dẹp lần cuối</span>,
+  //   renderCell: (params) => (
+  //     <span>{new Date(params.row.lastCleaned).toLocaleDateString()}</span>
+  //   ),
+  // },
 ];
 
 const RoomList = () => {
   const [selectedRoom, setSelectedRoom] = useState<RoomInfo | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-
+  const [data, setData] = useState<RoomInfo[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const rooms = await getAllRoom();
+        setData(rooms);
+      } catch (error) {
+        console.error("Failed to fetch room types:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, []);
 
   const handleAddRoom = () => {
     navigate("/admin/" + ADMIN_PATHS.ROOM_CREATE);
@@ -224,80 +162,94 @@ const RoomList = () => {
           <Search placeholder="Tìm kiếm phòng" onSearch={handleSearch} />
         </div>
         <div className={cx("list")}>
-          <DataGrid
-            style={{ fontSize: "1.4rem", cursor:"pointer"}}
-            className={cx("data")}
-            rows={data}
-            columns={columns}
-            rowCount={data.length}
-            disableColumnSorting={true}
-            onRowClick={handleRowClick}
-            rowSelection={false}
-            hideFooterPagination={true}
-          />
+          {loading ? (
+            <p>Đang tải dữ liệu...</p>
+          ) : (
+            <DataGrid
+              style={{ fontSize: "1.4rem", cursor: "pointer" }}
+              className={cx("data")}
+              rows={data}
+              columns={columns}
+              rowCount={data.length}
+              disableColumnSorting={true}
+              onRowClick={handleRowClick}
+              rowSelection={false}
+              hideFooterPagination={true}
+            />
+          )}
         </div>
       </div>
       {selectedRoom && (
-  <ShowInfoDialog
-    open={openDialog}
-    onClose={handleCloseDialog}
-    title="Thông tin phòng"
-  >
-    <div>
-      <p>
-        <strong>ID:</strong> {selectedRoom.id}
-      </p>
-      <p>
-        <strong>Số phòng:</strong> {selectedRoom.roomNumber}
-      </p>
-      <p>
-        <strong>Tầng:</strong> {selectedRoom.floor}
-      </p>
-      <p>
-        <strong>Trạng thái hiện tại:</strong> {selectedRoom.currentStatus}
-      </p>
-      <p>
-        <strong>Miêu tả:</strong> {selectedRoom.description}
-      </p>
-      <p>
-        <strong>Phòng hút thuốc:</strong>{" "}
-        {selectedRoom.isSmokingAllowed ? "Có" : "Không"}
-      </p>
-      <p>
-        <strong>Ngày dọn gần nhất:</strong> {selectedRoom.lastCleaned}
-      </p>
-      {selectedRoom.roomType && (
-        <>
-          <p>
-            <strong>Loại phòng:</strong> {selectedRoom.roomType.name}
-          </p>
-          <p>
-            <strong>Số giường đơn:</strong> {selectedRoom.roomType.singleBedCount}
-          </p>
-          <p>
-            <strong>Số giường đôi:</strong> {selectedRoom.roomType.doubleBedCount}
-          </p>
-          <p>
-            <strong>Diện tích:</strong> {selectedRoom.roomType.size} m²
-          </p>
-          <p>
-            <strong>Sức chứa tối đa:</strong> {selectedRoom.roomType.maxOccupancy}
-          </p>
-          <p>
-            <strong>Giá cơ bản mỗi đêm:</strong> {selectedRoom.roomType.basePricePerNight} $
-          </p>
-        </>
+        <ShowInfoDialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          title="Thông tin phòng"
+        >
+          <div>
+            <p>
+              <strong>ID:</strong> {selectedRoom.id}
+            </p>
+            <p>
+              <strong>Số phòng:</strong> {selectedRoom.roomNumber}
+            </p>
+            <p>
+              <strong>Tầng:</strong> {selectedRoom.floor}
+            </p>
+            <p>
+              <strong>Miêu tả:</strong> {selectedRoom.description}
+            </p>
+            <p>
+              <strong>Phòng hút thuốc:</strong>{" "}
+              {selectedRoom.isSmokingAllowed ? "Có" : "Không"}
+            </p>
+            {/* <p>
+              <strong>Ngày dọn gần nhất:</strong> {selectedRoom.lastCleaned}
+            </p> */}
+            {selectedRoom.roomType && (
+              <>
+                <p>
+                  <strong>Loại phòng:</strong> {selectedRoom.roomType.name}
+                </p>
+                <p>
+                  <strong>Số giường đơn:</strong>{" "}
+                  {selectedRoom.roomType.singleBedCount}
+                </p>
+                <p>
+                  <strong>Số giường đôi:</strong>{" "}
+                  {selectedRoom.roomType.doubleBedCount}
+                </p>
+                <p>
+                  <strong>Diện tích:</strong> {selectedRoom.size} m²
+                </p>
+                <p>
+                  <strong>Sức chứa tối đa:</strong>{" "}
+                  {selectedRoom.roomType.maxOccupancy}
+                </p>
+                <p>
+                  <strong>Giá cơ bản mỗi đêm:</strong>{" "}
+                  {selectedRoom.roomType.basePricePerNight} $
+                </p>
+              </>
+            )}
+            {selectedRoom.consumables && selectedRoom.consumables.length > 0 && (
+              <p>
+                <strong>Đồ dùng tiêu hao:</strong>{" "}
+                {selectedRoom.consumables
+                  .map((amenity) => amenity.name)
+                  .join(", ")}
+              </p>
+            )}
+            {selectedRoom.equipmentList && selectedRoom.equipmentList.length > 0 && (
+              <p>
+                <strong>Thiết bị:</strong>{" "}
+                {selectedRoom.equipmentList
+                  .map((amenity) => amenity.name)
+                  .join(", ")}
+              </p>
+            )}
+          </div>
+        </ShowInfoDialog>
       )}
-      {selectedRoom.amenities && selectedRoom.amenities.length > 0 && (
-        <p>
-          <strong>Tiện nghi:</strong>{" "}
-          {selectedRoom.amenities.map((amenity) => amenity.name).join(", ")}
-        </p>
-      )}
-    </div>
-  </ShowInfoDialog>
-)}
-
     </Container>
   );
 };

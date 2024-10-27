@@ -10,6 +10,7 @@ export const ADMIN_PATHS = {
   EMPLOYEES: "employees",
   ROLES: "roles",
   CUSTOMERS: "customers",
+  CUSTOMER_CREATE:"customers/create",
   SERVICES: "services",
   SERVICE_USAGE: "service-usage",
   INVENTORY: "inventory",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../../components/Button/Button";
 import Container from "../../../components/Container/Container";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -9,6 +9,7 @@ import Search from "../../../components/Search/Search";
 import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../../types/hotel";
+import { getCustomers } from "../../../apis/bookingApis/bookingApis";
 
 const cx = classNames.bind(styles);
 
@@ -77,16 +78,25 @@ const columns: GridColDef[] = [
     renderCell: (params) => <span>{params.row.gender}</span>,
   },
   {
-    field: "dateOfBirth",
+    field: "birthDay",
     headerName: "Ngày sinh",
     flex: 1,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Ngày sinh</span>,
-    renderCell: (params) => (
-      <span>{new Date(params.row.dateOfBirth).toLocaleDateString()}</span>
-    ),
+    renderCell: (params) => {
+      const date = new Date(params ? params.row.birthDay : 0);
+      return (
+        <span>
+          {params ? date.toLocaleString("vi-VN", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          }) : ""}
+        </span>
+      );
+    },
   },
   {
     field: "address",
@@ -119,43 +129,31 @@ const columns: GridColDef[] = [
     renderCell: (params) => <span>{params.row.identityNumber}</span>,
   },
 ];
-
-// Dữ liệu giả lập
-const data: Customer[] = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    email: "vana@example.com",
-    nationality: "Việt Nam",
-    phoneNumber: "0123456789",
-    address: "Hà Nội, Việt Nam",
-    dateOfBirth: 631152000000, // UNIX timestamp
-    gender: "Nam",
-    notes: "Khách quen.",
-    identityNumber: "123456789",
-  },
-  {
-    id: 2,
-    name: "Trần Thị B",
-    email: "b@example.com",
-    nationality: "Việt Nam",
-    phoneNumber: "0987654321",
-    address: "TP. Hồ Chí Minh, Việt Nam",
-    dateOfBirth: 568464000000,
-    gender: "Nữ",
-    notes: "Mới đến.",
-    identityNumber: "987654321",
-  },
-];
-
 const Customers = () => {
+  const [data, setData] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const customers = await getCustomers();
+        setData(customers);
+      } catch (error) {
+        console.error("Lấy danh sách khách hàng thất bại:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
   const handleAddCustomer = () => {
-    // navigate("/admin/" + ADMIN_PATHS.CUSTOMER_CREATE);
+    navigate("/admin/" + ADMIN_PATHS.CUSTOMER_CREATE);
   };
 
-  const handleSearch = (input: any) => {
+  const handleSearch = (input: string) => {
     console.log(input);
   };
 
@@ -178,16 +176,20 @@ const Customers = () => {
           <Search placeholder="Tìm kiếm khách hàng" onSearch={handleSearch} />
         </div>
         <div className={cx("list")}>
-          <DataGrid
-            style={{ fontSize: "1.4rem", cursor: "pointer" }}
-            className={cx("data")}
-            rows={data}
-            columns={columns}
-            rowCount={data.length}
-            disableColumnSorting={true}
-            rowSelection={false}
-            hideFooterPagination={true}
-          />
+          {loading ? (
+            <p>Đang tải dữ liệu...</p>
+          ) : (
+            <DataGrid
+              style={{ fontSize: "1.4rem", cursor: "pointer" }}
+              className={cx("data")}
+              rows={data}
+              columns={columns}
+              rowCount={data.length}
+              disableColumnSorting={true}
+              rowSelection={false}
+              hideFooterPagination={true}
+            />
+          )}
         </div>
       </div>
     </Container>

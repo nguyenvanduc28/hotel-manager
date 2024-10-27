@@ -1,185 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "../../../components/Container/Container";
 import Button from "../../../components/Button/Button";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import InputText from "../../../components/Input/InputText";
-import GroupRadio from "../../../components/GroupRadio/GroupRadio";
 import { Divider } from "@mui/material";
 import styles from "./RoomListCreate.module.scss";
 import classNames from "classnames/bind";
 import TextArea from "../../../components/TextArea/TextArea";
 import SelectContainer from "../../../components/Select/SelectContainer";
 import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
-import { ROOM_STATUS } from "../../../constants/admin/constants";
 import { RoomInfoForm } from "../../../types/forms";
+import CheckboxMenu from "../../../components/Select/CheckboxMenu";
+import {
+  createRoom,
+  getConsumables,
+  getEquipment,
+  getRoomTypes,
+} from "../../../apis/roomApis/roomApis";
+import { useNavigate } from "react-router-dom";
+import { Consumables, Equipments, RoomType } from "../../../types/hotel";
 
 type RoomListCreateProps = {};
 
 const cx = classNames.bind(styles);
 
-const roomTypeData = [
-  {
-    id: 1,
-    name: "Phòng tiêu chuẩn",
-    description: "Phòng tiêu chuẩn có đầy đủ tiện nghi.",
-    single_bed_count: 1,
-    double_bed_count: 1,
-    extra_bed_available: true,
-    size: 25,
-    max_occupancy: 3,
-    base_price_per_night: 500000,
-  },
-  {
-    id: 2,
-    name: "Phòng Deluxe",
-    description: "Phòng rộng rãi với tầm nhìn đẹp.",
-    single_bed_count: 0,
-    double_bed_count: 2,
-    extra_bed_available: true,
-    size: 35,
-    max_occupancy: 4,
-    base_price_per_night: 800000,
-  },
-];
-const amenitiesData = [
-  {
-    id: 1,
-    name: "Tủ lạnh",
-    numberInUse: 20,
-    inventoryNumber: 30,
-  },
-  {
-    id: 2,
-    name: "Máy lạnh",
-    numberInUse: 15,
-    inventoryNumber: 25,
-  },
-  {
-    id: 3,
-    name: "Ti vi",
-    numberInUse: 10,
-    inventoryNumber: 20,
-  },
-  {
-    id: 4,
-    name: "Bếp gas",
-    numberInUse: 5,
-    inventoryNumber: 10,
-  },
-  {
-    id: 5,
-    name: "Máy giặt",
-    numberInUse: 12,
-    inventoryNumber: 15,
-  },
-  {
-    id: 6,
-    name: "Lò vi sóng",
-    numberInUse: 8,
-    inventoryNumber: 10,
-  },
-  {
-    id: 7,
-    name: "Máy sấy",
-    numberInUse: 3,
-    inventoryNumber: 7,
-  },
-  {
-    id: 8,
-    name: "Tủ đông",
-    numberInUse: 4,
-    inventoryNumber: 8,
-  },
-  {
-    id: 9,
-    name: "Máy pha cà phê",
-    numberInUse: 6,
-    inventoryNumber: 10,
-  },
-  {
-    id: 10,
-    name: "Quạt",
-    numberInUse: 11,
-    inventoryNumber: 15,
-  },
-  {
-    id: 11,
-    name: "Máy chiếu",
-    numberInUse: 2,
-    inventoryNumber: 5,
-  },
-  {
-    id: 12,
-    name: "Máy lạnh di động",
-    numberInUse: 7,
-    inventoryNumber: 12,
-  },
-  {
-    id: 13,
-    name: "Đầu DVD",
-    numberInUse: 1,
-    inventoryNumber: 3,
-  },
-  {
-    id: 14,
-    name: "Bàn là",
-    numberInUse: 9,
-    inventoryNumber: 15,
-  },
-  {
-    id: 15,
-    name: "Nồi cơm điện",
-    numberInUse: 10,
-    inventoryNumber: 12,
-  },
-  {
-    id: 16,
-    name: "Máy làm mát",
-    numberInUse: 5,
-    inventoryNumber: 8,
-  },
-  {
-    id: 17,
-    name: "Máy ép trái cây",
-    numberInUse: 2,
-    inventoryNumber: 4,
-  },
-  {
-    id: 18,
-    name: "Tủ sách",
-    numberInUse: 3,
-    inventoryNumber: 5,
-  },
-  {
-    id: 19,
-    name: "Tủ giày",
-    numberInUse: 4,
-    inventoryNumber: 6,
-  },
-  {
-    id: 20,
-    name: "Bộ đồ ăn",
-    numberInUse: 15,
-    inventoryNumber: 20,
-  },
-];
 const options = [
   { value: 1, label: "Option 1" },
   { value: 2, label: "Option 2" },
   { value: 3, label: "Option 3" },
+  { value: 4, label: "Option 4" },
 ];
 const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
+  const [roomTypeData, setRoomTypeData] = useState<RoomType[]>([]);
+  const [consumables, setConsumables] = useState<Consumables[]>([]);
+  const [equipments, setEquipments] = useState<Equipments[]>([]);
   const [roomForm, setRoomForm] = useState<RoomInfoForm>({
-    roomNumber: undefined,
+    id:0,
+    roomNumber: "",
     floor: undefined,
     isAvailable: true,
-    currentStatus: ROOM_STATUS.AVAILABLE,
     description: "",
     isSmokingAllowed: false,
-    roomTypeId: undefined,
-    amenitiesId: undefined,
+    roomType: {
+      id: 0,
+      name: ""
+    },
+    consumables: undefined,
+    equipmentList: undefined,
+    hasPrivateKitchen: false,
+    hasPrivateBathroom: false,
+    hasBalcony: false,
+    hasLakeView: false,
+    hasGardenView: false,
+    hasPoolView: false,
+    hasMountainView: false,
+    hasLandmarkView: false,
+    hasCityView: false,
+    hasRiverView: false,
+    hasCourtyardView: false,
+    hasFreeWifi: true,
+    hasSoundproofing: false,
   });
-  const [selectedValue, setSelectedValue] = useState<string | number>("");
+  const navigate = useNavigate();
 
   const handleChange = (key: keyof RoomInfoForm, value: any) => {
     setRoomForm((prevForm: any) => ({
@@ -187,9 +69,46 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
       [key]: value,
     }));
   };
+  const fetchRoomTypes = async () => {
+    try {
+      const roomTypes = await getRoomTypes();
+      setRoomTypeData(roomTypes);
+    } catch (error) {
+      console.error("Failed to fetch room types:", error);
+    }
+  };
 
-  const handleSave = () => {
-    console.log(roomForm);
+  const fetchConsumables = async () => {
+    try {
+      const data = await getConsumables();
+      setConsumables(data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách sản phẩm tiêu hao:", error);
+    }
+  };
+  const fetchEquipments = async () => {
+    try {
+      const data = await getEquipment();
+      setEquipments(data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách thiết bị:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchConsumables();
+    fetchEquipments();
+    fetchRoomTypes();
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      const result = await createRoom(roomForm);
+      console.log("Phòng đã được tạo:", result);
+      navigate("/admin/" + ADMIN_PATHS.ROOM_LIST);
+    } catch (error) {
+      console.error("Lỗi khi tạo phòng:", error);
+    }
   };
 
   return (
@@ -198,47 +117,208 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
       linkToBack={"/admin/" + ADMIN_PATHS.ROOM_LIST}
       titleToBack="Quay trở lại"
     >
-      <InputText
-        value={roomForm.roomNumber?.toString()}
-        title="Số phòng"
-        placeholder="Nhập số phòng"
-        type="number"
-        onChange={(e) =>
-          handleChange("roomNumber", parseInt(e.target.value) || undefined)
-        }
-      />
-      <InputText
-        value={roomForm.floor?.toString()}
-        title="Tầng"
-        placeholder="Nhập tầng"
-        type="number"
-        onChange={(e) =>
-          handleChange("floor", parseInt(e.target.value) || undefined)
-        }
-      />
+      <div className={cx("box")}>
+        <div className={cx("box-item")}>
+          <InputText
+            value={roomForm.roomNumber?.toString()}
+            title="Số phòng"
+            placeholder="Nhập số phòng"
+            type="number"
+            onChange={(e) =>
+              handleChange("roomNumber", parseInt(e.target.value) || undefined)
+            }
+          />
+        </div>
+        <div className={cx("box-item")}>
+          <InputText
+            value={roomForm.floor?.toString()}
+            title="Tầng"
+            placeholder="Nhập tầng"
+            type="number"
+            onChange={(e) =>
+              handleChange("floor", parseInt(e.target.value) || undefined)
+            }
+          />
+        </div>
+      </div>
       <SelectContainer
         title="Loại phòng"
-        value={roomForm.roomTypeId}
-        onChange={(value) => handleChange("roomTypeId", value)}
+        value={roomForm.roomType.id}
+        onChange={(value) => {
+          const selectedRoomType = roomTypeData.find(
+            (roomType) => roomType.id === value
+          );
+          handleChange("roomType", selectedRoomType);
+        }}
         options={roomTypeData.map((type) => ({
           value: type.id,
           label: type.name,
         }))}
         note="Chọn một loại phòng từ danh sách."
       />
-      <GroupRadio
-        onSelect={(value) => handleChange("isSmokingAllowed", value === "true")}
-        value={roomForm.isSmokingAllowed?.toString()}
-        title="Cho phép hút thuốc?"
-        numOfRow={2}
-        options={[
-          { label: "Có", value: "true" },
-          { label: "Không", value: "false" },
-        ]}
-      />
+      <div className={cx("amenities")}>
+        <div className={cx("amenities-item")}>
+          <CheckboxMenu
+            title="Danh sách đồ dùng tiêu hao"
+            value={roomForm.consumables?.map((consumable) => consumable.id)} 
+            onChange={(value) =>
+              handleChange(
+                "consumables",
+                value.map((id) => ({ id }))
+              )
+            }
+            options={consumables.map((cs) => ({
+              value: cs.id,
+              label: cs.name,
+            }))}
+          />
+        </div>
+        <div className={cx("amenities-item")}>
+          <CheckboxMenu
+            title="Danh sách thiết bị trong phòng"
+            value={roomForm.equipmentList?.map((equipment) => equipment.id)} 
+            onChange={(value) =>
+              handleChange(
+                "equipmentList",
+                value.map((id) => ({ id }))
+              )
+            }
+            options={equipments.map((eq) => ({
+              value: eq.id,
+              label: eq.name,
+            }))}/>
+        </div>
+      </div>
       <div className={cx("divider")}>
         <Divider />
       </div>
+      <div className={cx("description-detail")}>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.isSmokingAllowed}
+            onChange={(e) => handleChange("isSmokingAllowed", e.target.checked)}
+          />
+          <span>Cho phép hút thuốc</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasPrivateKitchen}
+            onChange={(e) =>
+              handleChange("hasPrivateKitchen", e.target.checked)
+            }
+          />
+          <span>Bếp riêng</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasPrivateBathroom}
+            onChange={(e) =>
+              handleChange("hasPrivateBathroom", e.target.checked)
+            }
+          />
+          <span>Phòng tắm riêng</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasBalcony}
+            onChange={(e) => handleChange("hasBalcony", e.target.checked)}
+          />
+          <span>Ban công</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasLakeView}
+            onChange={(e) => handleChange("hasLakeView", e.target.checked)}
+          />
+          <span>View hồ</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasGardenView}
+            onChange={(e) => handleChange("hasGardenView", e.target.checked)}
+          />
+          <span>View vườn</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasPoolView}
+            onChange={(e) => handleChange("hasPoolView", e.target.checked)}
+          />
+          <span>View hồ bơi</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasMountainView}
+            onChange={(e) =>
+              handleChange("hasMountainView", e.target.checked)
+            }
+          />
+          <span>View núi</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasLandmarkView}
+            onChange={(e) =>
+              handleChange("hasLandmarkView", e.target.checked)
+            }
+          />
+          <span>View địa danh</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasCityView}
+            onChange={(e) => handleChange("hasCityView", e.target.checked)}
+          />
+          <span>View thành phố</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasRiverView}
+            onChange={(e) => handleChange("hasRiverView", e.target.checked)}
+          />
+          <span>View sông</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasCourtyardView}
+            onChange={(e) =>
+              handleChange("hasCourtyardView", e.target.checked)
+            }
+          />
+          <span>View sân vườn</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasFreeWifi}
+            onChange={(e) => handleChange("hasFreeWifi", e.target.checked)}
+          />
+          <span>Wifi miễn phí</span>
+        </label>
+        <label className={cx("option")}>
+          <input
+            type="checkbox"
+            checked={roomForm.hasSoundproofing}
+            onChange={(e) =>
+              handleChange("hasSoundproofing", e.target.checked)
+            }
+          />
+          <span>Cách âm</span>
+        </label>
+      </div>
+
       <TextArea
         title="Mô tả"
         value={roomForm.description}
