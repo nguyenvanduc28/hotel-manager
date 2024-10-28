@@ -6,6 +6,7 @@ import AdminRouters from "./routes";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import { useEffect } from "react";
 import NotFound from "../pages/NotFound";
+import ReceptionLayout from "../layouts/ReceptionLayout/ReceptionLayout";
 
 interface ProtectedRouteProps {
   roles: string[];
@@ -15,15 +16,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (!loading) {
-  //     if (!user) {
-  //       navigate("/login");
-  //     } else if (!user.roles.some((role) => roles.includes(role.name))) {
-  //       navigate("/no-permission");
-  //     }
-  //   }
-  // }, [loading, user, navigate, roles]);
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        navigate("/login");
+      } else if (!user.roles.some((role) => roles.includes(role.name))) {
+        navigate("/no-permission");
+      }
+    }
+  }, [loading, user, navigate, roles]);
 
   if (loading) return null;
 
@@ -34,7 +35,7 @@ const AppRouters: React.FC = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<ReceptionLayout />}>
           {AdminRouters.map((route) => (
             <Route
               key={route.path}

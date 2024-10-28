@@ -21,19 +21,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // const token = localStorage.getItem("token");
-    // if (token) {
-    //   checkToken(token).then((user) => {
-    //     if (user) {
-    //       setUser(user);
-    //     } else {
-    //       logout();
-    //     }
-    //     setLoading(false);
-    //   });
-    // } else {
+    const token = localStorage.getItem("token");
+    if (token) {
+      checkToken(token).then((user) => {
+        if (user) {
+          setUser(user);
+        } else {
+          logout();
+        }
+        setLoading(false);
+      });
+    } else {
       setLoading(false);
-    // }
+    }
   }, []);
 
   const login = async (username: string, password: string) => {
