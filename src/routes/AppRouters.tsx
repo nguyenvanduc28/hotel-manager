@@ -15,15 +15,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate("/login");
-      } else if (!user.roles.some((role) => roles.includes(role.name))) {
-        navigate("/no-permission");
-      }
-    }
-  }, [loading, user, navigate, roles]);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     if (!user) {
+  //       navigate("/login");
+  //     } else if (!user.roles.some((role) => roles.includes(role.name))) {
+  //       navigate("/no-permission");
+  //     }
+  //   }
+  // }, [loading, user, navigate, roles]);
 
   if (loading) return null;
 

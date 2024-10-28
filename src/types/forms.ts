@@ -1,5 +1,5 @@
-import { EquipmentStatus, RoomStatus } from "../constants/admin/constants";
-import { ConsumableCategories, Employee, Genders, Role } from "./hotel";
+import { BookingStatus, EquipmentStatus, RoomStatus } from "../constants/admin/constants";
+import { ConsumableCategories, Customer, Employee, Genders, Role, RoomInfo } from "./hotel";
 
 export type RoomTypeForm = {
     id: number;
@@ -93,3 +93,20 @@ export type CustomerForm = {
     address?: string;
     notes?: string;
 }
+
+export type BookingForm = {
+    id:number;
+    customer: Customer; 
+    checkInDate?: number; 
+    checkOutDate?: number;
+    bookingDate: number;
+    estimatedArrivalTime?: number; 
+    isGroup?: boolean; 
+    totalCost?: number; 
+    status: BookingStatus; 
+    deposit?: number; 
+    cancellationPolicy?: string; 
+    canceledAt?: number; 
+    isGuaranteed?: boolean; 
+    rooms: RoomInfo[];
+};

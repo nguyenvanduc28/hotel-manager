@@ -21,6 +21,7 @@ import RoomAmenityCreate from "../pages/AdminPage/RoomAmenities/RoomAmenityCreat
 import RoomTypeCreate from "../pages/AdminPage/RoomType/RoomTypeCreate";
 import RoomListCreate from "../pages/AdminPage/RoomList/RoomListCreate";
 import CustomerCreate from "../pages/AdminPage/Customers/CustomerCreate";
+import BookingCreate from "../pages/AdminPage/Bookings/BookingCreate";
 
 export type RouteWrapperProps = {
   path: string;
@@ -68,6 +69,11 @@ const AdminRoutes: RouteWrapperProps[] = [
   {
     path: ADMIN_PATHS.BOOKINGS,
     element: <Bookings />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+  {
+    path: ADMIN_PATHS.BOOKING_CREATE,
+    element: <BookingCreate />,
     allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
   {

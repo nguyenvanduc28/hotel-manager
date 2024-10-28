@@ -151,10 +151,12 @@ export type Customer = {
 export type Booking = {
     id:number;
     customer: Customer; 
-    checkInDate?: number; 
-    checkOutDate?: number;
-    estimatedArrivalTime?: number; 
-    bookingDate: number;
+    checkInDate?: number; // Ngày nhận phòng
+    checkOutDate?: number; // Ngày trả phòng
+    bookingDate?: number; // ngày đặt
+    estimatedArrivalTime?: number; // Thời gian đến dự kiến
+    checkInTime?: number; // Thời gian check-in
+    checkOutTime?: number; // Thời gian check-out
     isGroup?: boolean; 
     totalCost?: number; 
     status: BookingStatus; 

@@ -1,0 +1,97 @@
+.search-with-menu {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.6rem;
+    position: relative;
+  
+    .title {
+      font-family: "SVN-Gilroy", Arial, Helvetica, sans-serif;
+      line-height: 2.4rem;
+      font-size: 1.6rem;
+      margin-bottom: 1.2rem;
+    }
+  
+    .search-container {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d1d1d1;
+      border-radius: 4px;
+      background-color: #fff;
+      padding: 5px;
+      height: 36px;
+      cursor: pointer;
+  
+      .search-icon {
+        display: flex;
+        align-items: center;
+        margin-right: 8px;
+        color: rgba(49, 55, 61, 0.5);
+      }
+  
+      .search-input {
+        border: none;
+        outline: none;
+        flex: 1;
+        font-size: 14px;
+        color: #31373d;
+  
+        &::placeholder {
+          color: rgba(49, 55, 61, 0.5);
+        }
+      }
+  
+      .menu-icon {
+        margin-left: 8px;
+      }
+    }
+  
+    .options-list {
+        position: absolute;
+        top: 100%; // Đặt menu ngay dưới ô tìm kiếm
+        z-index: 10;
+        background: white;
+        border: 1px solid #c4cdd5;
+        border-radius: 3px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        .option-list-box {
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            .option {
+                padding: 5px 10px;
+            width: 100%;
+            cursor: pointer;
+                
+                &:hover {
+                    background-color: #f0f0f0; 
+                }
+            }
+            .no-options {
+                padding: 5px 10px;
+                color: #999;
+                text-align: center;
+            }
+        }
+        .button-box {
+
+            display: flex;
+            justify-content: flex-start;
+            padding: 0.3rem;
+            .action-button {
+                padding: 8px;
+                border: none;
+                background-color: #007bff;
+                color: white;
+                border-radius: 3px;
+                cursor: pointer;
+                margin-top: 5px;
+                
+                &:hover {
+                    background-color: #0056b3;
+                }
+            }
+        }
+    }
+}
+  

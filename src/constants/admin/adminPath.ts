@@ -7,6 +7,7 @@ export const ADMIN_PATHS = {
   ROOM_AMENITIES: "room-amenities",
   ROOM_AMENITY_CREATE: "room-amenities/create",
   BOOKINGS: "bookings",
+  BOOKING_CREATE: "bookings/create",
   EMPLOYEES: "employees",
   ROLES: "roles",
   CUSTOMERS: "customers",
