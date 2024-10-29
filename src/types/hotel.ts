@@ -67,6 +67,7 @@ export type RoomItem = {
     has_free_wifi?:boolean;
     has_soundproofing?:boolean;
     size?:number;
+    images?:string[];
 };
 
 export type ConsumableCategories = {
@@ -163,6 +164,8 @@ export type Booking = {
     deposit?: number; 
     cancellationPolicy?: string; 
     canceledAt?: number; 
-    isGuaranteed?: boolean; 
+    isGuaranteed?: boolean;
+    numberOfAdults?:number;
+    numberOfChildren?:number;
     rooms: RoomInfo[];
 };

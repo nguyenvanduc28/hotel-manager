@@ -22,3 +22,7 @@ export const ADMIN_PATHS = {
   INVOICES: "invoices",
   HOTEL_SETTING: "hotel-setting",
 };
+
+export const RECEPTION_PATHS = {
+  BOOKING_CREATE:"booking/create"
+}

@@ -1,21 +1,41 @@
 import React from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogProps,
+} from "@mui/material";
 import Button from "../Button/Button";
 
-interface ShowInfoDialogProps {
+interface ShowInfoDialogProps extends DialogProps {
   open: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  backdropStyle?: React.CSSProperties;
+
 }
 
-const ShowInfoDialog: React.FC<ShowInfoDialogProps> = ({ open, onClose, title, children }) => {
+const ShowInfoDialog: React.FC<ShowInfoDialogProps> = ({
+  open,
+  onClose,
+  title,
+  children,
+  backdropStyle,
+  ...rest
+}) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle style={{fontSize: "2rem"}}>{title}</DialogTitle>
-      <DialogContent style={{fontSize: "1.6rem"}}>{children}</DialogContent>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      slotProps={{ backdrop: { style: backdropStyle } }}
+      {...rest}
+    >
+      <DialogTitle style={{ fontSize: "2rem" }}>{title}</DialogTitle>
+      <DialogContent style={{ fontSize: "1.6rem" }}>{children}</DialogContent>
       <DialogActions>
-        <Button onClick={onClose} content="Đóng"/>
+        <Button onClick={onClose} content="Đóng" />
       </DialogActions>
     </Dialog>
   );

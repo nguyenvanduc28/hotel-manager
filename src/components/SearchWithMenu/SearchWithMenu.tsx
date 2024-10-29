@@ -4,6 +4,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import classNames from "classnames/bind";
 import { AddCircleOutline } from "@mui/icons-material";
 import Button from "../Button/Button";
+import { Divider } from "@mui/material";
 
 interface Option {
   value: string | number | undefined;
@@ -15,16 +16,24 @@ interface SearchWithMenuProps {
   options: Option[];
   handleSearch: (query: string) => void;
   handleButtonClick: () => void;
-  titleButton?:string;
+  titleButton?: string;
   onSelect: (value: any) => void;
+  widthMenu?: string;
 }
 
 const cx = classNames.bind(styles);
 
-const SearchWithMenu: React.FC<SearchWithMenuProps> = ({onSelect, title,titleButton ="Thêm", options,handleSearch, handleButtonClick }) => {
+const SearchWithMenu: React.FC<SearchWithMenuProps> = ({
+  widthMenu,
+  onSelect,
+  title,
+  titleButton = "Thêm",
+  options,
+  handleSearch,
+  handleButtonClick,
+}) => {
   const [query, setQuery] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
-
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -39,7 +48,7 @@ const SearchWithMenu: React.FC<SearchWithMenuProps> = ({onSelect, title,titleBut
   const handleSelect = (option: Option) => {
     console.log("Selected option:", option); // Xử lý lựa chọn
     onSelect(option.value);
-    setQuery(option.label || "")
+    setQuery(option.label || "");
     setIsOpen(false);
   };
 
@@ -56,40 +65,42 @@ const SearchWithMenu: React.FC<SearchWithMenuProps> = ({onSelect, title,titleBut
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Tìm kiếm..."
-          onClick={() => setIsOpen(prev => !prev)}
+          onClick={() => setIsOpen((prev) => !prev)}
           // onBlur={() => setIsOpen(false)}
         />
       </div>
       {isOpen && (
-        <div className={cx("options-list")}>
+        <div
+          className={cx("options-list")}
+          style={{ width: widthMenu ? widthMenu : "100%" }}
+        >
           <div className={cx("option-list-box")}>
-
-          {options.length > 0 ? (
-            options.map((option) => (
-              <div
-              key={option.value}
-              className={cx("option")}
-              onClick={() => handleSelect(option)}
-              >
-                {option.label}
-              </div>
-            ))
-          ) : (
-            <div className={cx("no-options")}>Không có tùy chọn nào</div>
-          )}
+            {options.length > 0 ? (
+              options.map((option) => (
+                <div
+                  key={option.value}
+                  className={cx("option")}
+                  onClick={() => handleSelect(option)}
+                >
+                  {option.label}
+                </div>
+              ))
+            ) : (
+              <div className={cx("no-options")}>Không có tùy chọn nào</div>
+            )}
           </div>
           {/* <button className={cx("action-button")} onClick={() => console.log("Button clicked!")}>
             Thực hiện
           </button> */}
+            <Divider />
           <div className={cx("button-box")}>
-
-          <Button
-            className={cx("action-button")}
-            icon={<AddCircleOutline />}
-            content={titleButton}
-            onMouseDown={handleButtonClick}
+            <Button
+              className={cx("action-button")}
+              icon={<AddCircleOutline />}
+              content={titleButton}
+              onMouseDown={handleButtonClick}
             />
-            </div>
+          </div>
         </div>
       )}
     </div>

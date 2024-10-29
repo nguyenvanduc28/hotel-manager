@@ -95,18 +95,20 @@ export type CustomerForm = {
 }
 
 export type BookingForm = {
-    id:number;
-    customer: Customer; 
-    checkInDate?: number; 
+    id: number;
+    customer: Customer;
+    checkInDate?: number;
     checkOutDate?: number;
     bookingDate: number;
-    estimatedArrivalTime?: number; 
-    isGroup?: boolean; 
-    totalCost?: number; 
-    status: BookingStatus; 
-    deposit?: number; 
-    cancellationPolicy?: string; 
-    canceledAt?: number; 
-    isGuaranteed?: boolean; 
+    estimatedArrivalTime?: number;
+    isGroup?: boolean;
+    totalCost?: number;
+    status: BookingStatus;
+    deposit?: number;
+    cancellationPolicy?: string;
+    canceledAt?: number;
+    isGuaranteed?: boolean;
+    numberOfAdults?: number;
+    numberOfChildren?: number;
     rooms: RoomInfo[];
 };

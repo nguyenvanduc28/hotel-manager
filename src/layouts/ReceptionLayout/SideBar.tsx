@@ -23,31 +23,31 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           <MenuItem
             title="Đặt phòng"
             icon={<EventNoteOutlined />}
-            link="/admin/bookings"
+            link="/reception/booking/create"
             isCollapse={isCollapse}
           />
           
           <MenuItem
             title="Danh sách đặt phòng"
             icon={<EventNoteOutlined />}
-            link="/admin/bookings"
+            link="/reception/bookings"
             isCollapse={isCollapse}
           />
           <MenuItem
             title="Danh sách phòng"
-            link="/admin/room-list"
+            link="/reception/room-list"
             isCollapse={isCollapse}
             icon={<HotelOutlined />}
           />
           <MenuItem
             title="Danh sách khách hàng"
-            link="/admin/customers"
+            link="/reception/customers"
             isCollapse={isCollapse}
             icon={<PersonOutlineOutlined />}
           />
           <MenuItem
             title="Danh sách hóa đơn"
-            link="/admin/invoices"
+            link="/reception/invoices"
             icon={<ReceiptOutlined />}
             isCollapse={isCollapse}
           />

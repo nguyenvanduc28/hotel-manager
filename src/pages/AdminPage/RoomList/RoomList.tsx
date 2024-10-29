@@ -12,6 +12,7 @@ import { RoomInfo } from "../../../types/hotel";
 import { useEffect, useState } from "react";
 import ShowInfoDialog from "../../../components/ShowInfoDialog/ShowInfoDialog";
 import { getAllRoom } from "../../../apis/roomApis/roomApis";
+import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 const cx = classNames.bind(styles);
 
 const columns: GridColDef[] = [
@@ -106,7 +107,165 @@ const columns: GridColDef[] = [
   //   ),
   // },
 ];
+const defaultColumns: GridColDef[] = [
+  {
+    field: "id",
+    headerName: "ID",
+    flex: 0.5,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span style={{ paddingLeft: "10px" }}>ID</span>,
+    renderCell: (params) => (
+      <span style={{ paddingLeft: "10px" }}>{params.row.id}</span>
+    ),
+  },
+  {
+    field: "roomNumber",
+    headerName: "Số phòng",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span>Số phòng</span>,
+    renderCell: (params) => <span>{params.row.roomNumber}</span>,
+  },
+  {
+    field: "floor",
+    headerName: "Tầng",
+    flex: 0.5,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span>Tầng</span>,
+    renderCell: (params) => <span>{params.row.floor}</span>,
+  },
+  {
+    field: "roomType",
+    headerName: "Loại phòng",
+    flex: 2,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span>Loại phòng</span>,
+    renderCell: (params) => (
+      <span>{params.row.roomType ? params.row.roomType.name : ""}</span>
+    ),
+  },
 
+  {
+    field: "isAvailable",
+    headerName: "Có sẵn",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span>Có sẵn</span>,
+    renderCell: (params) => (
+      <StyledChip
+        label={params.row.isAvailable ? "Có" : "Không"}
+        color={params.row.isAvailable ? "success" : "error"}
+      />
+    ),
+  },
+];
+const hiddenColumns: GridColDef[] = [
+  {
+    field: "description",
+    headerName: "Mô tả",
+    flex: 2,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) => <span>{params.row.description}</span>,
+  },
+  {
+    field: "lastCleaned",
+    headerName: "Dọn dẹp lần cuối",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) =>
+      params.row.lastCleaned
+        ? new Date(params.row.lastCleaned * 1000).toISOString().split("T")[0]
+        : "",
+  },
+  {
+    field: "isSmokingAllowed",
+    headerName: "Cho phép hút thuốc",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) => (
+      <StyledChip
+        label={params.row.isSmokingAllowed ? "Có" : "Không"}
+        color={params.row.isSmokingAllowed ? "success" : "error"}
+      />
+    ),
+  },
+  {
+    field: "has_private_kitchen",
+    headerName: "Bếp riêng",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) => (
+      <StyledChip
+        label={params.row.has_private_kitchen ? "Có" : "Không"}
+        color={params.row.has_private_kitchen ? "success" : "error"}
+      />
+    ),
+  },
+  {
+    field: "size",
+    headerName: "Diện tích",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) => <span>{params.row.size} m²</span>,
+  },
+  {
+    field: "roomType.sizeRange",
+    headerName: "Khoảng diện tích phòng",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) =>
+      params.row.roomType ? params.row.roomType.sizeRange : "Không có",
+  },
+  {
+    field: "roomType.maxOccupancy",
+    headerName: "Số người tối đa",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) =>
+      params.row.roomType ? params.row.roomType.maxOccupancy : "Không có",
+  },
+  {
+    field: "roomType.basePricePerNight",
+    headerName: "Giá cơ bản / Đêm",
+    flex: 1,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderCell: (params) =>
+      params.row.roomType
+        ? `${
+            params.row.roomType?.basePricePerNight &&
+            new Intl.NumberFormat("vi-VN").format(
+              params.row.roomType?.basePricePerNight
+            )
+          } VND`
+        : "Không có",
+  },
+];
 const RoomList = () => {
   const [selectedRoom, setSelectedRoom] = useState<RoomInfo | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -144,6 +303,9 @@ const RoomList = () => {
     setOpenDialog(false);
     setSelectedRoom(null);
   };
+  const [visibleColumns, setVisibleColumns] =
+  useState<GridColDef[]>(defaultColumns);
+
   return (
     <Container
       title="Danh sách phòng"
@@ -165,17 +327,24 @@ const RoomList = () => {
           {loading ? (
             <p>Đang tải dữ liệu...</p>
           ) : (
+            <>
+            <ColumnFilter
+            hiddenColumns={hiddenColumns}
+            defaultVisibleColumns={defaultColumns}
+            onChange={(columns) => setVisibleColumns(columns)}
+          />
             <DataGrid
               style={{ fontSize: "1.4rem", cursor: "pointer" }}
               className={cx("data")}
               rows={data}
-              columns={columns}
+              columns={visibleColumns}
               rowCount={data.length}
               disableColumnSorting={true}
               onRowClick={handleRowClick}
               rowSelection={false}
               hideFooterPagination={true}
-            />
+              />
+              </>
           )}
         </div>
       </div>

@@ -16,12 +16,12 @@ import HotelSetting from "../pages/AdminPage/HotelSetting/HotelSetting";
 import { ROLES } from "../constants/auth/roleConstants";
 import EmployeeRole from "../pages/AdminPage/Employees/EmployeeRole";
 import ServiceUsage from "../pages/AdminPage/Services/ServiceUsage";
-import { ADMIN_PATHS } from "../constants/admin/adminPath";
+import { ADMIN_PATHS, RECEPTION_PATHS } from "../constants/admin/adminPath";
 import RoomAmenityCreate from "../pages/AdminPage/RoomAmenities/RoomAmenityCreate";
 import RoomTypeCreate from "../pages/AdminPage/RoomType/RoomTypeCreate";
 import RoomListCreate from "../pages/AdminPage/RoomList/RoomListCreate";
 import CustomerCreate from "../pages/AdminPage/Customers/CustomerCreate";
-import BookingCreate from "../pages/AdminPage/Bookings/BookingCreate";
+import BookingCreate from "../pages/ReceptionPage/Booking/BookingCreate";
 
 export type RouteWrapperProps = {
   path: string;
@@ -69,11 +69,6 @@ const AdminRoutes: RouteWrapperProps[] = [
   {
     path: ADMIN_PATHS.BOOKINGS,
     element: <Bookings />,
-    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
-  },
-  {
-    path: ADMIN_PATHS.BOOKING_CREATE,
-    element: <BookingCreate />,
     allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
   {
@@ -142,5 +137,11 @@ const AdminRoutes: RouteWrapperProps[] = [
     allowedRoles: [ROLES.ADMIN, ROLES.HOTEL_INFO_MANAGER],
   },
 ];
-
+export const ReceptionRoutes: RouteWrapperProps[] = [
+  {
+    path: RECEPTION_PATHS.BOOKING_CREATE,
+    element: <BookingCreate />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+]
 export default AdminRoutes;

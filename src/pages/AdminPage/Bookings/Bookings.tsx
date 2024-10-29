@@ -157,9 +157,6 @@ const bookingColumns: GridColDef[] = [
 
 const Bookings = () => {
   const navigate = useNavigate();
-  const handleBooking = () => {
-    navigate("/admin/" + ADMIN_PATHS.BOOKING_CREATE);
-  };
   const [tab, setTab] = useState<BookingStatus | "all">("all");
   const [data, setData] = useState<Booking[]>([]);
 
@@ -199,13 +196,6 @@ const Bookings = () => {
       linkToBack="/admin"
       titleToBack="Quay trở lại trang admin"
       fullscreen
-      button={
-        <Button
-          icon={<AddCircleOutlineIcon />}
-          content="Tạo đặt phòng"
-          onClick={handleBooking}
-        />
-      }
     >
       <div className={cx("booking-box")}>
         <OptionBar>

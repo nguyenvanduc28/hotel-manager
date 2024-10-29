@@ -1,0 +1,104 @@
+.button-save {
+  display: flex;
+  justify-content: flex-end;
+}
+.box {
+  display: flex;
+  gap: 2rem;
+  .box-item {
+    flex: 1;
+  }
+}
+.divider {
+  margin-top: 2rem;
+  margin-bottom: 1.6rem;
+}
+
+.item-box-wrapper {
+  border: 1px dashed #c4cdd5;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+.item-box--button {
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #c4cdd5;
+  svg {
+    font-size: 2.4rem;
+  }
+  span {
+    font-size: 1.8rem;
+    margin-left: 1rem;
+  }
+  &:hover {
+    background-color: #f7f7f7;
+  }
+  cursor: pointer;
+}
+
+.item-box--value {
+  height: auto; // để chứa được nội dung linh hoạt
+  align-items: center;
+  border: 1px dashed #c4cdd5;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+}
+
+.item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 1.4rem;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .room-title {
+      font-size: 1.4rem;
+
+  }
+  .room-num {
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+}
+
+.item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+
+  .item-right-box {
+    width: 250px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .item-right-title {
+        font-size: 1.4rem;
+    }
+    .item-right-value {
+        font-size: 1.6rem;
+        font-size: 600;
+    }
+  }
+}

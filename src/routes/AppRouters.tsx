@@ -2,7 +2,7 @@ import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import AdminLayout from "../layouts/AdminLayout/AdminLayout";
 import { useAuth } from "../hooks/useAuth";
 import NoPermission from "../pages/NoPermission";
-import AdminRouters from "./routes";
+import AdminRouters, { ReceptionRoutes } from "./routes";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import { useEffect } from "react";
 import NotFound from "../pages/NotFound";
@@ -35,8 +35,18 @@ const AppRouters: React.FC = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
-        <Route path="/admin" element={<ReceptionLayout />}>
+        <Route path="/admin" element={<AdminLayout />}>
           {AdminRouters.map((route) => (
+            <Route
+              key={route.path}
+              element={<ProtectedRoute roles={route.allowedRoles} />}
+            >
+              <Route path={route.path} element={route.element} />
+            </Route>
+          ))}
+        </Route>
+        <Route path="/reception" element={<ReceptionLayout />}>
+          {ReceptionRoutes.map((route) => (
             <Route
               key={route.path}
               element={<ProtectedRoute roles={route.allowedRoles} />}
