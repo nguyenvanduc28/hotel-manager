@@ -10,6 +10,7 @@ import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../../types/hotel";
 import { getCustomers } from "../../../apis/bookingApis/bookingApis";
+import moment from "moment";
 
 const cx = classNames.bind(styles);
 
@@ -86,14 +87,10 @@ const columns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Ngày sinh</span>,
     renderCell: (params) => {
-      const date = new Date(params ? params.row.birthDay : 0);
+      const timestamp = params?.row?.birthDay || 0; // Lấy giá trị birthDay hoặc 0
       return (
         <span>
-          {params ? date.toLocaleString("vi-VN", {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          }) : ""}
+          {timestamp ? moment.unix(timestamp).format("DD/MM/YYYY") : ""}
         </span>
       );
     },

@@ -74,6 +74,21 @@ export const getAllRoom = async () => {
         throw new Error(errorMessage);
     }
 };
+export const getAvailableRooms = async (checkInDate: number, checkOutDate: number) => {
+    try {
+        const response = await axiosInstance.get('/admin/rooms/available', {
+            params: {
+                checkInDate,
+                checkOutDate
+            }
+        });
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách phòng trống thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
 
 export const getConsumableCategories = async () => {
     try {

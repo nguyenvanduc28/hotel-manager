@@ -52,8 +52,8 @@ export enum BOOKING_STATUS {
     CheckedOut = "Đã trả phòng",
     Canceled = "Đã hủy",
     NoShow = "Không đến",
-    Completed = "Đã hoàn tất",
     AwaitingPayment = "Đang chờ thanh toán",
     Refunded = "Đã hoàn tiền",
+    Completed = "Đã hoàn tất",
 }
 export type BookingStatus = typeof BOOKING_STATUS[keyof typeof BOOKING_STATUS];

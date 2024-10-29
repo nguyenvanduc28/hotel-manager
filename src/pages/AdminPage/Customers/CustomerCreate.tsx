@@ -13,6 +13,7 @@ import { createCustomer } from "../../../apis/bookingApis/bookingApis";
 import { useNavigate } from "react-router-dom";
 import GroupRadio from "../../../components/GroupRadio/GroupRadio";
 import { GENDERS } from "../../../constants/admin/constants";
+import moment from "moment";
 
 type CustomerCreateProps = {};
 
@@ -121,16 +122,14 @@ const CustomerCreate: React.FC<CustomerCreateProps> = () => {
           <InputText
             value={
               customerForm.birthDay
-                ? new Date(customerForm.birthDay * 1000)
-                    .toISOString()
-                    .split("T")[0]
+                ? moment.unix(customerForm.birthDay).format("YYYY-MM-DD")
                 : ""
             }
             variant="inline-group"
             title="Ngày sinh"
             type="date"
             onChange={(e) => {
-              const timestamp = new Date(e.target.value).getTime() / 1000;
+              const timestamp = moment(e.target.value, "YYYY-MM-DD").unix();
               handleChange("birthDay", timestamp);
             }}
           />

@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import ShowInfoDialog from "../../../components/ShowInfoDialog/ShowInfoDialog";
 import { getAllRoom } from "../../../apis/roomApis/roomApis";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
+import moment from "moment";
 const cx = classNames.bind(styles);
 
 const columns: GridColDef[] = [
@@ -188,7 +189,7 @@ const hiddenColumns: GridColDef[] = [
     headerAlign: "left",
     renderCell: (params) =>
       params.row.lastCleaned
-        ? new Date(params.row.lastCleaned * 1000).toISOString().split("T")[0]
+        ? moment.unix(params.row.lastCleaned).format("YYYY-MM-DD")
         : "",
   },
   {
@@ -304,7 +305,7 @@ const RoomList = () => {
     setSelectedRoom(null);
   };
   const [visibleColumns, setVisibleColumns] =
-  useState<GridColDef[]>(defaultColumns);
+    useState<GridColDef[]>(defaultColumns);
 
   return (
     <Container
@@ -328,23 +329,23 @@ const RoomList = () => {
             <p>Đang tải dữ liệu...</p>
           ) : (
             <>
-            <ColumnFilter
-            hiddenColumns={hiddenColumns}
-            defaultVisibleColumns={defaultColumns}
-            onChange={(columns) => setVisibleColumns(columns)}
-          />
-            <DataGrid
-              style={{ fontSize: "1.4rem", cursor: "pointer" }}
-              className={cx("data")}
-              rows={data}
-              columns={visibleColumns}
-              rowCount={data.length}
-              disableColumnSorting={true}
-              onRowClick={handleRowClick}
-              rowSelection={false}
-              hideFooterPagination={true}
+              <ColumnFilter
+                hiddenColumns={hiddenColumns}
+                defaultVisibleColumns={defaultColumns}
+                onChange={(columns) => setVisibleColumns(columns)}
               />
-              </>
+              <DataGrid
+                style={{ fontSize: "1.4rem", cursor: "pointer" }}
+                className={cx("data")}
+                rows={data}
+                columns={visibleColumns}
+                rowCount={data.length}
+                disableColumnSorting={true}
+                onRowClick={handleRowClick}
+                rowSelection={false}
+                hideFooterPagination={true}
+              />
+            </>
           )}
         </div>
       </div>
@@ -400,22 +401,24 @@ const RoomList = () => {
                 </p>
               </>
             )}
-            {selectedRoom.consumables && selectedRoom.consumables.length > 0 && (
-              <p>
-                <strong>Đồ dùng tiêu hao:</strong>{" "}
-                {selectedRoom.consumables
-                  .map((amenity) => amenity.name)
-                  .join(", ")}
-              </p>
-            )}
-            {selectedRoom.equipmentList && selectedRoom.equipmentList.length > 0 && (
-              <p>
-                <strong>Thiết bị:</strong>{" "}
-                {selectedRoom.equipmentList
-                  .map((amenity) => amenity.name)
-                  .join(", ")}
-              </p>
-            )}
+            {selectedRoom.consumables &&
+              selectedRoom.consumables.length > 0 && (
+                <p>
+                  <strong>Đồ dùng tiêu hao:</strong>{" "}
+                  {selectedRoom.consumables
+                    .map((amenity) => amenity.name)
+                    .join(", ")}
+                </p>
+              )}
+            {selectedRoom.equipmentList &&
+              selectedRoom.equipmentList.length > 0 && (
+                <p>
+                  <strong>Thiết bị:</strong>{" "}
+                  {selectedRoom.equipmentList
+                    .map((amenity) => amenity.name)
+                    .join(", ")}
+                </p>
+              )}
           </div>
         </ShowInfoDialog>
       )}

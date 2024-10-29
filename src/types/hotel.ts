@@ -67,7 +67,7 @@ export type RoomItem = {
     has_free_wifi?:boolean;
     has_soundproofing?:boolean;
     size?:number;
-    images?:string[];
+    images?:string;
 };
 
 export type ConsumableCategories = {

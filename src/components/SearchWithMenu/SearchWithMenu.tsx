@@ -43,7 +43,7 @@ const SearchWithMenu: React.FC<SearchWithMenuProps> = ({
     return () => {
       clearTimeout(handler);
     };
-  }, [query, handleSearch]);
+  }, [query]);
 
   const handleSelect = (option: Option) => {
     console.log("Selected option:", option); // Xử lý lựa chọn

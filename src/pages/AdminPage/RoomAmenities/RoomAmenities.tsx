@@ -13,6 +13,7 @@ import OptionItem from "../../../components/OptionBar/OptionItem";
 import { StyledChip } from "../../../components/StyledChip/StyledChip";
 import { useEffect, useState } from "react";
 import { getConsumables, getEquipment } from "../../../apis/roomApis/roomApis";
+import moment from "moment";
 const cx = classNames.bind(styles);
 
 const consumableColumns: GridColDef[] = [
@@ -77,10 +78,9 @@ const consumableColumns: GridColDef[] = [
     renderHeader: () => <span>Giá</span>,
     renderCell: (params) => {
       const price = params ? params.row.price : "";
-      const formattedPrice = new Intl.NumberFormat('vi-VN').format(price);
+      const formattedPrice = new Intl.NumberFormat("vi-VN").format(price);
       return <span>{formattedPrice} đ</span>;
-  },
-  
+    },
   },
   {
     field: "unit",
@@ -127,21 +127,13 @@ const consumableColumns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Ngày hết hạn</span>,
     renderCell: (params) => {
-      const date = new Date(params ? params.row.expiryDate : 0);
+      const timestamp = params?.row?.expiryDate || 0; // Lấy giá trị expiryDate hoặc 0
       return (
         <span>
-          {params ? date.toLocaleString("vi-VN", {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }) : ""}
+          {timestamp ? moment.unix(timestamp).format("DD/MM/YYYY HH:mm") : ""}
         </span>
       );
     },
-    
   },
 ];
 const equipmentColumns: GridColDef[] = [
@@ -205,20 +197,16 @@ const equipmentColumns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Ngày lắp đặt</span>,
     renderCell: (params) => {
-      const date = new Date(params ? params.row.installationDate : 0);
+      const timestamp = params?.row?.installationDate || 0; // Lấy giá trị installationDate hoặc 0
       return (
         <span>
-          {params ? date.toLocaleString("vi-VN", {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }) : ""}
+          {timestamp
+            ? moment.unix(timestamp).format("DD/MM/YYYY HH:mm")
+            : ""}
         </span>
       );
     },
+    
   },
 
   {
@@ -253,7 +241,7 @@ const RoomAmenities = () => {
     navigate("/admin/" + ADMIN_PATHS.ROOM_AMENITY_CREATE);
   };
   const [colDef, setColDef] = useState<any>(consumableColumns);
-  
+
   const [tab, setTab] = useState<any>("consumable");
   const [data, setData] = useState<any>(null);
   const handleSearch = (input: any) => {
@@ -276,7 +264,7 @@ const RoomAmenities = () => {
   const fetchConsumables = async () => {
     try {
       const data = await getConsumables();
-      setData(data)
+      setData(data);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách sản phẩm tiêu hao:", error);
     }
@@ -284,7 +272,7 @@ const RoomAmenities = () => {
   const fetchEquipments = async () => {
     try {
       const data = await getEquipment();
-      setData(data)
+      setData(data);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách thiết bị:", error);
     }

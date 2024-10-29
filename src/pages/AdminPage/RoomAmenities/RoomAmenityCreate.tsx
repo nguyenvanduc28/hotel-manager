@@ -21,6 +21,7 @@ import {
   getEquipmentCategories,
 } from "../../../apis/roomApis/roomApis"; // Nhớ import hàm API
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 type RoomAmenityCreateProps = {};
 const cx = classNames.bind(styles);
@@ -232,16 +233,14 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
               <InputText
                 value={
                   consumable.expiryDate
-                    ? new Date(consumable.expiryDate * 1000)
-                        .toISOString()
-                        .split("T")[0]
+                    ? moment.unix(consumable.expiryDate).format("YYYY-MM-DD")
                     : ""
                 }
                 variant="inline-group"
                 title="Ngày hết hạn"
                 type="date"
                 onChange={(e) => {
-                  const timestamp = new Date(e.target.value).getTime() / 1000;
+                  const timestamp = moment(e.target.value, "YYYY-MM-DD").unix(); // Chuyển đổi giá trị ngày về timestamp
                   handleChange("expiryDate", timestamp);
                 }}
               />
@@ -251,21 +250,20 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
       )}
       {tab == "equipment" && (
         <InputText
-          value={
-            equipment.installationDate
-              ? new Date(equipment.installationDate * 1000)
-                  .toISOString()
-                  .split("T")[0]
-              : ""
-          }
-          variant="inline-group"
-          title="Ngày lắp đặt"
-          type="date"
-          onChange={(e) => {
-            const timestamp = new Date(e.target.value).getTime() / 1000;
-            handleChange("installationDate", timestamp);
-          }}
-        />
+        value={
+          equipment.installationDate
+            ? moment.unix(equipment.installationDate).format("YYYY-MM-DD")
+            : ""
+        }
+        variant="inline-group"
+        title="Ngày lắp đặt"
+        type="date"
+        onChange={(e) => {
+          const timestamp = moment(e.target.value, "YYYY-MM-DD").unix(); // Chuyển đổi giá trị ngày về timestamp
+          handleChange("installationDate", timestamp);
+        }}
+      />
+      
       )}
       <div className={cx("divider")}>
         <Divider />

@@ -15,6 +15,7 @@ import { Booking } from "../../../types/hotel";
 import { useNavigate } from "react-router-dom";
 import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
 import Button from "../../../components/Button/Button";
+import moment from "moment";
 
 const cx = classNames.bind(styles);
 const mockBookings: Booking[] = [
@@ -73,60 +74,48 @@ const bookingColumns: GridColDef[] = [
     headerName: "Ngày đặt phòng",
     flex: 2,
     renderCell: (params) => {
-      const date = new Date(params ? params.row.bookingDate : 0);
+      const timestamp = params ? params.row.bookingDate : 0;
       return (
         <span>
-          {params ? date.toLocaleString("vi-VN", {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }) : ""}
+          {timestamp
+            ? moment.unix(timestamp).format("DD/MM/YYYY HH:mm")
+            : ""}
         </span>
       );
     },
+    
   },
   {
     field: "checkInDate",
     headerName: "Ngày nhận phòng",
     flex: 2,
     renderCell: (params) => {
-      const date = new Date(params ? params.row.checkInDate : 0);
+      const timestamp = params?.row?.checkInDate || 0; // Lấy giá trị checkInDate hoặc 0
       return (
-        <span>
-          {params?.row?.checkInDate ? date.toLocaleString("vi-VN", {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }) : ""}
+        <span>14:00 {" "}
+          {timestamp
+            ? moment.unix(timestamp).format("DD/MM/YYYY")
+            : ""}
         </span>
       );
     },
+    
   },
   {
     field: "checkOutDate",
     headerName: "Ngày trả phòng",
     flex: 2,
     renderCell: (params) => {
-      const date = new Date(params ? params.row.checkOutDate : 0);
+      const timestamp = params?.row?.checkOutDate || 0; // Lấy giá trị checkOutDate hoặc 0
       return (
-        <span>
-          {params?.row?.checkOutDate ? date.toLocaleString("vi-VN", {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          }) : ""}
+        <span>12:00{" "}
+          {timestamp
+            ? moment.unix(timestamp).format("DD/MM/YYYY")
+            : ""}
         </span>
       );
     },
+    
   },
   {
     field: "rooms",
