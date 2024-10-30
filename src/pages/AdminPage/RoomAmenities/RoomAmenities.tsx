@@ -310,7 +310,7 @@ const RoomAmenities = () => {
           </OptionBar>
         </div>
         <div className={cx("search")}>
-          <Search placeholder="Tìm kiếm tiện nghi" onSearch={handleSearch} />
+          <Search placeholder="Tìm kiếm tiện nghi" handleSearch={(q) => handleSearch(q)} />
         </div>
         <div className={cx("list")}>
           <DataGrid

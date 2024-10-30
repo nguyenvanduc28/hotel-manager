@@ -24,5 +24,6 @@ export const ADMIN_PATHS = {
 };
 
 export const RECEPTION_PATHS = {
-  BOOKING_CREATE:"booking/create"
+  BOOKING_CREATE:"booking/create",
+  BOOKING_LIST:"booking/list",
 }

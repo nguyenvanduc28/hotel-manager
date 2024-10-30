@@ -172,7 +172,7 @@ const RoomType = () => {
     >
       <div className={cx("room-type-box")}>
         <div className={cx("search")}>
-          <Search placeholder="Tìm kiếm loại phòng" onSearch={handleSearch} />
+          <Search placeholder="Tìm kiếm loại phòng" handleSearch={(q) => handleSearch(q)} />
         </div>
         <div className={cx("list")}>
           {loading ? (

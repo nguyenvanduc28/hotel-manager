@@ -138,7 +138,8 @@
         .item-value {
           color: #333;
         }
-        .total-cost-title, .total-cost-value {
+        .total-cost-title,
+        .total-cost-value {
           font-size: 1.8rem;
         }
       }
@@ -172,5 +173,26 @@
         }
       }
     }
+  }
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.6rem;
+  height: 6rem;
+  .checkbox {
+    margin-right: 0.8rem;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    accent-color: #007bff;
+  }
+
+  .title {
+    font-family: "SVN-Gilroy", Arial, Helvetica, sans-serif;
+    font-size: 1.6rem;
+    line-height: 2rem;
+    margin-right: 10px;
   }
 }

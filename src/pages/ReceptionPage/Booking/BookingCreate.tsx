@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Container from "../../../components/Container/Container";
 import Button from "../../../components/Button/Button";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
-import { CloseOutlined } from "@mui/icons-material";
+import { CheckBox, CloseOutlined } from "@mui/icons-material";
 import InputText from "../../../components/Input/InputText";
 import styles from "./BookingCreate.module.scss";
 import classNames from "classnames/bind";
@@ -17,7 +17,10 @@ import {
 } from "@mui/material";
 import Title from "../../../components/Title/Title";
 import AddIcon from "@mui/icons-material/Add";
-import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
+import {
+  ADMIN_PATHS,
+  RECEPTION_PATHS,
+} from "../../../constants/admin/adminPath";
 import { BookingForm, CustomerForm } from "../../../types/forms";
 // import { createBooking } from "../../../apis/bookingApis/bookingApis";
 import { useNavigate } from "react-router-dom";
@@ -220,6 +223,8 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
     cancellationPolicy: "Miễn phí hủy trong 12h",
     canceledAt: undefined,
     isGuaranteed: true,
+    numberOfAdults: 2,
+    numberOfChildren: 0,
     rooms: [],
   });
   const [totalNights, setTotalNights] = useState<number>(0);
@@ -272,19 +277,18 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
   const fetchCustomers = async (name: string) => {
     try {
       const customers = await searchCustomersByName(name);
-      setCustomerList(customers); // Giả sử setCustomerList là hàm để cập nhật danh sách khách hàng
+      setCustomerList(customers);
     } catch (error) {
       console.error("Failed to fetch customers:", error);
     }
   };
 
-  // Gọi API để lưu thông tin booking
   const handleSave = async () => {
     try {
-        const result = await createBooking(bookingForm);
+      const result = await createBooking(bookingForm);
 
       console.log("Booking đã được tạo:", bookingForm);
-      navigate("/admin/" + ADMIN_PATHS.BOOKINGS);
+      navigate("/reception/" + RECEPTION_PATHS.BOOKING_LIST);
     } catch (error) {
       console.error("Lỗi khi tạo booking:", error);
     }
@@ -428,6 +432,7 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                 title="Số trẻ em"
                 placeholder="Nhập số người"
                 variant="inline-group"
+                type="number"
                 onChange={(e) => {
                   const parsedValue = parseFloat(e.target.value);
                   handleChange(
@@ -437,6 +442,42 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                 }}
                 suffix="người"
               />
+            </div>
+          </div>
+          <div className={cx("box")}>
+            <div className={cx("box-item")}>
+              <div className={cx("checkbox-wrapper")}>
+                <label>
+                  <span className={cx("title")}>Đảm bảo phòng?</span>
+                  <input
+                    className="checkbox"
+                    type="checkbox"
+                    checked={bookingForm.isGuaranteed}
+                    onChange={(e) =>
+                      handleChange("isGuaranteed", e.target.checked)
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+            <div className={cx("box-item")}>
+              {bookingForm.isGuaranteed && (
+                <InputText
+                  value={bookingForm.deposit?.toString()}
+                  title="Số tiền đặt cọc để đảm bảo"
+                  placeholder="Nhập số tiền"
+                  variant="inline-group"
+                  type="number"
+                  onChange={(e) => {
+                    const parsedValue = parseFloat(e.target.value);
+                    handleChange(
+                      "deposit",
+                      isNaN(parsedValue) ? 0 : parsedValue
+                    );
+                  }}
+                  suffix="vnđ"
+                />
+              )}
             </div>
           </div>
           <div className={cx("room-list")}>
@@ -514,25 +555,31 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
             <div className={cx("info-item")}>
               <span className={cx("item-title")}>Họ và tên:</span>
               <span className={cx("item-value")}>
-                {bookingForm.customer.name}
+                {bookingForm.customer.name ? bookingForm.customer.name : "..."}
               </span>
             </div>
             <div className={cx("info-item")}>
               <span className={cx("item-title")}>Email:</span>
               <span className={cx("item-value")}>
-                {bookingForm.customer.email}
+                {bookingForm.customer.email
+                  ? bookingForm.customer.email
+                  : "..."}
               </span>
             </div>
             <div className={cx("info-item")}>
               <span className={cx("item-title")}>Số điện thoại:</span>
               <span className={cx("item-value")}>
-                {bookingForm.customer.phoneNumber}
+                {bookingForm.customer.phoneNumber
+                  ? bookingForm.customer.phoneNumber
+                  : "..."}
               </span>
             </div>
             <div className={cx("info-item")}>
               <span className={cx("item-title")}>Địa chỉ:</span>
               <span className={cx("item-value")}>
-                {bookingForm.customer.address}
+                {bookingForm.customer.address
+                  ? bookingForm.customer.address
+                  : "..."}
               </span>
             </div>
             <div className={cx("info-item")}>
@@ -595,6 +642,12 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                   </div>
                 ))}
               </div>
+            </div>
+            <div className={cx("info-item")}>
+              <span className={cx("item-title")}>Số tiền đặt cọc:</span>
+              <span className={cx("item-value")}>
+                {bookingForm.deposit} vnđ
+              </span>
             </div>
             <div className={cx("info-item", "total-cost")}>
               <span className={cx("item-title", "total-cost-title")}>

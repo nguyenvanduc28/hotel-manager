@@ -3,28 +3,23 @@ import style from "./Search.module.scss";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import classNames from "classnames/bind";
 interface SearchProps {
-  onSearch: (query: string) => void;
   placeholder: string;
+  handleSearch: (query: string) => void;
 }
 
 const cx = classNames.bind(style);
-const Search: React.FC<SearchProps> = ({ onSearch, placeholder }) => {
+const Search: React.FC<SearchProps> = ({ placeholder, handleSearch }) => {
   const [query, setQuery] = useState<string>("");
-  const [debouncedQuery, setDebouncedQuery] = useState<string>(query);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedQuery(query);
+      handleSearch(query);
     }, 400);
 
     return () => {
       clearTimeout(handler);
     };
   }, [query]);
-
-  useEffect(() => {
-    onSearch(debouncedQuery);
-  }, [debouncedQuery, onSearch]);
 
   return (
     <div className={cx("search")}>

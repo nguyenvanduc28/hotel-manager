@@ -6,7 +6,7 @@ import styles from "./Employees.module.scss";
 import classNames from "classnames/bind";
 import Search from "../../../components/Search/Search";
 import { StyledChip } from "../../../components/StyledChip/StyledChip";
-import { EmployeeInfo } from "../../../types/hotel";
+import { EmployeeInfo } from "../../../types/forms";
 import { EMPLOYEE_STATUS, GENDERS } from "../../../constants/admin/constants";
 import ShowInfoDialog from "../../../components/ShowInfoDialog/ShowInfoDialog";
 import { useState } from "react";
@@ -162,7 +162,7 @@ const Employees = () => {
     >
       <div className={cx("employee-list-box")}>
         <div className={cx("search")}>
-          <Search placeholder="Tìm kiếm nhân viên" onSearch={handleSearch} />
+          <Search placeholder="Tìm kiếm nhân viên" handleSearch={(q) => handleSearch} />
         </div>
         <div className={cx("list")}>
           <DataGrid

@@ -30,7 +30,7 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           <MenuItem
             title="Danh sách đặt phòng"
             icon={<EventNoteOutlined />}
-            link="/reception/bookings"
+            link="/reception/booking/list"
             isCollapse={isCollapse}
           />
           <MenuItem

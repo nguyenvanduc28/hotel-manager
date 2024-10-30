@@ -33,3 +33,40 @@ export const createBooking = async (payload: BookingForm) => {
         throw new Error(errorMessage);
     }
 };
+
+export const getBookings = async () => {
+    try {
+        const response = await axiosInstance.get('/admin/bookings/getall');
+        return response.data;
+    } catch (error :unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách phòng thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const searchBooking = async (status : string) => {
+    try {
+        const response = await axiosInstance.get('/admin/bookings/search', {
+            params: { status }
+        });
+        return response.data;
+    } catch (error :unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách phòng thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const searchBookingByCusName = async (customerName : string) => {
+    try {
+        const response = await axiosInstance.get('/admin/bookings/search-cusname', {
+            params: { customerName }
+        });
+        return response.data;
+    } catch (error :unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách phòng theo tên thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};

@@ -4,8 +4,10 @@ import Container from "../../../components/Container/Container";
 import OptionBar from "../../../components/OptionBar/OptionBar";
 import OptionItem from "../../../components/OptionBar/OptionItem";
 import Search from "../../../components/Search/Search";
+import { StyledChip } from "../../../components/StyledChip/StyledChip";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-import styles from "./Bookings.module.scss";
+import styles from "./BookingList.module.scss";
 import classNames from "classnames/bind";
 import {
   BOOKING_STATUS,
@@ -13,13 +15,16 @@ import {
 } from "../../../constants/admin/constants";
 import { Booking } from "../../../types/hotel";
 import { useNavigate } from "react-router-dom";
+import Button from "../../../components/Button/Button";
 import moment from "moment";
 import {
+  getBookings,
   searchBooking,
   searchBookingByCusName,
 } from "../../../apis/bookingApis/bookingApis";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter"; // Import ColumnFilter
-import BookingInfoModal from "../../ReceptionPage/Booking/BookingInfoModal";
+import BookingInfoModal from "./BookingInfoModal";
+
 const cx = classNames.bind(styles);
 
 const defaultColumns: GridColDef[] = [
@@ -236,7 +241,7 @@ const hiddenColumns: GridColDef[] = [
   },
 ];
 
-const Bookings = () => {
+const BookingList = () => {
   const navigate = useNavigate();
   const [tab, setTab] = useState<BookingStatus | "all">("all");
   const [data, setData] = useState<Booking[]>([]);
@@ -368,4 +373,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default BookingList;

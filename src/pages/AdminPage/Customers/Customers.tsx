@@ -170,7 +170,7 @@ const Customers = () => {
     >
       <div className={cx("customer-list-box")}>
         <div className={cx("search")}>
-          <Search placeholder="Tìm kiếm khách hàng" onSearch={handleSearch} />
+          <Search placeholder="Tìm kiếm khách hàng" handleSearch={(query)=> handleSearch(query)} />
         </div>
         <div className={cx("list")}>
           {loading ? (

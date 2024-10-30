@@ -16,98 +16,6 @@ import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import moment from "moment";
 const cx = classNames.bind(styles);
 
-const columns: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    flex: 0.5,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span style={{ paddingLeft: "10px" }}>ID</span>,
-    renderCell: (params) => (
-      <span style={{ paddingLeft: "10px" }}>{params.row.id}</span>
-    ),
-  },
-  {
-    field: "roomNumber",
-    headerName: "Số phòng",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Số phòng</span>,
-    renderCell: (params) => <span>{params.row.roomNumber}</span>,
-  },
-  {
-    field: "floor",
-    headerName: "Tầng",
-    flex: 0.5,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Tầng</span>,
-    renderCell: (params) => <span>{params.row.floor}</span>,
-  },
-  {
-    field: "roomType",
-    headerName: "Loại phòng",
-    flex: 2,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Loại phòng</span>,
-    renderCell: (params) => (
-      <span>{params.row.roomType ? params.row.roomType.name : ""}</span>
-    ),
-  },
-  // {
-  //   field: "currentStatus",
-  //   headerName: "Trạng thái",
-  //   flex: 1,
-  //   headerClassName: "datagrid-header",
-  //   cellClassName: "datagrid-cell",
-  //   headerAlign: "left",
-  //   renderHeader: () => <span>Trạng thái</span>,
-  //   renderCell: (params) => (
-  //     <StyledChip
-  //       label={params.row.currentStatus}
-  //       color={
-  //         params.row.currentStatus === ROOM_STATUS.AVAILABLE
-  //           ? "success"
-  //           : "error"
-  //       }
-  //     />
-  //   ),
-  // },
-  {
-    field: "isAvailable",
-    headerName: "Có sẵn",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Có sẵn</span>,
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.isAvailable ? "Có" : "Không"}
-        color={params.row.isAvailable ? "success" : "error"}
-      />
-    ),
-  },
-  // {
-  //   field: "lastCleaned",
-  //   headerName: "Lần dọn dẹp",
-  //   flex: 1,
-  //   headerClassName: "datagrid-header",
-  //   cellClassName: "datagrid-cell",
-  //   headerAlign: "left",
-  //   renderHeader: () => <span>Dọn dẹp lần cuối</span>,
-  //   renderCell: (params) => (
-  //     <span>{new Date(params.row.lastCleaned).toLocaleDateString()}</span>
-  //   ),
-  // },
-];
 const defaultColumns: GridColDef[] = [
   {
     field: "id",
@@ -322,7 +230,7 @@ const RoomList = () => {
     >
       <div className={cx("room-list-box")}>
         <div className={cx("search")}>
-          <Search placeholder="Tìm kiếm phòng" onSearch={handleSearch} />
+          <Search placeholder="Tìm kiếm phòng" handleSearch={(e)=>handleSearch(e)} />
         </div>
         <div className={cx("list")}>
           {loading ? (
