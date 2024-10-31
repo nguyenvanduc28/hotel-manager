@@ -35,7 +35,7 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           />
           <MenuItem
             title="Danh sách phòng"
-            link="/reception/room-list"
+            link="/reception/room/list"
             isCollapse={isCollapse}
             icon={<HotelOutlined />}
           />

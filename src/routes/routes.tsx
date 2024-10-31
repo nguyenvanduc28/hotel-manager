@@ -23,6 +23,7 @@ import RoomListCreate from "../pages/AdminPage/RoomList/RoomListCreate";
 import CustomerCreate from "../pages/AdminPage/Customers/CustomerCreate";
 import BookingCreate from "../pages/ReceptionPage/Booking/BookingCreate";
 import BookingList from "../pages/ReceptionPage/Booking/BookingList";
+import RoomListRecep from "../pages/ReceptionPage/Room/RoomListRecep";
 
 export type RouteWrapperProps = {
   path: string;
@@ -147,6 +148,11 @@ export const ReceptionRoutes: RouteWrapperProps[] = [
   {
     path: RECEPTION_PATHS.BOOKING_LIST,
     element: <BookingList />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+  {
+    path: RECEPTION_PATHS.ROOM_LIST,
+    element: <RoomListRecep />,
     allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
 ]
