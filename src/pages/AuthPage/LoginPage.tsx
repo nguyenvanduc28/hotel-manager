@@ -23,7 +23,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px"}}>
+    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px", fontSize:"16px"}}>
       <Typography variant="h4" component="h1" gutterBottom>
         Trang Đăng Nhập
       </Typography>
@@ -34,7 +34,7 @@ const LoginPage = () => {
         margin="normal"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        style={{fontSize: "1.6rem" }}
+        
       />
       <TextField
         label="Mật khẩu"
@@ -44,7 +44,6 @@ const LoginPage = () => {
         margin="normal"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        style={{fontSize: "1.6rem" }}
       />
       <Button
         variant="contained"

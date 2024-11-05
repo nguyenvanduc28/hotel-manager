@@ -14,6 +14,9 @@ import ShowInfoDialog from "../../../components/ShowInfoDialog/ShowInfoDialog";
 import { getAllRoom } from "../../../apis/roomApis/roomApis";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import moment from "moment";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import RoomIndoModal from "./RoomIndoModal";
 const cx = classNames.bind(styles);
 
 const defaultColumns: GridColDef[] = [
@@ -52,7 +55,7 @@ const defaultColumns: GridColDef[] = [
   {
     field: "roomType",
     headerName: "Loại phòng",
-    flex: 2,
+    flex: 1,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
@@ -70,12 +73,38 @@ const defaultColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Có sẵn</span>,
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.isAvailable ? "Có" : "Không"}
-        color={params.row.isAvailable ? "success" : "error"}
-      />
-    ),
+    renderCell: (params) =>
+      params.row.isAvailable ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "price",
+    headerName: "Giá",
+    flex: 1.5,
+    filterable: false,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span>Giá phòng/1 đêm</span>,
+    renderCell: (params) => {
+      // const price = params ? params.row.roomType.basePricePerNight : "0";
+      // const formattedPrice = new Intl.NumberFormat("vi-VN").format(price);
+      return (
+        <span>
+          {params
+            ? params.row.roomType.basePricePerNight.toLocaleString()
+            : "0"}{" "}
+          đ
+        </span>
+      );
+    },
   },
 ];
 const hiddenColumns: GridColDef[] = [
@@ -104,77 +133,214 @@ const hiddenColumns: GridColDef[] = [
     field: "isSmokingAllowed",
     headerName: "Cho phép hút thuốc",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.isSmokingAllowed ? "Có" : "Không"}
-        color={params.row.isSmokingAllowed ? "success" : "error"}
-      />
-    ),
+    renderCell: (params) =>
+      params.row.isSmokingAllowed ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
   {
-    field: "has_private_kitchen",
+    field: "hasPrivateKitchen",
     headerName: "Bếp riêng",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.has_private_kitchen ? "Có" : "Không"}
-        color={params.row.has_private_kitchen ? "success" : "error"}
-      />
-    ),
-  },
-  {
-    field: "size",
-    headerName: "Diện tích",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) => <span>{params.row.size} m²</span>,
-  },
-  {
-    field: "roomType.sizeRange",
-    headerName: "Khoảng diện tích phòng",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
     renderCell: (params) =>
-      params.row.roomType ? params.row.roomType.sizeRange : "Không có",
+      params.row.hasPrivateKitchen ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
   {
-    field: "roomType.maxOccupancy",
-    headerName: "Số người tối đa",
+    field: "hasPrivateBathroom",
+    headerName: "Phòng tắm riêng",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
     renderCell: (params) =>
-      params.row.roomType ? params.row.roomType.maxOccupancy : "Không có",
+      params.row.hasPrivateBathroom ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
   {
-    field: "roomType.basePricePerNight",
-    headerName: "Giá cơ bản / Đêm",
+    field: "hasBalcony",
+    headerName: "Ban công",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
     renderCell: (params) =>
-      params.row.roomType
-        ? `${
-            params.row.roomType?.basePricePerNight &&
-            new Intl.NumberFormat("vi-VN").format(
-              params.row.roomType?.basePricePerNight
-            )
-          } VND`
-        : "Không có",
+      params.row.hasBalcony ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasLakeView",
+    headerName: "Hồ nước",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasLakeView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasGardenView",
+    headerName: "Vườn",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasGardenView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasPoolView",
+    headerName: "Hồ bơi",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasPoolView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasMountainView",
+    headerName: "Núi",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasMountainView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasLandmarkView",
+    headerName: "Địa danh",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasLandmarkView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasCityView",
+    headerName: "Thành phố",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasCityView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasRiverView",
+    headerName: "Sông",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasRiverView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasCourtyardView",
+    headerName: "Sân",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasCourtyardView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasFreeWifi",
+    headerName: "Wi-Fi miễn phí",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasFreeWifi ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasSoundproofing",
+    headerName: "Cách âm",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasSoundproofing ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
 ];
+
 const RoomList = () => {
   const [selectedRoom, setSelectedRoom] = useState<RoomInfo | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -230,7 +396,10 @@ const RoomList = () => {
     >
       <div className={cx("room-list-box")}>
         <div className={cx("search")}>
-          <Search placeholder="Tìm kiếm phòng" handleSearch={(e)=>handleSearch(e)} />
+          <Search
+            placeholder="Tìm kiếm phòng"
+            handleSearch={(e) => handleSearch(e)}
+          />
         </div>
         <div className={cx("list")}>
           {loading ? (
@@ -258,77 +427,11 @@ const RoomList = () => {
         </div>
       </div>
       {selectedRoom && (
-        <ShowInfoDialog
+        <RoomIndoModal
+          roomInfo={selectedRoom}
           open={openDialog}
-          onClose={handleCloseDialog}
-          title="Thông tin phòng"
-        >
-          <div>
-            <p>
-              <strong>ID:</strong> {selectedRoom.id}
-            </p>
-            <p>
-              <strong>Số phòng:</strong> {selectedRoom.roomNumber}
-            </p>
-            <p>
-              <strong>Tầng:</strong> {selectedRoom.floor}
-            </p>
-            <p>
-              <strong>Miêu tả:</strong> {selectedRoom.description}
-            </p>
-            <p>
-              <strong>Phòng hút thuốc:</strong>{" "}
-              {selectedRoom.isSmokingAllowed ? "Có" : "Không"}
-            </p>
-            {/* <p>
-              <strong>Ngày dọn gần nhất:</strong> {selectedRoom.lastCleaned}
-            </p> */}
-            {selectedRoom.roomType && (
-              <>
-                <p>
-                  <strong>Loại phòng:</strong> {selectedRoom.roomType.name}
-                </p>
-                <p>
-                  <strong>Số giường đơn:</strong>{" "}
-                  {selectedRoom.roomType.singleBedCount}
-                </p>
-                <p>
-                  <strong>Số giường đôi:</strong>{" "}
-                  {selectedRoom.roomType.doubleBedCount}
-                </p>
-                <p>
-                  <strong>Diện tích:</strong> {selectedRoom.size} m²
-                </p>
-                <p>
-                  <strong>Sức chứa tối đa:</strong>{" "}
-                  {selectedRoom.roomType.maxOccupancy}
-                </p>
-                <p>
-                  <strong>Giá cơ bản mỗi đêm:</strong>{" "}
-                  {selectedRoom.roomType.basePricePerNight} $
-                </p>
-              </>
-            )}
-            {selectedRoom.consumables &&
-              selectedRoom.consumables.length > 0 && (
-                <p>
-                  <strong>Đồ dùng tiêu hao:</strong>{" "}
-                  {selectedRoom.consumables
-                    .map((amenity) => amenity.name)
-                    .join(", ")}
-                </p>
-              )}
-            {selectedRoom.equipmentList &&
-              selectedRoom.equipmentList.length > 0 && (
-                <p>
-                  <strong>Thiết bị:</strong>{" "}
-                  {selectedRoom.equipmentList
-                    .map((amenity) => amenity.name)
-                    .join(", ")}
-                </p>
-              )}
-          </div>
-        </ShowInfoDialog>
+          onClose={() => setOpenDialog(false)}
+        />
       )}
     </Container>
   );

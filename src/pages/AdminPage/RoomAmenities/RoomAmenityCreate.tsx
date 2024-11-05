@@ -226,7 +226,7 @@ const RoomAmenityCreate: React.FC<RoomAmenityCreateProps> = ({}) => {
                   handleChange("price", isNaN(parsedValue) ? 0 : parsedValue);
                 }}
                 suffix="₫"
-                note="*Giá bán của mỗi đơn vị sản phẩm"
+                note="*Giá bán của mỗi đơn vị sản phẩm. (Đặt là 0 nếu sản phẩm miễn phí)"
               />
             </div>
             <div className={cx("box-item")}>

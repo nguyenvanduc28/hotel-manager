@@ -60,7 +60,7 @@ export type ConsumableForm = {
     id: number;
     name: string;
     consumableCategory: ConsumableCategoriesForm;
-    room?: RoomInfoForm;
+    room?: RoomInfoForm | null;
     price?: number;
     quantity?: number;
     unit?: string;
@@ -73,7 +73,7 @@ export type EquipmentForm = {
     id: number;
     name: string;
     equipmentCategory: EquipmentCategoryForm;
-    room?: RoomInfoForm;
+    room?: RoomInfoForm | null;
     installationDate?: number;
     barcode?: string;
     status?: EquipmentStatus;

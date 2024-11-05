@@ -4,7 +4,7 @@ import Button from "../../../components/Button/Button";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import InputText from "../../../components/Input/InputText";
 import { Divider } from "@mui/material";
-import styles from "./RoomListCreate.module.scss";
+import styles from "./RoomEdit.module.scss";
 import classNames from "classnames/bind";
 import TextArea from "../../../components/TextArea/TextArea";
 import SelectContainer from "../../../components/Select/SelectContainer";
@@ -12,27 +12,28 @@ import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
 import { RoomInfoForm } from "../../../types/forms";
 import CheckboxMenu from "../../../components/Select/CheckboxMenu";
 import {
-  createRoom,
-  getConsumables,
-  getConsumablesAvailable,
-  getEquipment,
-  getEquipmentAvailable,
+  getRoomById,
+  updateRoom,
   getRoomTypes,
+  getEquipmentAvailable,
+  getConsumablesAvailable,
 } from "../../../apis/roomApis/roomApis";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Consumables, Equipments, RoomType } from "../../../types/hotel";
 
-type RoomListCreateProps = {};
+type RoomListEditProps = {};
 
 const cx = classNames.bind(styles);
 
-
-const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
+const RoomEdit: React.FC<RoomListEditProps> = () => {
   const [roomTypeData, setRoomTypeData] = useState<RoomType[]>([]);
   const [consumables, setConsumables] = useState<Consumables[]>([]);
   const [equipments, setEquipments] = useState<Equipments[]>([]);
+  const [originalRoomData, setOriginalRoomData] = useState<RoomInfoForm | null>(
+    null
+  );
   const [roomForm, setRoomForm] = useState<RoomInfoForm>({
-    id:0,
+    id: 0,
     roomNumber: "",
     floor: undefined,
     isAvailable: true,
@@ -40,7 +41,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
     isSmokingAllowed: false,
     roomType: {
       id: 0,
-      name: ""
+      name: "",
     },
     consumables: undefined,
     equipmentList: undefined,
@@ -59,13 +60,27 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
     hasSoundproofing: false,
   });
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
   const handleChange = (key: keyof RoomInfoForm, value: any) => {
-    setRoomForm((prevForm: any) => ({
+    setRoomForm((prevForm) => ({
       ...prevForm,
       [key]: value,
     }));
   };
+
+  const fetchRoomData = async () => {
+    if (id) {
+      try {
+        const roomData = await getRoomById(parseInt(id));
+        setOriginalRoomData(roomData);
+        setRoomForm(roomData);
+      } catch (error) {
+        console.error("Failed to fetch room data:", error);
+      }
+    }
+  };
+
   const fetchRoomTypes = async () => {
     try {
       const roomTypes = await getRoomTypes();
@@ -77,15 +92,16 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
 
   const fetchConsumables = async () => {
     try {
-      const data = await getConsumablesAvailable(0);
+      const data = await getConsumablesAvailable(parseInt(id || "0", 10));
       setConsumables(data);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách sản phẩm tiêu hao:", error);
     }
   };
+
   const fetchEquipments = async () => {
     try {
-      const data = await getEquipmentAvailable(0);
+      const data = await getEquipmentAvailable(parseInt(id || "0", 10));
       setEquipments(data);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách thiết bị:", error);
@@ -93,26 +109,52 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
   };
 
   useEffect(() => {
+    fetchRoomData();
     fetchConsumables();
     fetchEquipments();
     fetchRoomTypes();
-  }, []);
+  }, [id]);
 
   const handleSave = async () => {
     try {
       console.log("data", roomForm);
-      
-      const result = await createRoom(roomForm);
-      console.log("Phòng đã được tạo:", result);
+      const updatedRoomForm = {
+        ...roomForm,
+        equipmentList: roomForm.equipmentList
+          ? roomForm.equipmentList?.map((equipment) => ({
+              id: equipment.id,
+              name: "",
+              equipmentCategory: {
+                id: 0,
+                name: "",
+              },
+            }))
+          : [],
+        consumables: roomForm.consumables
+          ? roomForm.consumables?.map((consumable) => ({
+              id: consumable.id,
+              name: "",
+              consumableCategory: { id: 0, name: "" },
+            }))
+          : [],
+      };
+
+      const result = await updateRoom(updatedRoomForm);
+      console.log("Phòng đã được cập nhật:", result);
       navigate("/admin/" + ADMIN_PATHS.ROOM_LIST);
     } catch (error) {
-      console.error("Lỗi khi tạo phòng:", error);
+      console.error("Lỗi khi cập nhật phòng:", error);
     }
+  };
+
+  // Check if the form is dirty (i.e., there are changes)
+  const isFormDirty = () => {
+    return JSON.stringify(originalRoomData) !== JSON.stringify(roomForm);
   };
 
   return (
     <Container
-      title="Thêm phòng mới"
+      title="Chỉnh sửa phòng"
       linkToBack={"/admin/" + ADMIN_PATHS.ROOM_LIST}
       titleToBack="Quay trở lại"
     >
@@ -140,26 +182,42 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
           />
         </div>
       </div>
-      <SelectContainer
-        title="Loại phòng"
-        value={roomForm.roomType.id}
-        onChange={(value) => {
-          const selectedRoomType = roomTypeData.find(
-            (roomType) => roomType.id === value
-          );
-          handleChange("roomType", selectedRoomType);
-        }}
-        options={roomTypeData.map((type) => ({
-          value: type.id,
-          label: type.name,
-        }))}
-        note="Chọn một loại phòng từ danh sách."
-      />
+      <div className={cx("box")}>
+        <div className={cx("box-item")}>
+          <SelectContainer
+            title="Loại phòng"
+            value={roomForm.roomType.id}
+            onChange={(value) => {
+              const selectedRoomType = roomTypeData.find(
+                (roomType) => roomType.id === value
+              );
+              handleChange("roomType", selectedRoomType);
+            }}
+            options={roomTypeData.map((type) => ({
+              value: type.id,
+              label: type.name,
+            }))}
+            note="Chọn một loại phòng từ danh sách."
+          />
+        </div>
+        <div className={cx("box-item")}>
+          <InputText
+            value={roomForm.size?.toString()}
+            title="Diện tích"
+            placeholder="Nhập diện tích phòng"
+            type="number"
+            onChange={(e) =>
+              handleChange("size", parseInt(e.target.value) || undefined)
+            }
+          />
+        </div>
+      </div>
+
       <div className={cx("amenities")}>
         <div className={cx("amenities-item")}>
           <CheckboxMenu
             title="Danh sách đồ dùng tiêu hao"
-            value={roomForm.consumables?.map((consumable) => consumable.id)} 
+            value={roomForm.consumables?.map((consumable) => consumable.id)}
             onChange={(value) =>
               handleChange(
                 "consumables",
@@ -175,7 +233,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
         <div className={cx("amenities-item")}>
           <CheckboxMenu
             title="Danh sách thiết bị trong phòng"
-            value={roomForm.equipmentList?.map((equipment) => equipment.id)} 
+            value={roomForm.equipmentList?.map((equipment) => equipment.id)}
             onChange={(value) =>
               handleChange(
                 "equipmentList",
@@ -185,7 +243,8 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
             options={equipments.map((eq) => ({
               value: eq.id,
               label: eq.name,
-            }))}/>
+            }))}
+          />
         </div>
       </div>
       <div className={cx("divider")}>
@@ -256,9 +315,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
           <input
             type="checkbox"
             checked={roomForm.hasMountainView}
-            onChange={(e) =>
-              handleChange("hasMountainView", e.target.checked)
-            }
+            onChange={(e) => handleChange("hasMountainView", e.target.checked)}
           />
           <span>View núi</span>
         </label>
@@ -266,9 +323,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
           <input
             type="checkbox"
             checked={roomForm.hasLandmarkView}
-            onChange={(e) =>
-              handleChange("hasLandmarkView", e.target.checked)
-            }
+            onChange={(e) => handleChange("hasLandmarkView", e.target.checked)}
           />
           <span>View địa danh</span>
         </label>
@@ -292,9 +347,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
           <input
             type="checkbox"
             checked={roomForm.hasCourtyardView}
-            onChange={(e) =>
-              handleChange("hasCourtyardView", e.target.checked)
-            }
+            onChange={(e) => handleChange("hasCourtyardView", e.target.checked)}
           />
           <span>View sân vườn</span>
         </label>
@@ -310,9 +363,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
           <input
             type="checkbox"
             checked={roomForm.hasSoundproofing}
-            onChange={(e) =>
-              handleChange("hasSoundproofing", e.target.checked)
-            }
+            onChange={(e) => handleChange("hasSoundproofing", e.target.checked)}
           />
           <span>Cách âm</span>
         </label>
@@ -329,10 +380,11 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
           icon={<SaveOutlinedIcon />}
           content="Lưu"
           onClick={handleSave}
+          disabled={!isFormDirty()}
         />
       </div>
     </Container>
   );
 };
 
-export default RoomListCreate;
+export default RoomEdit;

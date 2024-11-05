@@ -49,7 +49,7 @@ const SelectContainer: FC<SelectContainerProps> = ({
           {options.map((option) => (
             <div
               key={option.value}
-              className={cx("option")}
+              className={cx("option", { selected: option.value === value })}
               onClick={() => handleSelect(option)}
             >
               {option.label}

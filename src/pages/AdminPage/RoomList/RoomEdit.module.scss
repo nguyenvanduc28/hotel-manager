@@ -1,0 +1,43 @@
+.button-save {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .box {
+    display: flex;
+    gap: 2rem;
+    .box-item {
+      flex: 1;
+    }
+  }
+  
+  .divider {
+    margin-top: 2rem;
+    margin-bottom: 1.6rem;
+  }
+  .amenities {
+    display: flex;
+    gap: 2rem;
+    .amenities-item {
+      flex: 1;
+    }
+  }
+  
+  .description-detail {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    .option {
+      padding: 5px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      &:hover {
+        background-color: #f0f0f0;
+      }
+      input {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+  

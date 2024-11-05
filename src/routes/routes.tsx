@@ -24,6 +24,9 @@ import CustomerCreate from "../pages/AdminPage/Customers/CustomerCreate";
 import BookingCreate from "../pages/ReceptionPage/Booking/BookingCreate";
 import BookingList from "../pages/ReceptionPage/Booking/BookingList";
 import RoomListRecep from "../pages/ReceptionPage/Room/RoomListRecep";
+import RoomAmenityEdit from "../pages/AdminPage/RoomAmenities/RoomAmenityEdit";
+import RoomEdit from "../pages/AdminPage/RoomList/RoomEdit";
+import RoomAmenityCategories from "../pages/AdminPage/RoomAmenities/RoomAmenityCategories";
 
 export type RouteWrapperProps = {
   path: string;
@@ -49,6 +52,11 @@ const AdminRoutes: RouteWrapperProps[] = [
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
+    path: ADMIN_PATHS.ROOM_EDIT,
+    element: <RoomEdit />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
     path: ADMIN_PATHS.ROOM_TYPE,
     element: <RoomType />,
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
@@ -64,8 +72,18 @@ const AdminRoutes: RouteWrapperProps[] = [
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
+    path: ADMIN_PATHS.ROOM_AMENITY_CATEGORY,
+    element: <RoomAmenityCategories />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
     path: ADMIN_PATHS.ROOM_AMENITY_CREATE,
     element: <RoomAmenityCreate />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
+    path: ADMIN_PATHS.ROOM_AMENITY_EDIT,
+    element: <RoomAmenityEdit />,
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {

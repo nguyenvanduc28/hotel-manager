@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, Typography } from "@mui/material"; // Giả sử bạn sử dụng react-modal
 import classNames from "classnames/bind";
 import styles from "./BookingInfoModal.module.scss";
@@ -9,6 +9,10 @@ import {
   BookingStatus,
 } from "../../../constants/admin/constants";
 import { CloseOutlined } from "@mui/icons-material";
+import {
+  checkInBooking,
+  confirmBooking,
+} from "../../../apis/bookingApis/bookingApis";
 
 const cx = classNames.bind(styles);
 interface BookingInfoModalProps {
@@ -24,14 +28,32 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
   bookingData,
   onReload,
 }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false); // TODO
+  const requestConfirmBooking = async (bookingId: number) => {
+    try {
+      await confirmBooking(bookingId);
+    } catch (error) {
+      console.log("Lỗi xác nhận đặt phòng", error);
+    }
+  };
+  const requestCheckinBooking = async (bookingId: number) => {
+    try {
+      await checkInBooking(bookingId);
+    } catch (error) {
+      console.log("Lỗi checkin", error);
+    }
+  };
+
   const handleConfirm = () => {
-    // Thêm logic để xử lý khi xác nhận
+    requestConfirmBooking(bookingData.id);
     onReload();
+    onClose();
   };
 
   const handleCheckIn = () => {
-    // Thêm logic để xử lý khi checkin
+    requestCheckinBooking(bookingData.id);
     onReload();
+    onClose();
   };
 
   const handleCheckOut = () => {
@@ -189,10 +211,11 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
             <div className={cx("info-item")}>
               <span className={cx("item-title")}>Số tiền đặt cọc:</span>
               <span className={cx("item-value")}>
-              {bookingData.deposit &&
+                {bookingData.deposit &&
                   new Intl.NumberFormat("vi-VN").format(
                     bookingData.deposit
-                  )}{" "} vnđ
+                  )}{" "}
+                vnđ
               </span>
             </div>
             <div className={cx("info-item", "total-cost")}>
@@ -209,43 +232,48 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
             </div>
           </div>
           <div className={cx("action-buttons")}>
-            {bookingData.status === BOOKING_STATUS.Pending && (
-              <button
-                onClick={handleConfirm}
-                className={cx("action-button", "action-button--confirm")}
-              >
-                Xác nhận
-              </button>
-            )}
+            <button
+              onClick={handleConfirm}
+              className={cx("action-button", "action-button--confirm")}
+              disabled={bookingData.status !== BOOKING_STATUS.Pending}
+            >
+              {bookingData.status === BOOKING_STATUS.Pending
+                ? "Xác nhận"
+                : "Đã xác nhận"}
+            </button>
 
-            {bookingData.status === BOOKING_STATUS.Confirmed && (
-              <button
-                onClick={handleCheckIn}
-                className={cx("action-button", "action-button--checkin")}
-              >
-                Checkin
-              </button>
-            )}
+            <button
+              onClick={handleCheckIn}
+              className={cx("action-button", "action-button--checkin")}
+              disabled={
+                bookingData.status === BOOKING_STATUS.Pending ||
+                bookingData.status === BOOKING_STATUS.CheckedOut ||
+                bookingData.status === BOOKING_STATUS.Canceled
+              }
+            >
+              Checkin
+            </button>
 
-            {bookingData.status === BOOKING_STATUS.CheckedIn && (
-              <button
-                onClick={handleCheckOut}
-                className={cx("action-button", "action-button--checkout")}
-              >
-                Checkout
-              </button>
-            )}
+            <button
+              onClick={handleCheckOut}
+              className={cx("action-button", "action-button--checkout")}
+              disabled={
+                bookingData.status === BOOKING_STATUS.Pending ||
+                bookingData.status === BOOKING_STATUS.Confirmed ||
+                bookingData.status === BOOKING_STATUS.CheckedIn ||
+                bookingData.status === BOOKING_STATUS.Canceled
+              }
+            >
+              Checkout
+            </button>
 
-            {bookingData.status === BOOKING_STATUS.Pending && (
-              <button
-                onClick={handleCancel}
-                className={cx("action-button", "action-button--cancel")}
-              >
-                Hủy đặt phòng
-              </button>
-            )}
-
-            {/* Nút thêm dịch vụ có thể thêm sau này */}
+            <button
+              onClick={handleCancel}
+              className={cx("action-button", "action-button--cancel")}
+              disabled={bookingData.status === BOOKING_STATUS.Canceled}
+            >
+              Hủy đặt phòng
+            </button>
           </div>
         </div>
       </div>

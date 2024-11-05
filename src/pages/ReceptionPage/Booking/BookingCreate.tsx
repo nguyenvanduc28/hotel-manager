@@ -4,6 +4,9 @@ import Button from "../../../components/Button/Button";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import { CheckBox, CloseOutlined } from "@mui/icons-material";
 import InputText from "../../../components/Input/InputText";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import styles from "./BookingCreate.module.scss";
 import classNames from "classnames/bind";
 import moment from "moment";
@@ -28,13 +31,11 @@ import { BOOKING_STATUS, GENDERS } from "../../../constants/admin/constants";
 import SearchWithMenu from "../../../components/SearchWithMenu/SearchWithMenu";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Customer, RoomInfo } from "../../../types/hotel";
-import { getAllRoom, getAvailableRooms } from "../../../apis/roomApis/roomApis";
+import { getAvailableRooms } from "../../../apis/roomApis/roomApis";
 import {
   createBooking,
   createCustomer,
-  getCustomers,
 } from "../../../apis/bookingApis/bookingApis";
-import { StyledChip } from "../../../components/StyledChip/StyledChip";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import GroupRadio from "../../../components/GroupRadio/GroupRadio";
 import TextArea from "../../../components/TextArea/TextArea";
@@ -79,7 +80,7 @@ const defaultColumns: GridColDef[] = [
   {
     field: "roomType",
     headerName: "Loại phòng",
-    flex: 2,
+    flex: 1,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
@@ -97,12 +98,38 @@ const defaultColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Có sẵn</span>,
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.isAvailable ? "Có" : "Không"}
-        color={params.row.isAvailable ? "success" : "error"}
-      />
-    ),
+    renderCell: (params) =>
+      params.row.isAvailable ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "price",
+    headerName: "Giá phòng (giá cơ bản/đêm)",
+    flex: 1,
+    filterable: false,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span>Giá phòng/1 đêm</span>,
+    renderCell: (params) => {
+      // const price = params ? params.row.roomType.basePricePerNight.toLocaleString() : "0";
+      // const formattedPrice = new Intl.NumberFormat("vi-VN").format(price);
+      return (
+        <span>
+          {params
+            ? params.row.roomType.basePricePerNight.toLocaleString()
+            : "0"}{" "}
+          đ
+        </span>
+      );
+    },
   },
 ];
 const hiddenColumns: GridColDef[] = [
@@ -131,75 +158,211 @@ const hiddenColumns: GridColDef[] = [
     field: "isSmokingAllowed",
     headerName: "Cho phép hút thuốc",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.isSmokingAllowed ? "Có" : "Không"}
-        color={params.row.isSmokingAllowed ? "success" : "error"}
-      />
-    ),
+    renderCell: (params) =>
+      params.row.isSmokingAllowed ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
   {
-    field: "has_private_kitchen",
+    field: "hasPrivateKitchen",
     headerName: "Bếp riêng",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) => (
-      <StyledChip
-        label={params.row.has_private_kitchen ? "Có" : "Không"}
-        color={params.row.has_private_kitchen ? "success" : "error"}
-      />
-    ),
-  },
-  {
-    field: "size",
-    headerName: "Diện tích",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) => <span>{params.row.size} m²</span>,
-  },
-  {
-    field: "roomType.sizeRange",
-    headerName: "Khoảng diện tích phòng",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
     renderCell: (params) =>
-      params.row.roomType ? params.row.roomType.sizeRange : "Không có",
+      params.row.hasPrivateKitchen ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
   {
-    field: "roomType.maxOccupancy",
-    headerName: "Số người tối đa",
+    field: "hasPrivateBathroom",
+    headerName: "Phòng tắm riêng",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
     renderCell: (params) =>
-      params.row.roomType ? params.row.roomType.maxOccupancy : "Không có",
+      params.row.hasPrivateBathroom ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
   {
-    field: "roomType.basePricePerNight",
-    headerName: "Giá cơ bản / Đêm",
+    field: "hasBalcony",
+    headerName: "Ban công",
     flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
     renderCell: (params) =>
-      params.row.roomType
-        ? `${
-            params.row.roomType?.basePricePerNight &&
-            new Intl.NumberFormat("vi-VN").format(
-              params.row.roomType?.basePricePerNight
-            )
-          } VND`
-        : "Không có",
+      params.row.hasBalcony ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasLakeView",
+    headerName: "Hồ nước",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasLakeView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasGardenView",
+    headerName: "Vườn",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasGardenView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasPoolView",
+    headerName: "Hồ bơi",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasPoolView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasMountainView",
+    headerName: "Núi",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasMountainView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasLandmarkView",
+    headerName: "Địa danh",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasLandmarkView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasCityView",
+    headerName: "Thành phố",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasCityView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasRiverView",
+    headerName: "Sông",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasRiverView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasCourtyardView",
+    headerName: "Sân",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasCourtyardView ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasFreeWifi",
+    headerName: "Wi-Fi miễn phí",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasFreeWifi ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
+  },
+  {
+    field: "hasSoundproofing",
+    headerName: "Cách âm",
+    flex: 1,
+    renderCell: (params) =>
+      params.row.hasSoundproofing ? (
+        <span>
+          <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+        </span>
+      ) : (
+        <span>
+          <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+        </span>
+      ),
   },
 ];
 
@@ -300,9 +463,11 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
       const updatedRooms = [...bookingForm.rooms, params.row];
       handleChange("rooms", updatedRooms);
 
-      const newTotalCost = updatedRooms.reduce((acc, item) => {
-        return acc + (item.roomType?.basePricePerNight || 0) * totalNights;
-      }, 0);
+      const newTotalCost =
+        updatedRooms.reduce((acc, item) => {
+          return acc + (item.roomType?.basePricePerNight || 0) * totalNights;
+        }, 0) + bookingForm.deposit;
+
       handleChange("totalCost", newTotalCost);
 
       setOpenModal(false);
@@ -310,7 +475,19 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
   };
   const [visibleColumns, setVisibleColumns] =
     useState<GridColDef[]>(defaultColumns);
+  const handleDeleteRom = (roomId: number) => {
+    const updatedRooms = bookingForm.rooms.filter((room) => room.id !== roomId);
+    setBookingForm((prevForm) => ({
+      ...prevForm,
+      rooms: updatedRooms,
+    }));
 
+    const newTotalCost =
+      updatedRooms.reduce((acc, item) => {
+        return acc + (item.roomType?.basePricePerNight || 0) * totalNights;
+      }, 0) + (bookingForm.deposit || 0);
+    handleChange("totalCost", newTotalCost);
+  };
   return (
     <Container fullscreen title="Thêm Booking">
       <div className={cx("booking-wrapper")}>
@@ -319,7 +496,7 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
             title="Thông tin khách hàng"
             options={customerList.map((cus) => ({
               value: cus.id,
-              label: cus.name,
+              label: cus.name + " - " + cus.phoneNumber,
             }))}
             handleSearch={(query) => {
               fetchCustomers(query);
@@ -474,6 +651,13 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                       "deposit",
                       isNaN(parsedValue) ? 0 : parsedValue
                     );
+
+                    handleChange(
+                      "totalCost",
+                      (bookingForm.totalCost || 0) -
+                        (bookingForm.deposit || 0) +
+                        (isNaN(parsedValue) ? 0 : parsedValue)
+                    );
                   }}
                   suffix="vnđ"
                 />
@@ -505,21 +689,35 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                   </div>
                 </div>
                 <div className={cx("item-right")}>
-                  <div className={cx("item-right-box")}>
-                    <span className={cx("item-right-title")}>Loại phòng:</span>
-                    <span className={cx("item-right-value")}>
-                      {room.roomType?.name}
-                    </span>
+                  <div className={cx("item-right-info")}>
+                    <div className={cx("item-right-box")}>
+                      <span className={cx("item-right-title")}>
+                        Loại phòng:
+                      </span>
+                      <span className={cx("item-right-value")}>
+                        {room.roomType?.name}
+                      </span>
+                    </div>
+                    <div className={cx("item-right-box")}>
+                      <span className={cx("item-right-title")}>
+                        Giá cơ bản:
+                      </span>
+                      <span className={cx("item-right-value")}>
+                        {room.roomType?.basePricePerNight &&
+                          room.roomType?.basePricePerNight.toLocaleString() +
+                            " đ/đêm"}
+                      </span>
+                    </div>
                   </div>
-                  <div className={cx("item-right-box")}>
-                    <span className={cx("item-right-title")}>Giá cơ bản:</span>
-                    <span className={cx("item-right-value")}>
-                      {room.roomType?.basePricePerNight &&
-                        new Intl.NumberFormat("vi-VN").format(
-                          room.roomType?.basePricePerNight
-                        )}
-                      đ/đêm
-                    </span>
+                  <div className={cx("item-right-button")}>
+                    <button
+                      className={cx("item-right-button--button")}
+                      onClick={(e) => handleDeleteRom(room.id || 0)}
+                    >
+                      <RemoveCircleOutlineIcon
+                        style={{ fontSize: "1.6rem", color: "red" }}
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -632,11 +830,8 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                       <span className={cx("room-detail")}>
                         Giá cơ bản:{" "}
                         {room.roomType?.basePricePerNight &&
-                          new Intl.NumberFormat("vi-VN").format(
-                            room.roomType?.basePricePerNight
-                          )}{" "}
-                        VND x {totalNights}
-                        đêm
+                          room.roomType?.basePricePerNight.toLocaleString()}
+                        {" đ x " + totalNights + " đêm"}
                       </span>
                     </div>
                   </div>
@@ -646,7 +841,8 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
             <div className={cx("info-item")}>
               <span className={cx("item-title")}>Số tiền đặt cọc:</span>
               <span className={cx("item-value")}>
-                {bookingForm.deposit} vnđ
+                {bookingForm.deposit &&
+                  bookingForm.deposit.toLocaleString() + " đ"}
               </span>
             </div>
             <div className={cx("info-item", "total-cost")}>
@@ -655,10 +851,7 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
               </span>
               <span className={cx("item-value", "total-cost-value")}>
                 {bookingForm.totalCost &&
-                  new Intl.NumberFormat("vi-VN").format(
-                    bookingForm.totalCost
-                  )}{" "}
-                VND
+                  bookingForm.totalCost.toLocaleString() + " đ"}
               </span>
             </div>
           </div>

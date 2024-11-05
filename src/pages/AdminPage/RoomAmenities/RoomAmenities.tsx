@@ -77,9 +77,9 @@ const consumableColumns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Giá</span>,
     renderCell: (params) => {
-      const price = params ? params.row.price : "";
-      const formattedPrice = new Intl.NumberFormat("vi-VN").format(price);
-      return <span>{formattedPrice} đ</span>;
+      // const price = params ? params.row.price.toLocaleString() : "0";
+      // const formattedPrice = new Intl.NumberFormat("vi-VN").format(price);
+      return <span>{params ? params.row.price?.toLocaleString() : "0"} đ</span>;
     },
   },
   {
@@ -247,9 +247,13 @@ const RoomAmenities = () => {
   const handleSearch = (input: any) => {
     console.log(input);
   };
-  const handleRowClick = (e: any) => {
-    console.log(e);
-  };
+
+  const handleRowClick = (params: any) => {
+  const { id } = params.row;
+  const type = tab === "consumable" ? "consumable" : "equipment";
+  navigate(`/admin/${ADMIN_PATHS.ROOM_AMENITY_EDIT.replace(':type', type).replace(':id', id)}`);
+};
+
   const handleSelectConsumableTab = () => {
     setColDef(consumableColumns);
     setTab("consumable");

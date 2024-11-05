@@ -119,7 +119,7 @@ const columns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Giá cơ bản / đêm</span>,
     renderCell: (params) => (
-      <span>{params ? params.row.basePricePerNight : ""}</span>
+      <span>{params ? params.row.basePricePerNight.toLocaleString() : "0"} đ</span>
     ),
   },
 ];

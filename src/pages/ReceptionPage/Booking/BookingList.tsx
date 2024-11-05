@@ -5,8 +5,8 @@ import OptionBar from "../../../components/OptionBar/OptionBar";
 import OptionItem from "../../../components/OptionBar/OptionItem";
 import Search from "../../../components/Search/Search";
 import { StyledChip } from "../../../components/StyledChip/StyledChip";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import styles from "./BookingList.module.scss";
 import classNames from "classnames/bind";
 import {
@@ -15,17 +15,30 @@ import {
 } from "../../../constants/admin/constants";
 import { Booking } from "../../../types/hotel";
 import { useNavigate } from "react-router-dom";
-import Button from "../../../components/Button/Button";
 import moment from "moment";
 import {
-  getBookings,
   searchBooking,
   searchBookingByCusName,
 } from "../../../apis/bookingApis/bookingApis";
-import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter"; // Import ColumnFilter
+import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import BookingInfoModal from "./BookingInfoModal";
 
+
 const cx = classNames.bind(styles);
+const statusStyles: Record<BookingStatus, React.CSSProperties> = {
+  [BOOKING_STATUS.Confirmed]: { backgroundColor: "green", color: "white" },
+  [BOOKING_STATUS.CheckedIn]: { backgroundColor: "blue", color: "white" },
+  [BOOKING_STATUS.CheckedOut]: { backgroundColor: "gray", color: "white" },
+  [BOOKING_STATUS.Canceled]: { backgroundColor: "red", color: "white" },
+  [BOOKING_STATUS.Pending]: { backgroundColor: "orange", color: "black" },
+  [BOOKING_STATUS.Completed]: { backgroundColor: "purple", color: "white" },
+  [BOOKING_STATUS.NoShow]: { backgroundColor: "brown", color: "white" },
+  [BOOKING_STATUS.AwaitingPayment]: {
+    backgroundColor: "darkorange",
+    color: "white",
+  },
+  [BOOKING_STATUS.Refunded]: { backgroundColor: "pink", color: "black" },
+};
 
 const defaultColumns: GridColDef[] = [
   {
@@ -48,7 +61,7 @@ const defaultColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Tên khách hàng</span>,
-    renderCell: (params) => <span>{params.row.customer?.name || "N/A"}</span>,
+    renderCell: (params) => <span>{params.row.customer?.name || "_"}</span>,
   },
   {
     field: "status",
@@ -58,7 +71,16 @@ const defaultColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Trạng thái</span>,
-    renderCell: (params) => <span>{params.row.status}</span>,
+    renderCell: (params) => {
+      const status = params.row.status as BookingStatus;
+      return (
+        <StyledChip
+          label={status}
+          style={statusStyles[status]}
+          // variant="outlined"
+        />
+      );
+    },
   },
   {
     field: "checkInDate",
@@ -72,7 +94,7 @@ const defaultColumns: GridColDef[] = [
       const checkInDate = params.row.checkInDate;
       return (
         <span>
-          {checkInDate ? moment.unix(checkInDate).format("DD/MM/YYYY") : "N/A"}
+          {checkInDate ? moment.unix(checkInDate).format("DD/MM/YYYY") : "_"}
         </span>
       );
     },
@@ -91,7 +113,7 @@ const defaultColumns: GridColDef[] = [
         <span>
           {checkOutDate
             ? moment.unix(checkOutDate).format("DD/MM/YYYY")
-            : "N/A"}
+            : "_"}
         </span>
       );
     },
@@ -107,8 +129,8 @@ const defaultColumns: GridColDef[] = [
     renderCell: (params) => (
       <span>
         {params.row.totalCost
-          ? `${params.row.totalCost.toLocaleString()} VND`
-          : "N/A"}
+          ? `${params.row.totalCost.toLocaleString()} đ`
+          : "_"}
       </span>
     ),
   },
@@ -122,7 +144,7 @@ const defaultColumns: GridColDef[] = [
     renderHeader: () => <span>Tiền cọc</span>,
     renderCell: (params) => (
       <span>
-        {params.row.deposit ? `${params.row.deposit.toLocaleString()} VND` : 0}
+        {params.row.deposit ? `${params.row.deposit.toLocaleString()} đ` : 0}
       </span>
     ),
   },
@@ -141,7 +163,7 @@ const hiddenColumns: GridColDef[] = [
       const bookingDate = params.row.bookingDate;
       return (
         <span>
-          {bookingDate ? moment.unix(bookingDate).format("DD/MM/YYYY") : "N/A"}
+          {bookingDate ? moment.unix(bookingDate).format("HH:mm DD.MM.YYYY") : "_"}
         </span>
       );
     },
@@ -158,7 +180,7 @@ const hiddenColumns: GridColDef[] = [
       const arrivalTime = params.row.estimatedArrivalTime;
       return (
         <span>
-          {arrivalTime ? moment.unix(arrivalTime).format("HH:mm") : "N/A"}
+          {arrivalTime ? moment.unix(arrivalTime).format("HH:mm DD.MM.YYYY") : "_"}
         </span>
       );
     },
@@ -175,7 +197,7 @@ const hiddenColumns: GridColDef[] = [
       const checkInTime = params.row.checkInTime;
       return (
         <span>
-          {checkInTime ? moment.unix(checkInTime).format("HH:mm") : "N/A"}
+          {checkInTime ? moment.unix(checkInTime).format("HH:mm DD.MM.YYYY") : "_"}
         </span>
       );
     },
@@ -192,7 +214,7 @@ const hiddenColumns: GridColDef[] = [
       const checkOutTime = params.row.checkOutTime;
       return (
         <span>
-          {checkOutTime ? moment.unix(checkOutTime).format("HH:mm") : "N/A"}
+          {checkOutTime ? moment.unix(checkOutTime).format("HH:mm DD.MM.YYYY") : "_"}
         </span>
       );
     },
@@ -236,7 +258,17 @@ const hiddenColumns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Đảm bảo đặt phòng</span>,
     renderCell: (params) => (
-      <span>{params.row.isGuaranteed ? "Có" : "Không"}</span>
+      <span>
+        {params.row.isGuaranteed ? (
+          <span>
+            <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+          </span>
+        ) : (
+          <span>
+            <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+          </span>
+        )}
+      </span>
     ),
   },
 ];
@@ -269,6 +301,7 @@ const BookingList = () => {
   });
   const fetchBookings = async (status: string) => {
     try {
+      setLoading(true);
       const response = await searchBooking(status);
       setData(response);
     } catch (error) {
@@ -312,6 +345,7 @@ const BookingList = () => {
     setSelectedRoom(params.row);
     setOpenRow(true);
   };
+
   return (
     <Container title="Danh sách đặt phòng" fullscreen>
       <div className={cx("booking-box")}>

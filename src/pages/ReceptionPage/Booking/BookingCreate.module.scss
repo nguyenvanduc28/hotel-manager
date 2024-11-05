@@ -83,21 +83,42 @@
 
 .item-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-end;
+  align-items: center;
 
-  .item-right-box {
-    width: 250px;
+  .item-right-info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .item-right-title {
-      font-size: 1.4rem;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+
+    .item-right-box {
+      width: 250px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .item-right-title {
+        font-size: 1.4rem;
+      }
+      .item-right-value {
+        font-size: 1.6rem;
+        font-size: 600;
+      }
     }
-    .item-right-value {
-      font-size: 1.6rem;
-      font-size: 600;
+  }
+  .item-right-button {
+    width: 50px;
+    text-align: center;
+    .item-right-button--button {
+      background: none;
+      border: none;
+      border-radius: 5px;
+      width: 30px;
+      height: 30px;
+      &:hover {
+        background-color: #f2f2f2;
+        cursor: pointer;
+      }
     }
   }
 }
