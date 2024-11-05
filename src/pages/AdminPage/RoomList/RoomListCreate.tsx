@@ -21,6 +21,7 @@ import {
 } from "../../../apis/roomApis/roomApis";
 import { useNavigate } from "react-router-dom";
 import { Consumables, Equipments, RoomType } from "../../../types/hotel";
+import { useFormValidation } from "../../../hooks/useFormValidation";
 
 type RoomListCreateProps = {};
 
@@ -42,8 +43,9 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
       id: 0,
       name: ""
     },
-    consumables: undefined,
-    equipmentList: undefined,
+    size: 0,
+    consumables: [],
+    equipmentList: [],
     hasPrivateKitchen: false,
     hasPrivateBathroom: false,
     hasBalcony: false,
@@ -59,6 +61,47 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
     hasSoundproofing: false,
   });
   const navigate = useNavigate();
+
+  const validationRules = {
+    roomNumber: [
+      {
+        validate: (value: any) => value !== undefined && value !== "",
+        message: "Số phòng không được để trống",
+      },
+      {
+        validate: (value: any) => value > 0,
+        message: "Số phòng phải lớn hơn 0",
+      },
+    ],
+    floor: [
+      {
+        validate: (value: any) => value !== undefined && value !== "",
+        message: "Tầng không được để trống",
+      },
+      {
+        validate: (value: any) => value >= 0,
+        message: "Tầng phải lớn hơn hoặc bằng 0",
+      },
+    ],
+    roomType: [
+      {
+        validate: (value: any) => value.id && value.id !== 0,
+        message: "Vui lòng chọn loại phòng",
+      },
+    ],
+    size: [
+      {
+        validate: (value: any) => value !== undefined && value !== "",
+        message: "Diện tích không được để trống",
+      },
+      {
+        validate: (value: any) => value > 0,
+        message: "Diện tích phải lớn hơn 0",
+      },
+    ],
+  };
+
+  const { errors, validateForm, confirmSave } = useFormValidation(validationRules);
 
   const handleChange = (key: keyof RoomInfoForm, value: any) => {
     setRoomForm((prevForm: any) => ({
@@ -99,12 +142,17 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
   }, []);
 
   const handleSave = async () => {
+    if (!validateForm(roomForm)) {
+      return;
+    }
+
     try {
-      console.log("data", roomForm);
-      
-      const result = await createRoom(roomForm);
-      console.log("Phòng đã được tạo:", result);
-      navigate("/admin/" + ADMIN_PATHS.ROOM_LIST);
+      await confirmSave(async () => {
+        console.log("data", roomForm);
+        const result = await createRoom(roomForm);
+        console.log("Phòng đã được tạo:", result);
+        navigate("/admin/" + ADMIN_PATHS.ROOM_LIST);
+      });
     } catch (error) {
       console.error("Lỗi khi tạo phòng:", error);
     }
@@ -126,6 +174,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
             onChange={(e) =>
               handleChange("roomNumber", parseInt(e.target.value) || undefined)
             }
+            error={errors.roomNumber}
           />
         </div>
         <div className={cx("box-item")}>
@@ -137,24 +186,42 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
             onChange={(e) =>
               handleChange("floor", parseInt(e.target.value) || undefined)
             }
+            error={errors.floor}
           />
         </div>
       </div>
-      <SelectContainer
-        title="Loại phòng"
-        value={roomForm.roomType.id}
-        onChange={(value) => {
-          const selectedRoomType = roomTypeData.find(
-            (roomType) => roomType.id === value
-          );
-          handleChange("roomType", selectedRoomType);
-        }}
-        options={roomTypeData.map((type) => ({
-          value: type.id,
-          label: type.name,
-        }))}
-        note="Chọn một loại phòng từ danh sách."
-      />
+      <div className={cx("box")}>
+        <div className={cx("box-item")}>
+          <SelectContainer
+            title="Loại phòng"
+            value={roomForm.roomType.id}
+            onChange={(value) => {
+              const selectedRoomType = roomTypeData.find(
+                (roomType) => roomType.id === value
+              );
+              handleChange("roomType", selectedRoomType);
+            }}
+            options={roomTypeData.map((type) => ({
+              value: type.id,
+              label: type.name,
+            }))}
+            note="Chọn một loại phòng từ danh sách."
+            error={errors.roomType}
+          />
+        </div>
+        <div className={cx("box-item")}>
+          <InputText
+            value={roomForm.size?.toString()}
+            title="Diện tích"
+            placeholder="Nhập diện tích phòng"
+            type="number"
+            onChange={(e) =>
+              handleChange("size", parseInt(e.target.value) || 0)
+            }
+            error={errors.size}
+          />
+        </div>
+      </div>
       <div className={cx("amenities")}>
         <div className={cx("amenities-item")}>
           <CheckboxMenu

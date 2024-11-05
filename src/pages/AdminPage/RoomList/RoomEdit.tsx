@@ -20,6 +20,7 @@ import {
 } from "../../../apis/roomApis/roomApis";
 import { useNavigate, useParams } from "react-router-dom";
 import { Consumables, Equipments, RoomType } from "../../../types/hotel";
+import { useFormValidation } from "../../../hooks/useFormValidation";
 
 type RoomListEditProps = {};
 
@@ -61,6 +62,41 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
   });
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+
+  const validationRules = {
+    roomNumber: [
+      {
+        validate: (value: any) => value !== undefined && value !== "",
+        message: "Số phòng không được để trống",
+      },
+      {
+        validate: (value: any) => value > 0,
+        message: "Số phòng phải lớn hơn 0",
+      },
+    ],
+    floor: [
+      {
+        validate: (value: any) => value !== undefined && value !== "",
+        message: "Tầng không được để trống",
+      },
+      {
+        validate: (value: any) => value >= 0,
+        message: "Tầng phải lớn hơn hoặc bằng 0",
+      },
+    ],
+    size: [
+      {
+        validate: (value: any) => value !== undefined && value !== "",
+        message: "Diện tích không được để trống",
+      },
+      {
+        validate: (value: any) => value > 0,
+        message: "Diện tích phải lớn hơn 0",
+      },
+    ],
+  };
+
+  const { errors, validateForm, confirmSave } = useFormValidation(validationRules);
 
   const handleChange = (key: keyof RoomInfoForm, value: any) => {
     setRoomForm((prevForm) => ({
@@ -116,32 +152,38 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
   }, [id]);
 
   const handleSave = async () => {
-    try {
-      console.log("data", roomForm);
-      const updatedRoomForm = {
-        ...roomForm,
-        equipmentList: roomForm.equipmentList
-          ? roomForm.equipmentList?.map((equipment) => ({
-              id: equipment.id,
-              name: "",
-              equipmentCategory: {
-                id: 0,
-                name: "",
-              },
-            }))
-          : [],
-        consumables: roomForm.consumables
-          ? roomForm.consumables?.map((consumable) => ({
-              id: consumable.id,
-              name: "",
-              consumableCategory: { id: 0, name: "" },
-            }))
-          : [],
-      };
+    if (!validateForm(roomForm)) {
+      return;
+    }
 
-      const result = await updateRoom(updatedRoomForm);
-      console.log("Phòng đã được cập nhật:", result);
-      navigate("/admin/" + ADMIN_PATHS.ROOM_LIST);
+    try {
+      await confirmSave(async () => {
+        console.log("data", roomForm);
+        const updatedRoomForm = {
+          ...roomForm,
+          equipmentList: roomForm.equipmentList
+            ? roomForm.equipmentList?.map((equipment) => ({
+                id: equipment.id,
+                name: "",
+                equipmentCategory: {
+                  id: 0,
+                  name: "",
+                },
+              }))
+            : [],
+          consumables: roomForm.consumables
+            ? roomForm.consumables?.map((consumable) => ({
+                id: consumable.id,
+                name: "",
+                consumableCategory: { id: 0, name: "" },
+              }))
+            : [],
+        };
+
+        const result = await updateRoom(updatedRoomForm);
+        console.log("Phòng đã được cập nhật:", result);
+        navigate("/admin/" + ADMIN_PATHS.ROOM_LIST);
+      });
     } catch (error) {
       console.error("Lỗi khi cập nhật phòng:", error);
     }
@@ -168,6 +210,7 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
             onChange={(e) =>
               handleChange("roomNumber", parseInt(e.target.value) || undefined)
             }
+            error={errors.roomNumber}
           />
         </div>
         <div className={cx("box-item")}>
@@ -179,6 +222,7 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
             onChange={(e) =>
               handleChange("floor", parseInt(e.target.value) || undefined)
             }
+            error={errors.floor}
           />
         </div>
       </div>
@@ -202,13 +246,14 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
         </div>
         <div className={cx("box-item")}>
           <InputText
-            value={roomForm.size?.toString()}
+            value={roomForm.size?.toString() || '0'}
             title="Diện tích"
             placeholder="Nhập diện tích phòng"
             type="number"
             onChange={(e) =>
-              handleChange("size", parseInt(e.target.value) || undefined)
+              handleChange("size", parseInt(e.target.value) || 0)
             }
+            error={errors.size}
           />
         </div>
       </div>

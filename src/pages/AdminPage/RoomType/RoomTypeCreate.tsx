@@ -13,6 +13,8 @@ import GroupRadio from "../../../components/GroupRadio/GroupRadio";
 import { RoomTypeForm } from "../../../types/forms";
 import { createRoomType } from "../../../apis/roomApis/roomApis";
 import { useNavigate } from "react-router-dom";
+import { useFormValidation } from '../../../hooks/useFormValidation';
+import { toast } from 'react-toastify';
 
 type RoomTypeCreateProps = {};
 
@@ -40,15 +42,47 @@ const RoomTypeCreate: React.FC<RoomTypeCreateProps> = () => {
     }));
   };
 
-  // Call API to save room type
+  const validationRules = {
+    name: [
+      {
+        validate: (value: string) => value.trim().length > 0,
+        message: 'Tên loại phòng không được để trống'
+      }
+    ],
+    basePricePerNight: [
+      {
+        validate: (value: number) => value > 0,
+        message: 'Giá phòng phải lớn hơn 0'
+      }
+    ],
+    maxOccupancy: [
+      {
+        validate: (value: number) => value > 0,
+        message: 'Sức chứa tối đa phải lớn hơn 0'
+      }
+    ],
+    sizeRange: [
+      {
+        validate: (value: string) => value.trim().length > 0,
+        message: 'Diện tích không được để trống'
+      }
+    ]
+  };
+
+  const { errors, validateForm, confirmSave } = useFormValidation(validationRules);
+
   const handleSave = async () => {
-    try {
-      const result = await createRoomType(roomTypeForm);
-      console.log("Loại phòng đã được tạo:", result);
-      // Chuyển hướng về trang danh sách loại phòng
-      navigate("/admin/" + ADMIN_PATHS.ROOM_TYPE);
-    } catch (error) {
-      console.error("Lỗi khi tạo loại phòng:", error);
+    if (validateForm(roomTypeForm)) {
+      try {
+        await confirmSave(async () => {
+          const result = await createRoomType(roomTypeForm);
+          toast.success('Tạo loại phòng thành công!');
+          navigate("/admin/" + ADMIN_PATHS.ROOM_TYPE);
+        });
+      } catch (error) {
+        toast.error('Có lỗi xảy ra khi tạo loại phòng');
+        console.error("Lỗi khi tạo loại phòng:", error);
+      }
     }
   };
 
@@ -63,6 +97,8 @@ const RoomTypeCreate: React.FC<RoomTypeCreateProps> = () => {
         title="Tên loại phòng"
         placeholder="Nhập tên loại phòng"
         onChange={(e) => handleChange("name", e.target.value)}
+        error={errors.name}
+        note="Nhập tên loại phòng"
       />
       <TextArea
         title="Mô tả"
@@ -149,6 +185,7 @@ const RoomTypeCreate: React.FC<RoomTypeCreateProps> = () => {
           handleChange("basePricePerNight", parseFloat(e.target.value) || 0)
         }
         suffix="₫"
+        error={errors.basePricePerNight}
       />
       <div className={cx("button-save")}>
         <Button

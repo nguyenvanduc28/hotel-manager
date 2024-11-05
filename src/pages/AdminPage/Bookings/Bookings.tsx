@@ -20,7 +20,23 @@ import {
 } from "../../../apis/bookingApis/bookingApis";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter"; // Import ColumnFilter
 import BookingInfoModal from "../../ReceptionPage/Booking/BookingInfoModal";
+import { StyledChip } from "../../../components/StyledChip/StyledChip";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+
 const cx = classNames.bind(styles);
+
+const statusStyles: Record<BookingStatus, React.CSSProperties> = {
+  [BOOKING_STATUS.Confirmed]: { backgroundColor: "green", color: "white" },
+  [BOOKING_STATUS.CheckedIn]: { backgroundColor: "blue", color: "white" },
+  [BOOKING_STATUS.CheckedOut]: { backgroundColor: "gray", color: "white" },
+  [BOOKING_STATUS.Canceled]: { backgroundColor: "red", color: "white" },
+  [BOOKING_STATUS.Pending]: { backgroundColor: "orange", color: "black" },
+  [BOOKING_STATUS.Completed]: { backgroundColor: "purple", color: "white" },
+  [BOOKING_STATUS.NoShow]: { backgroundColor: "brown", color: "white" },
+  [BOOKING_STATUS.AwaitingPayment]: { backgroundColor: "darkorange", color: "white" },
+  [BOOKING_STATUS.Refunded]: { backgroundColor: "pink", color: "black" },
+};
 
 const defaultColumns: GridColDef[] = [
   {
@@ -43,7 +59,7 @@ const defaultColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Tên khách hàng</span>,
-    renderCell: (params) => <span>{params.row.customer?.name || "N/A"}</span>,
+    renderCell: (params) => <span>{params.row.customer?.name || "_"}</span>,
   },
   {
     field: "status",
@@ -53,7 +69,10 @@ const defaultColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
     headerAlign: "left",
     renderHeader: () => <span>Trạng thái</span>,
-    renderCell: (params) => <span>{params.row.status}</span>,
+    renderCell: (params) => {
+      const status = params.row.status as BookingStatus;
+      return <StyledChip label={status} style={statusStyles[status]} />;
+    },
   },
   {
     field: "checkInDate",
@@ -67,7 +86,7 @@ const defaultColumns: GridColDef[] = [
       const checkInDate = params.row.checkInDate;
       return (
         <span>
-          {checkInDate ? moment.unix(checkInDate).format("DD/MM/YYYY") : "N/A"}
+          {checkInDate ? moment.unix(checkInDate).format("DD/MM/YYYY") : "_"}
         </span>
       );
     },
@@ -86,7 +105,7 @@ const defaultColumns: GridColDef[] = [
         <span>
           {checkOutDate
             ? moment.unix(checkOutDate).format("DD/MM/YYYY")
-            : "N/A"}
+            : "_"}
         </span>
       );
     },
@@ -101,9 +120,7 @@ const defaultColumns: GridColDef[] = [
     renderHeader: () => <span>Tổng chi phí</span>,
     renderCell: (params) => (
       <span>
-        {params.row.totalCost
-          ? `${params.row.totalCost.toLocaleString()} VND`
-          : "N/A"}
+        {params.row.totalCost ? `${params.row.totalCost.toLocaleString()} đ` : "_"}
       </span>
     ),
   },
@@ -136,7 +153,7 @@ const hiddenColumns: GridColDef[] = [
       const bookingDate = params.row.bookingDate;
       return (
         <span>
-          {bookingDate ? moment.unix(bookingDate).format("DD/MM/YYYY") : "N/A"}
+          {bookingDate ? moment.unix(bookingDate).format("HH:mm DD.MM.YYYY") : "_"}
         </span>
       );
     },
@@ -153,7 +170,7 @@ const hiddenColumns: GridColDef[] = [
       const arrivalTime = params.row.estimatedArrivalTime;
       return (
         <span>
-          {arrivalTime ? moment.unix(arrivalTime).format("HH:mm") : "N/A"}
+          {arrivalTime ? moment.unix(arrivalTime).format("HH:mm") : "_"}
         </span>
       );
     },
@@ -170,7 +187,7 @@ const hiddenColumns: GridColDef[] = [
       const checkInTime = params.row.checkInTime;
       return (
         <span>
-          {checkInTime ? moment.unix(checkInTime).format("HH:mm") : "N/A"}
+          {checkInTime ? moment.unix(checkInTime).format("HH:mm") : "_"}
         </span>
       );
     },
@@ -187,7 +204,7 @@ const hiddenColumns: GridColDef[] = [
       const checkOutTime = params.row.checkOutTime;
       return (
         <span>
-          {checkOutTime ? moment.unix(checkOutTime).format("HH:mm") : "N/A"}
+          {checkOutTime ? moment.unix(checkOutTime).format("HH:mm") : "_"}
         </span>
       );
     },
@@ -231,7 +248,17 @@ const hiddenColumns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Đảm bảo đặt phòng</span>,
     renderCell: (params) => (
-      <span>{params.row.isGuaranteed ? "Có" : "Không"}</span>
+      <span>
+        {params.row.isGuaranteed ? (
+          <span>
+            <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+          </span>
+        ) : (
+          <span>
+            <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+          </span>
+        )}
+      </span>
     ),
   },
 ];

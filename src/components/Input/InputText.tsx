@@ -9,18 +9,20 @@ interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   note?: string;
   suffix?: string;
-  variant?: "inline" | "block" | "inline-group"; // Thêm prop variant
+  variant?: "inline" | "block" | "inline-group";
+  error?: string;
 }
 
 const cx = classNames.bind(styles);
 const InputText: FC<InputTextProps> = ({
   placeholder = "Enter value",
-  value = "", // Đặt giá trị mặc định rỗng nếu value là undefined
+  value = "",
   title,
   note,
   suffix,
   onChange,
-  variant = "block", // Đặt giá trị mặc định là "block"
+  variant = "block",
+  error,
   ...restProps
 }) => {
   return (
@@ -41,7 +43,8 @@ const InputText: FC<InputTextProps> = ({
           {...restProps}
         />
         {suffix && <span className={cx("suffix")}>{suffix}</span>}
-        {note && <span className={cx("note")}>{note}</span>}
+        {!error && note && <span className={cx("note")}>{note}</span>}
+        {error && <div className={cx('error-message')}>{error}</div>}
       </div>
     </div>
   );

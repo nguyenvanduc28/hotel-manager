@@ -14,6 +14,7 @@ interface SelectContainerProps {
   onChange: (value: any) => void;
   options: Option[];
   note?: string;
+  error?: string;
 }
 
 const cx = classNames.bind(styles);
@@ -24,6 +25,7 @@ const SelectContainer: FC<SelectContainerProps> = ({
   onChange,
   options,
   note,
+  error
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -57,7 +59,8 @@ const SelectContainer: FC<SelectContainerProps> = ({
           ))}
         </div>
       )}
-      {note && <span className={cx("note")}>{note}</span>}
+      {!error && note && <span className={cx("note")}>{note}</span>}
+      {error && <div className={cx('error-message')}>{error}</div>}
     </div>
   );
 };

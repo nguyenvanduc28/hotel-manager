@@ -14,6 +14,23 @@
   margin-bottom: 1.6rem;
 }
 
-.tab {
+.tab-container {
   margin-bottom: 1rem;
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tab-options {
+  // Styles cho phần tab options nếu cần
+}
+
+.excel-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }

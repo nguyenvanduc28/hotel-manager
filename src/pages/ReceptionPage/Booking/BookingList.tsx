@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Container from "../../../components/Container/Container";
 import OptionBar from "../../../components/OptionBar/OptionBar";
@@ -346,6 +346,18 @@ const BookingList = () => {
     setOpenRow(true);
   };
 
+  const handleReload = useCallback(() => {
+    const statusValue =
+    tab === "all"
+        ? ""
+        : `${
+            BOOKING_STATUS[
+              tab as unknown as keyof typeof BOOKING_STATUS
+            ]
+          }`;
+    fetchBookings(statusValue);
+  }, [tab]);
+
   return (
     <Container title="Danh sách đặt phòng" fullscreen>
       <div className={cx("booking-box")}>
@@ -401,7 +413,7 @@ const BookingList = () => {
         onClose={() => setOpenRow(false)}
         bookingData={rowSelected}
         open={openRow}
-        onReload={() => fetchBookings("")}
+        onReload={handleReload}
       />
     </Container>
   );

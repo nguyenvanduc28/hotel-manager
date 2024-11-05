@@ -44,16 +44,24 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
     }
   };
 
-  const handleConfirm = () => {
-    requestConfirmBooking(bookingData.id);
-    onReload();
-    onClose();
+  const handleConfirm = async () => {
+    try {
+      await requestConfirmBooking(bookingData.id);
+      onReload();
+      onClose();
+    } catch (error) {
+      console.error("Lỗi xác nhận đặt phòng:", error);
+    }
   };
 
-  const handleCheckIn = () => {
-    requestCheckinBooking(bookingData.id);
-    onReload();
-    onClose();
+  const handleCheckIn = async () => {
+    try {
+      await requestCheckinBooking(bookingData.id);
+      onReload();
+      onClose();
+    } catch (error) {
+      console.error("Lỗi checkin:", error);
+    }
   };
 
   const handleCheckOut = () => {
@@ -247,6 +255,7 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
               className={cx("action-button", "action-button--checkin")}
               disabled={
                 bookingData.status === BOOKING_STATUS.Pending ||
+                bookingData.status === BOOKING_STATUS.CheckedIn ||
                 bookingData.status === BOOKING_STATUS.CheckedOut ||
                 bookingData.status === BOOKING_STATUS.Canceled
               }
@@ -260,7 +269,7 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
               disabled={
                 bookingData.status === BOOKING_STATUS.Pending ||
                 bookingData.status === BOOKING_STATUS.Confirmed ||
-                bookingData.status === BOOKING_STATUS.CheckedIn ||
+                bookingData.status === BOOKING_STATUS.CheckedOut ||
                 bookingData.status === BOOKING_STATUS.Canceled
               }
             >

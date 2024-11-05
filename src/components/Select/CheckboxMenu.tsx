@@ -30,10 +30,9 @@ const CheckboxMenu: FC<CheckboxMenuProps> = ({
   const handleSelect = (optionValue: number | undefined) => {
     if (optionValue === undefined) return;
 
-    // Kiểm tra xem optionValue đã tồn tại trong value chưa
     const newValue = value.includes(optionValue)
-      ? value.filter((v) => v !== optionValue) // Nếu có thì loại bỏ nó
-      : [...value, optionValue]; // Nếu không thì thêm vào
+      ? value.filter((v) => v !== optionValue)
+      : [...value, optionValue];
 
     onChange(newValue);
   };
@@ -59,6 +58,7 @@ const CheckboxMenu: FC<CheckboxMenuProps> = ({
               {option.label}
             </label>
           ))}
+          {options.length === 0 && <div className={cx("no-options")}>Không có dữ liệu</div>}
         </div>
       )}
       {note && <span className={cx("note")}>{note}</span>}
