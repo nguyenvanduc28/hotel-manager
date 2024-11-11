@@ -16,6 +16,7 @@ import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import moment from "moment";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import RoomIndoModal from "../../AdminPage/RoomList/RoomIndoModal";
 const cx = classNames.bind(styles);
 
 const defaultColumns: GridColDef[] = [
@@ -418,85 +419,11 @@ const RoomListRecep = () => {
         </div>
       </div>
       {selectedRoom && (
-        <ShowInfoDialog
+        <RoomIndoModal
+          roomInfo={selectedRoom}
           open={openDialog}
-          onClose={handleCloseDialog}
-          title="Thông tin phòng"
-        >
-          <div>
-            <p>
-              <strong>ID:</strong> {selectedRoom.id}
-            </p>
-            <p>
-              <strong>Số phòng:</strong> {selectedRoom.roomNumber}
-            </p>
-            <p>
-              <strong>Tầng:</strong> {selectedRoom.floor}
-            </p>
-            <p>
-              <strong>Miêu tả:</strong> {selectedRoom.description}
-            </p>
-            <p>
-              <strong>Phòng hút thuốc:</strong>{" "}
-              {selectedRoom.isSmokingAllowed ? (
-                <span>
-                  <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
-                </span>
-              ) : (
-                <span>
-                  <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
-                </span>
-              )}
-            </p>
-            {/* <p>
-              <strong>Ngày dọn gần nhất:</strong> {selectedRoom.lastCleaned}
-            </p> */}
-            {selectedRoom.roomType && (
-              <>
-                <p>
-                  <strong>Loại phòng:</strong> {selectedRoom.roomType.name}
-                </p>
-                <p>
-                  <strong>Số giường đơn:</strong>{" "}
-                  {selectedRoom.roomType.singleBedCount}
-                </p>
-                <p>
-                  <strong>Số giường đôi:</strong>{" "}
-                  {selectedRoom.roomType.doubleBedCount}
-                </p>
-                <p>
-                  <strong>Diện tích:</strong> {selectedRoom.size} m²
-                </p>
-                <p>
-                  <strong>Sức chứa tối đa:</strong>{" "}
-                  {selectedRoom.roomType.maxOccupancy}
-                </p>
-                <p>
-                  <strong>Giá cơ bản mỗi đêm:</strong>{" "}
-                  {selectedRoom.roomType.basePricePerNight} $
-                </p>
-              </>
-            )}
-            {selectedRoom.consumables &&
-              selectedRoom.consumables.length > 0 && (
-                <p>
-                  <strong>Đồ dùng tiêu hao:</strong>{" "}
-                  {selectedRoom.consumables
-                    .map((amenity) => amenity.name)
-                    .join(", ")}
-                </p>
-              )}
-            {selectedRoom.equipmentList &&
-              selectedRoom.equipmentList.length > 0 && (
-                <p>
-                  <strong>Thiết bị:</strong>{" "}
-                  {selectedRoom.equipmentList
-                    .map((amenity) => amenity.name)
-                    .join(", ")}
-                </p>
-              )}
-          </div>
-        </ShowInfoDialog>
+          onClose={() => setOpenDialog(false)}
+        />
       )}
     </Container>
   );

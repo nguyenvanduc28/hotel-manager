@@ -262,3 +262,25 @@ export const getRoomTypes = async () => {
         throw new Error(errorMessage);
     }
 };
+
+export const getConsumablesByRoomId = async (roomId: number) => {
+    try {
+        const response = await axiosInstance.get(`/admin/rooms/consumable/room/${roomId}`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách đồ tiêu hao theo phòng thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const getEquipmentsByRoomId = async (roomId: number) => {
+    try {
+        const response = await axiosInstance.get(`/admin/rooms/equipment/room/${roomId}`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách thiết bị theo phòng thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};

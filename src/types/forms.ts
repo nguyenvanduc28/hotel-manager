@@ -1,5 +1,5 @@
 import { BookingStatus, EquipmentStatus, RoomStatus } from "../constants/admin/constants";
-import { ConsumableCategories, Customer, Employee, Genders, Role, RoomInfo } from "./hotel";
+import { BookingConsumable, BookingEquipmentDamaged, ConsumableCategories, Customer, Employee, Genders, Role, RoomInfo } from "./hotel";
 
 export type RoomTypeForm = {
     id: number;
@@ -111,4 +111,6 @@ export type BookingForm = {
     numberOfAdults?: number;
     numberOfChildren?: number;
     rooms: RoomInfo[];
+    consumablesUsed?: BookingConsumable[];
+    equipmentDamagedList?: BookingEquipmentDamaged[];
 };

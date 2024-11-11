@@ -1,0 +1,293 @@
+.checkout-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+.checkout-info {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+
+  .info-item {
+    flex: 1;
+    border: 1px solid #f3f3f3;
+    border-radius: 0.8rem;
+    background: #fff;
+    overflow: hidden;
+
+    .info-item-header {
+      padding: 1.2rem;
+      background: #fdfdfd;
+      border-bottom: 1px solid #e0e0e0;
+
+      h3 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: rgb(24, 37, 55);
+        margin: 0;
+      }
+    }
+
+    .info-item-content {
+      padding: 1.5rem;
+      
+      .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .info-row {
+          display: flex;
+          gap: 1rem;
+          align-items: flex-start;
+
+          .info-label {
+            min-width: 140px;
+            font-weight: 600;
+            color: rgb(75, 75, 75);
+          }
+
+          .info-value {
+            flex: 1;
+            color: #333;
+          }
+
+          .item-rooms {
+            width: 100%;
+            
+            .room-item {
+              margin-bottom: 1rem;
+              padding: 1rem;
+              background: #fafbfb;
+              border: 1px solid #e0e0e0;
+              border-radius: 0.8rem;
+      
+              .room-title {
+                font-weight: 600;
+                font-size: 1.4rem;
+                color: #2c3e50;
+                margin-bottom: 0.8rem;
+              }
+      
+              .room-details {
+                display: flex;
+                flex-direction: column;
+      
+                .room-detail {
+                  font-size: 1.2rem;
+                  color: #666;
+                  margin-top: 0.4rem;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.checkout-section {
+  margin-bottom: 2rem;
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      .section-title {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: rgb(75, 75, 75);
+        margin: 0;
+      }
+      .summary-title {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #2c3e50;
+      }
+
+      .edit-button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+
+        &:hover {
+          background-color: #45a049;
+        }
+
+        .edit-icon {
+          font-size: 1.8rem;
+          color: white;
+        }
+
+        .edit-text {
+          font-size: 1.4rem;
+          color: white;
+        }
+      }
+    }
+
+    .section-content {
+
+
+      padding-left: 1.6rem;
+      padding-right: 1.6rem;
+      font-style: italic;
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+
+        .table-header {
+          background: #fafbfb;
+
+          .header-cell {
+            padding: 1.2rem 1.6rem;
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            white-space: nowrap;
+
+            &:first-child {
+              border-top-left-radius: 0.4rem;
+            }
+
+            &:last-child {
+              border-top-right-radius: 0.4rem;
+            }
+          }
+        }
+
+        .table-body {
+          .table-row {
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background-color: #f8f9fa;
+            }
+
+            .table-cell {
+              padding: 1.2rem 1.6rem;
+              border-bottom: 1px solid #e0e0e0;
+              color: #333;
+              font-size: 1.4rem;
+
+              &.price-cell {
+                font-weight: 500;
+                color: #2c3e50;
+              }
+            }
+          }
+
+          .empty-cell {
+            font-style: italic;
+            color: #6c757d;
+          }
+        }
+
+        // Column specific widths
+        .header-cell,
+        .table-cell {
+          &:nth-child(1) { width: 120px; } // Mã đồ dùng
+          &:nth-child(2) { width: auto; }  // Tên đồ dùng
+          &:nth-child(3) { width: 150px; } // Loại
+          &:nth-child(4) { width: 150px; } // Số lượng
+          &:nth-child(5) { width: 150px; } // Tổng tiền
+        }
+      }
+
+      .total-summary {
+        padding-left: 1.6rem;
+        .summary-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.2rem 0;
+          border-bottom: 1px solid #f0f0f0;
+
+          .summary-label {
+            font-size: 1.6rem;
+            color: #505050;
+            font-weight: 500;
+            font-style: italic;
+          }
+
+          .summary-value {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            font-weight: 500;
+            font-style: italic;
+
+            &.deposit {
+              color: #dc3545;
+            }
+          }
+
+          &.total {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-bottom: none;
+            .summary-label {
+              font-style: normal;
+              font-size: 1.6rem;
+              font-weight: 600;
+              color: #2c3e50;
+            }
+
+            .summary-value {
+              font-style: normal;
+              font-size: 1.8rem;
+              font-weight: 700;
+              color: #2c3e50;
+            }
+          }
+        }
+      }
+    }
+}
+
+.checkout-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  .checkout-button {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 0.8rem;
+    background-color: #1976d2;
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: #1565c0;
+    }
+
+    .checkout-button-icon {
+      font-size: 2rem;
+    }
+
+    .checkout-button-text {
+      font-size: 1.4rem;
+      font-weight: 500;
+    }
+  }
+
+} 

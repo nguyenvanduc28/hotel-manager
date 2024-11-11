@@ -13,6 +13,8 @@ import {
   checkInBooking,
   confirmBooking,
 } from "../../../apis/bookingApis/bookingApis";
+import { useNavigate } from "react-router-dom";
+import { RECEPTION_PATHS } from "../../../constants/admin/adminPath";
 
 const cx = classNames.bind(styles);
 interface BookingInfoModalProps {
@@ -29,6 +31,7 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
   onReload,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false); // TODO
+  const navigate = useNavigate();
   const requestConfirmBooking = async (bookingId: number) => {
     try {
       await confirmBooking(bookingId);
@@ -65,8 +68,8 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
   };
 
   const handleCheckOut = () => {
-    // Thêm logic để xử lý khi checkout
-    onReload();
+    navigate("/reception/checkout/"+ bookingData.id.toString());
+    onClose();
   };
 
   const handleCancel = () => {
@@ -279,7 +282,7 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
             <button
               onClick={handleCancel}
               className={cx("action-button", "action-button--cancel")}
-              disabled={bookingData.status === BOOKING_STATUS.Canceled}
+              disabled={bookingData.status === BOOKING_STATUS.Canceled || bookingData.status === BOOKING_STATUS.CheckedOut}
             >
               Hủy đặt phòng
             </button>

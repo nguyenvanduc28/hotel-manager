@@ -1,4 +1,5 @@
 import { BookingForm, CustomerForm } from "../../types/forms";
+import { Booking } from "../../types/hotel";
 import axiosInstance from "../axiosInstance";
 
 export const getCustomers = async () => {
@@ -88,6 +89,28 @@ export const checkInBooking = async (bookingId: number) => {
         return response.data;
     } catch (error: unknown) {
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Checkin thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const getBookingById = async (bookingId: number) => {
+    try {
+        const response = await axiosInstance.get(`/admin/bookings/${bookingId}`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy thông tin đặt phòng thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const checkoutBooking = async (bookingId: number, payload: Booking) => {
+    try {
+        const response = await axiosInstance.post(`/admin/bookings/${bookingId}/checkout`, payload);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Checkout thất bại';
         console.error(errorMessage);
         throw new Error(errorMessage);
     }

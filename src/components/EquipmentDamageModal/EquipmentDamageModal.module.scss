@@ -1,0 +1,96 @@
+.selected-equipment,
+.available-equipment {
+  margin: 20px 0;
+
+  h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #333;
+  }
+}
+
+.equipment-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  th {
+    background-color: #f5f5f5;
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  td {
+    font-size: 1.6rem;
+    vertical-align: middle;
+  }
+
+  // Column widths for selected equipment
+  &.selected-equipment {
+    th, td {
+      &:nth-child(1) { width: 25%; } // Tên thiết bị
+      &:nth-child(2) { width: 15%; } // Loại
+      &:nth-child(3) { width: 30%; } // Mô tả hư hỏng
+      &:nth-child(4) { width: 20%; } // Chi phí
+      &:nth-child(5) { width: 10%; } // Actions
+    }
+  }
+
+  // Column widths for available equipment
+  &.available-equipment {
+    th, td {
+      &:nth-child(1) { width: 35%; } // Tên thiết bị
+      &:nth-child(2) { width: 25%; } // Loại
+      &:nth-child(3) { width: 25%; } // Phòng
+      &:nth-child(4) { width: 15%; } // Actions
+    }
+  }
+
+  // Style for number input
+  input[type="number"] {
+    width: 120px;
+    
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      opacity: 1;
+    }
+  }
+
+  .empty-cell {
+    color: #666;
+    font-style: italic;
+  }
+}
+
+.description-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1.6rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+}
+
+.fee-input {
+  width: 120px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1.6rem;
+  text-align: right;
+  
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+} 

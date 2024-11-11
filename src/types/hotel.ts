@@ -149,6 +149,31 @@ export type Customer = {
     identityNumber?: string;
 }
 
+export type BookingConsumable = {
+    id?: number;
+    name?: string;
+    consumableCategory?: ConsumableCategories;
+    unit?: string;
+    expiryDate?: number;
+    barcode?: string;
+    description?: string;
+    quantityUsed?: number;
+    totalPrice?: number;
+    consumableId?: number;
+}
+
+export type BookingEquipmentDamaged = {
+    id?: number;
+    name?: string;
+    equipmentCategory?: EquipmentCategory;
+    installationDate?: number;
+    barcode?: string;
+    description?: string;
+    damageFee?: number;
+    damageDescription?: string;
+    equipmentId?: number;
+}
+
 export type Booking = {
     id:number;
     customer: Customer; 
@@ -165,7 +190,9 @@ export type Booking = {
     cancellationPolicy?: string; 
     canceledAt?: number; 
     isGuaranteed?: boolean;
-    numberOfAdults?:number;
-    numberOfChildren?:number;
+    numberOfAdults?: number;
+    numberOfChildren?: number;
     rooms: RoomInfo[];
+    consumablesUsed?: BookingConsumable[];
+    equipmentDamagedList?: BookingEquipmentDamaged[];
 };
