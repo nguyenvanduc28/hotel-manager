@@ -183,6 +183,7 @@ export type Booking = {
     estimatedArrivalTime?: number; // Thời gian đến dự kiến
     checkInTime?: number; // Thời gian check-in
     checkOutTime?: number; // Thời gian check-out
+    confirmedTime?: number; // Thời gian xác nhận
     isGroup?: boolean; 
     totalCost?: number; 
     status: BookingStatus; 

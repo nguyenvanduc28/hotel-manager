@@ -134,6 +134,20 @@
       }
     }
 
+    .action-button--payment {
+      background-color: #007bff;
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+
+    .action-button--awaiting-payment {
+      background-color: #eb9413;
+      &:hover {
+        background-color: #d4840f;
+      }
+    }
+
     .action-button--confirmed {
     }
 
@@ -142,6 +156,12 @@
       &:hover {
         background-color: #5a6268;
       }
+    }
+
+    .action-button--canceled {
+    }
+
+    .action-button--completed {
     }
   }
 }

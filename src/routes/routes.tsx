@@ -28,6 +28,7 @@ import RoomAmenityEdit from "../pages/AdminPage/RoomAmenities/RoomAmenityEdit";
 import RoomEdit from "../pages/AdminPage/RoomList/RoomEdit";
 import RoomAmenityCategories from "../pages/AdminPage/RoomAmenities/RoomAmenityCategories";
 import Checkout from "../pages/ReceptionPage/Checkout/Checkout";
+import Payment from "../pages/ReceptionPage/Payment/Payment";
 
 export type RouteWrapperProps = {
   path: string;
@@ -177,6 +178,11 @@ export const ReceptionRoutes: RouteWrapperProps[] = [
   {
     path: RECEPTION_PATHS.CHECKOUT,
     element: <Checkout />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+  {
+    path: RECEPTION_PATHS.PAYMENT,
+    element: <Payment />,
     allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
 ]

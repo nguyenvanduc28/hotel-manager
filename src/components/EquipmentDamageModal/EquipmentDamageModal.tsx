@@ -28,6 +28,7 @@ const EquipmentDamageModal = ({ open, onClose, rooms, onSave, equipmentListDamag
 
   const fetchEquipmentForRooms = async () => {
     try {
+      setEquipmentByRoom([]);
       for (const room of rooms) {
         if (!room.id) continue;
         const equipment = await getEquipmentsByRoomId(room.id);

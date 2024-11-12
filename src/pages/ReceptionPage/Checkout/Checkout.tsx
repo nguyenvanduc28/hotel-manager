@@ -143,7 +143,7 @@ const Checkout = () => {
       if (!booking || !id) return;
 
       await checkoutBooking(parseInt(id), booking);
-      navigate("/reception/booking/list");
+      navigate(`/reception/checkout/${id}/payment`);
     } catch (error) {
       console.error('Checkout failed:', error);
       setError(error instanceof Error ? error.message : 'Checkout failed');
@@ -164,6 +164,14 @@ const Checkout = () => {
           <div className={cx("info-row")}>
             <span className={cx("info-label")}>Khách hàng:</span>
             <span className={cx("info-value")}>{booking?.customer?.name}</span>
+          </div>
+          <div className={cx("info-row")}>
+            <span className={cx("info-label")}>Giới tính:</span>
+            <span className={cx("info-value")}>{booking?.customer?.gender}</span>
+          </div>
+          <div className={cx("info-row")}>
+            <span className={cx("info-label")}>Quốc tịch:</span>
+            <span className={cx("info-value")}>{booking?.customer?.nationality}</span>
           </div>
           <div className={cx("info-row")}>
             <span className={cx("info-label")}>Số điện thoại:</span>
@@ -434,10 +442,9 @@ const Checkout = () => {
       open={isConfirmCheckoutOpen}
       onClose={() => setIsConfirmCheckoutOpen(false)}
     >
-      <DialogTitle style={{fontSize: "2rem"}}>Xác nhận thanh toán</DialogTitle>
+      <DialogTitle style={{fontSize: "2rem"}}>Xác nhận Checkout</DialogTitle>
       <DialogContent>
-        <p style={{fontSize: "1.6rem"}}>Bạn có chắc chắn muốn thanh toán cho booking này?</p>
-        <p style={{fontSize: "1.6rem", marginTop: "10px"}}>Tổng tiền: {formatCurrency(calculateGrandTotal())}</p>
+        <p style={{fontSize: "1.6rem"}}>Bạn có chắc chắn muốn Checkout?</p>
       </DialogContent>
       <DialogActions>
         <Button 
@@ -484,7 +491,7 @@ const Checkout = () => {
             onClick={() => setIsConfirmCheckoutOpen(true)}
           >
             <CreditCard className={cx("checkout-button-icon")} />
-            <span className={cx("checkout-button-text")}>Thanh toán</span>
+            <span className={cx("checkout-button-text")}>Checkout</span>
           </button>
         </div>
         {renderConsumablesModal()}

@@ -389,6 +389,8 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
     numberOfAdults: 2,
     numberOfChildren: 0,
     rooms: [],
+    consumablesUsed: [],
+    equipmentDamagedList: [],
   });
   const [totalNights, setTotalNights] = useState<number>(0);
   const [customerForm, setCustomerForm] = useState<CustomerForm>({

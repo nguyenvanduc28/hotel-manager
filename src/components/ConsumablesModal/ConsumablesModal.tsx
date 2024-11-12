@@ -18,7 +18,6 @@ interface ConsumablesModalProps {
 }
 
 const ConsumablesModal = ({ open, onClose, rooms, onSave, consumablesSelected }: ConsumablesModalProps) => {
-  const [consumablesSelectedInitial, setConsumablesSelectedInitial] = useState<BookingConsumable[]>(consumablesSelected);
   const [consumablesByRoom, setConsumablesByRoom] = useState<ConsumableForm[]>([]);
 
   useEffect(() => {
@@ -29,6 +28,7 @@ const ConsumablesModal = ({ open, onClose, rooms, onSave, consumablesSelected }:
 
   const fetchConsumablesForRooms = async () => {
     try {
+      setConsumablesByRoom([]);
       for (const room of rooms) {
         if (!room.id) continue;
         const consumables = await getConsumablesByRoomId(room.id);

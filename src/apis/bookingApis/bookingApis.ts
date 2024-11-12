@@ -115,3 +115,25 @@ export const checkoutBooking = async (bookingId: number, payload: Booking) => {
         throw new Error(errorMessage);
     }
 };
+
+export const unConfirmBooking = async (bookingId: number) => {
+    try {
+        const response = await axiosInstance.post(`/admin/bookings/${bookingId}/unconfirm`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Hủy xác nhận thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const unCheckInBooking = async (bookingId: number) => {
+    try {
+        const response = await axiosInstance.post(`/admin/bookings/${bookingId}/uncheckin`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Hủy check-in thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};

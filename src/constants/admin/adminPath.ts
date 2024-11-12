@@ -31,4 +31,5 @@ export const RECEPTION_PATHS = {
   BOOKING_LIST:"booking/list",
   ROOM_LIST:"room/list",
   CHECKOUT:"checkout/:id",
+  PAYMENT:"checkout/:id/payment",
 }

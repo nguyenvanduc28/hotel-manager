@@ -1,0 +1,273 @@
+.payment-content {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  height: calc(100vh - 100px); // Adjust based on your header height
+}
+
+// Left side - Checkout content
+.checkout-content {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-right: 1.5rem;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+
+  .checkout-content-item {
+    border: 1px solid #f3f3f3;
+    border-radius: 0.8rem;
+    background: #fff;
+    // overflow: hidden;
+
+    .checkout-content-item-title {
+      padding: 1.2rem;
+      background: #fdfdfd;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: rgb(24, 37, 55);
+    }
+
+    .checkout-content-item-content {
+      padding: 1.5rem;
+
+      .checkout-content-item-content-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+
+        .checkout-content-item-content-item-label {
+          min-width: 250px;
+          font-weight: 600;
+          color: rgb(75, 75, 75);
+        }
+
+        .checkout-content-item-content-item-value {
+          flex: 1;
+          color: #333;
+
+          &.booking-number {
+            font-weight: 600;
+            color: #2c3e50;
+          }
+        }
+      }
+    }
+  }
+
+  // Table styles
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    .table-header {
+      background: #fafbfb;
+
+      .header-cell {
+        padding: 1.2rem 1.6rem;
+        font-weight: 600;
+        color: #2c3e50;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+        white-space: nowrap;
+      }
+    }
+
+    .table-body {
+      .table-row {
+        &:hover {
+          background-color: #f8f9fa;
+        }
+
+        .table-cell {
+          padding: 1.2rem 1.6rem;
+          border-bottom: 1px solid #e0e0e0;
+          color: #333;
+          font-size: 1.4rem;
+
+          &.price-cell {
+            font-weight: 500;
+            color: #2c3e50;
+          }
+
+          &.empty-cell {
+            font-style: italic;
+            color: #6c757d;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Right side - Payment summary
+.payment-summary {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background: #fff;
+  border-radius: 0.8rem;
+  border: 1px solid #f3f3f3;
+  padding: 2rem;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+
+  .summary-section {
+    .section-header {
+      margin-bottom: 2rem;
+
+      .section-title {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0;
+      }
+    }
+
+    .total-summary {
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        .summary-label {
+          font-size: 1.6rem;
+          color: #505050;
+          font-weight: 500;
+        }
+
+        .summary-value {
+          font-size: 1.6rem;
+          color: #2c3e50;
+          font-weight: 500;
+
+          &.deposit {
+            color: #dc3545;
+          }
+        }
+
+        &.total {
+          margin-top: 1.5rem;
+          padding-top: 1.5rem;
+          border-bottom: none;
+
+          .summary-label {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #2c3e50;
+          }
+
+          .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+          }
+        }
+      }
+    }
+  }
+
+  .payment-input {
+    margin-top: 2rem;
+    
+    .input-group {
+      margin-bottom: 2rem;
+
+      .input-label {
+        display: block;
+        font-size: 1.6rem;
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+      }
+
+      .payment-amount-input {
+        width: 100%;
+        padding: 1.2rem;
+        font-size: 1.6rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 0.8rem;
+        outline: none;
+
+        &:focus {
+          border-color: #1976d2;
+        }
+      }
+    }
+
+    .payment-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      padding: 1.2rem;
+      background-color: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 0.8rem;
+      font-size: 1.6rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #1565c0;
+      }
+
+      .payment-icon {
+        font-size: 2rem;
+      }
+    }
+  }
+}
+
+.room-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1.2rem;
+  background-color: #ffffff;
+  border: 1px solid #f3f3f3;
+  border-radius: 0.8rem;
+  margin-bottom: 1.2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .room-title {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: #333;
+  }
+
+  .room-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    .room-detail {
+      font-size: 1.3rem;
+      color: #666;
+    }
+  }
+}
