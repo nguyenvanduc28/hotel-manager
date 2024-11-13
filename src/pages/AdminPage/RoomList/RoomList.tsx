@@ -383,6 +383,7 @@ const RoomList = () => {
 
   return (
     <Container
+      fullscreen
       title="Danh sách phòng"
       button={
         <Button
@@ -391,8 +392,6 @@ const RoomList = () => {
           onClick={handleAddRoom}
         />
       }
-      linkToBack="/admin"
-      titleToBack="Quay trở lại trang admin"
     >
       <div className={cx("room-list-box")}>
         <div className={cx("search")}>

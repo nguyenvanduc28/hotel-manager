@@ -1,0 +1,60 @@
+.customer-detail-box {
+  padding: 20px;
+  
+  .customer-info {
+    margin-bottom: 30px;
+    
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      
+      .info-item {
+        display: flex;
+        align-items: center;
+        
+        .label {
+          font-weight: 600;
+          min-width: 180px;
+          font-size: 1.4rem;
+          color: rgb(75, 75, 75);
+        }
+        
+        .value {
+          font-size: 1.4rem;
+          color: #333;
+        }
+      }
+    }
+  }
+
+  .invoice-list {
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    
+    .data {
+      background-color: white;
+      border-radius: 8px;
+      min-height: 400px;
+    }
+  }
+}
+
+:global {
+  .datagrid-header {
+    background-color: #f5f5f5;
+    font-size: 1.4rem !important;
+    font-weight: 600 !important;
+  }
+
+  .datagrid-cell {
+    font-size: 1.4rem !important;
+  }
+}

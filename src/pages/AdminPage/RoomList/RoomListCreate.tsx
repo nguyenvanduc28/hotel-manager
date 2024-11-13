@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Consumables, Equipments, RoomType } from "../../../types/hotel";
 import { useFormValidation } from "../../../hooks/useFormValidation";
+import { uploadMultipleImages } from "../../../apis/imageApis/imageApis";
 
 type RoomListCreateProps = {};
 
@@ -32,6 +33,8 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
   const [roomTypeData, setRoomTypeData] = useState<RoomType[]>([]);
   const [consumables, setConsumables] = useState<Consumables[]>([]);
   const [equipments, setEquipments] = useState<Equipments[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [roomForm, setRoomForm] = useState<RoomInfoForm>({
     id:0,
     roomNumber: "",
@@ -59,6 +62,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
     hasCourtyardView: false,
     hasFreeWifi: true,
     hasSoundproofing: false,
+    imageList: [],
   });
   const navigate = useNavigate();
 
@@ -158,12 +162,80 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    
+    const filesArray = Array.from(e.target.files);
+    
+    // Create preview URLs
+    const previews = filesArray.map(file => URL.createObjectURL(file));
+    setPreviewImages(prev => [...prev, ...previews]);
+    
+    try {
+      setIsUploading(true);
+      const uploadedUrls = await uploadMultipleImages(filesArray);
+      handleChange('imageList', [...(roomForm.imageList || []), ...uploadedUrls]);
+      console.log("Images uploaded successfully:", uploadedUrls);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <Container
       title="Thêm phòng mới"
       linkToBack={"/admin/" + ADMIN_PATHS.ROOM_LIST}
       titleToBack="Quay trở lại"
     >
+      <div className={cx("box")}>
+        <div className={cx("box-item")}>
+          <div className={cx("upload-section")}>
+            <h3>Tải lên ảnh phòng</h3>
+            <div className={cx("image-upload-container")}>
+              <label className={cx("upload-button")}>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+                <div className={cx("add-image-button")}>
+                  <span>+</span>
+                </div>
+              </label>
+              
+              <div className={cx("preview-container")}>
+                {previewImages.map((preview, index) => (
+                  <div key={index} className={cx("preview-image-wrapper")}>
+                    <img 
+                      src={preview} 
+                      alt={`Preview ${index + 1}`} 
+                      className={cx("preview-image")}
+                    />
+                    <button
+                      className={cx("remove-image")}
+                      onClick={() => {
+                        setPreviewImages(prev => prev.filter((_, i) => i !== index));
+                        handleChange('imageList', 
+                          (roomForm.imageList || []).filter((_, i) => i !== index)
+                        );
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p className={cx("upload-note")}>
+              Chọn một hoặc nhiều ảnh để tải lên. Chấp nhận các định dạng: JPG, PNG, GIF
+            </p>
+          </div>
+        </div>
+      </div>
       <div className={cx("box")}>
         <div className={cx("box-item")}>
           <InputText
@@ -235,7 +307,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
             }
             options={consumables.map((cs) => ({
               value: cs.id,
-              label: cs.name,
+              label: cs.name + " - " + cs?.barcode,
             }))}
           />
         </div>
@@ -251,7 +323,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
             }
             options={equipments.map((eq) => ({
               value: eq.id,
-              label: eq.name,
+              label: eq.name + " - " + eq?.barcode,
             }))}/>
         </div>
       </div>
@@ -396,6 +468,7 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
           icon={<SaveOutlinedIcon />}
           content="Lưu"
           onClick={handleSave}
+          disabled={isUploading}
         />
       </div>
     </Container>

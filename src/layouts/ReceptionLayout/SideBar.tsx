@@ -41,13 +41,13 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           />
           <MenuItem
             title="Danh sách khách hàng"
-            link="/reception/customers"
+            link="/reception/customer/list"
             isCollapse={isCollapse}
             icon={<PersonOutlineOutlined />}
           />
           <MenuItem
             title="Danh sách hóa đơn"
-            link="/reception/invoices"
+            link="/reception/invoice/list"
             icon={<ReceiptOutlined />}
             isCollapse={isCollapse}
           />

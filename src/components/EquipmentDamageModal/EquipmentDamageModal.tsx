@@ -41,6 +41,11 @@ const EquipmentDamageModal = ({ open, onClose, rooms, onSave, equipmentListDamag
 
   return (
     <Dialog
+      sx={{
+        '& .MuiBackdrop-root': {
+          backgroundColor: 'rgb(0 0 0 / 0.3)'
+        }
+      }}
       open={open}
       onClose={onClose}
       maxWidth="md"

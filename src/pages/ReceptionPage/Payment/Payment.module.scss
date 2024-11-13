@@ -237,6 +237,22 @@
         font-size: 2rem;
       }
     }
+    .disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 4px;
+      color: #666;
+
+      &:hover {
+        background-color: #ccc;
+        cursor: default;
+      }
+    }
+    
   }
 }
 
@@ -269,5 +285,29 @@
       font-size: 1.3rem;
       color: #666;
     }
+  }
+}
+
+.invoice-exists {
+  color: #dc3545;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.payment-info-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+
+  .payment-info-label {
+    font-weight: 500;
+  }
+
+  .payment-info-value {
+    font-weight: 500;
+    font-style: italic;
   }
 }

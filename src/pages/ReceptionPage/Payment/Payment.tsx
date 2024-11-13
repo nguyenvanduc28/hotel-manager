@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from "./Payment.module.scss";
-import { Booking } from "../../../types/hotel";
+import { Booking, Invoice } from "../../../types/hotel";
 import Container from "../../../components/Container/Container";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBookingById } from "../../../apis/bookingApis/bookingApis";
+import { checkInvoiceExistsByBookingId, getInvoiceByBookingId } from "../../../apis/invoiceApis/invoiceApis";
 import moment from "moment";
 import { CreditCard } from "@mui/icons-material";
 import { createInvoice } from "../../../apis/invoiceApis/invoiceApis";
@@ -81,26 +82,48 @@ const Payment = () => {
   const { id } = useParams();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [invoiceExists, setInvoiceExists] = useState(false);
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
+  const fetchBooking = async () => {
+    try {
+      if (!id) return;
+      const data = await getBookingById(parseInt(id));
+      setBooking(data);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch booking"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchInvoice = async () => {
+    try {
+      if (!id) return;
+      const data = await getInvoiceByBookingId(parseInt(id));
+      setInvoice(data);
+      setBooking(data.booking);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch invoice"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  const checkInvoiceExists = async () => {
+    if (!id) return;
+    const data = await checkInvoiceExistsByBookingId(parseInt(id));
+    setInvoiceExists(data);
+    if (data) fetchInvoice();
+    else fetchBooking();
+  };
 
   useEffect(() => {
-    const fetchBooking = async () => {
-      try {
-        if (!id) return;
-        const data = await getBookingById(parseInt(id));
-        setBooking(data);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch booking"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBooking();
+    checkInvoiceExists();
   }, [id]);
 
   if (loading) return <div>Loading...</div>;
@@ -117,7 +140,7 @@ const Payment = () => {
 
   const handleConfirmPayment = async () => {
     await handleCreateInvoice();
-    navigate(`/reception/bookings/list`);
+    navigate(`/reception/booking/list`);
     setOpenDialog(false);
   };
 
@@ -125,19 +148,20 @@ const Payment = () => {
     setOpenDialog(false);
   };
 
+
   return (
     <Container
       fullscreen
       title="Thanh toán"
-      linkToBack={`/reception/checkout/${id}`}
-      titleToBack="Quay lại màn hình checkout"
+      linkToBack={invoiceExists ? `/reception/invoice/list` : `/reception/checkout/${id}`}
+      titleToBack={invoiceExists ? "Quay lại danh sách hóa đơn" : "Quay lại màn hình checkout"}
     >
       <div className={cx("payment-content")}>
         <div className={cx("checkout-content")}>
           {/* Mã đặt phòng */}
           <div className={cx("checkout-content-item", "booking-id")}>
             <div className={cx("checkout-content-item-title")}>
-              Mã đặt phòng - #{booking.id}
+              Mã đặt phòng - #{booking.id} {invoiceExists ? <span className={cx("invoice-exists")}>(Đã thanh toán)</span> : ""}
             </div>
           </div>
           {/* Thông tin khách hàng */}
@@ -439,26 +463,51 @@ const Payment = () => {
                 type="text"
                 id="customerPayment"
                 className={cx("payment-amount-input")}
-                value={calculateGrandTotal(booking).toLocaleString()}
+                value={invoiceExists ? invoice?.totalAmount?.toLocaleString() : calculateGrandTotal(booking).toLocaleString()}
                 placeholder="Số tiền khách trả"
+                disabled={invoiceExists}
               />
             </div>
-            <button 
-              className={cx("payment-button")} 
-              onClick={handlePaymentClick}
-            >
-              <CreditCard className={cx("payment-icon")} />
-              Thanh toán
-            </button>
+            {invoiceExists && (
+              <div className={cx("payment-info")}>
+                <div className={cx("payment-info-item")}>
+                  <span className={cx("payment-info-label")}>Ngày thanh toán:</span>
+                  <span className={cx("payment-info-value")}>{formatDateTime(invoice?.issueDate, "HH:mm DD/MM/YYYY")}</span>
+                </div>
+                <div className={cx("payment-info-item")}>
+                  <span className={cx("payment-info-label")}>Trạng thái:</span>
+                  <span className={cx("payment-info-value")}>{invoice?.paymentStatus}</span>
+                </div>
+              </div>
+            )}
+            {invoiceExists ? (
+              <div className={cx("payment-button", "disabled")}>
+                <CreditCard className={cx("payment-icon")} />
+                Đã thanh toán
+              </div>
+            ) : (
+              <button 
+                className={cx("payment-button")} 
+                onClick={handlePaymentClick}
+              >
+                <CreditCard className={cx("payment-icon")} />
+                Thanh toán
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       <Dialog
+        sx={{
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgb(0 0 0 / 0.3)',
+          '& .MuiDialogTitle-root': { fontSize: '1.6rem' }
+          }
+        }}
         open={openDialog}
         onClose={handleCloseDialog}
         aria-labelledby="alert-dialog-title"
-        sx={{ '& .MuiDialogTitle-root': { fontSize: '1.6rem' } }}
       >
         <DialogTitle id="alert-dialog-title">
           Xác nhận thanh toán

@@ -2,7 +2,6 @@ import Dashboard from "../pages/AdminPage/Dashboard/Dashboard";
 import RoomList from "../pages/AdminPage/RoomList/RoomList";
 import RoomType from "../pages/AdminPage/RoomType/RoomType";
 import RoomAmenities from "../pages/AdminPage/RoomAmenities/RoomAmenities";
-import Bookings from "../pages/AdminPage/Bookings/Bookings";
 import Employees from "../pages/AdminPage/Employees/Employees";
 import Customers from "../pages/AdminPage/Customers/Customers";
 import Services from "../pages/AdminPage/Services/Services";
@@ -11,7 +10,6 @@ import InventoryHistory from "../pages/AdminPage/InventoryHistory/InventoryHisto
 import ReportSummary from "../pages/AdminPage/Reports/Summary/ReportSummary";
 import ReportServiceRevenue from "../pages/AdminPage/Reports/ServiceRevenue/ReportServiceRevenue";
 import ReportBillRevenue from "../pages/AdminPage/Reports/BillRevenue/ReportBillRevenue";
-import Invoices from "../pages/AdminPage/Invoices/Invoices";
 import HotelSetting from "../pages/AdminPage/HotelSetting/HotelSetting";
 import { ROLES } from "../constants/auth/roleConstants";
 import EmployeeRole from "../pages/AdminPage/Employees/EmployeeRole";
@@ -29,6 +27,9 @@ import RoomEdit from "../pages/AdminPage/RoomList/RoomEdit";
 import RoomAmenityCategories from "../pages/AdminPage/RoomAmenities/RoomAmenityCategories";
 import Checkout from "../pages/ReceptionPage/Checkout/Checkout";
 import Payment from "../pages/ReceptionPage/Payment/Payment";
+import InvoiceList from "../pages/ReceptionPage/Invoice/InvoiceList";
+import NoPermission from "../pages/NoPermission";
+import CustomerDetail from "../pages/AdminPage/Customers/CustomerDetail";
 
 export type RouteWrapperProps = {
   path: string;
@@ -90,7 +91,7 @@ const AdminRoutes: RouteWrapperProps[] = [
   },
   {
     path: ADMIN_PATHS.BOOKINGS,
-    element: <Bookings />,
+    element: <BookingList />,
     allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
   {
@@ -150,13 +151,23 @@ const AdminRoutes: RouteWrapperProps[] = [
   },
   {
     path: ADMIN_PATHS.INVOICES,
-    element: <Invoices />,
-    allowedRoles: [ROLES.ADMIN, ROLES.INVOICE_MANAGER],
+    element: <InvoiceList />,
+    allowedRoles: [ROLES.ADMIN, ROLES.INVOICE_MANAGER, ROLES.RECEPTIONIST],
   },
   {
     path: ADMIN_PATHS.HOTEL_SETTING,
     element: <HotelSetting />,
     allowedRoles: [ROLES.ADMIN, ROLES.HOTEL_INFO_MANAGER],
+  },
+  {
+    path: ADMIN_PATHS.NO_PERMISSION,
+    element: <NoPermission />,
+    allowedRoles: [],
+  },
+  {
+    path: ADMIN_PATHS.CUSTOMER_DETAIL,
+    element: <CustomerDetail />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
 ];
 export const ReceptionRoutes: RouteWrapperProps[] = [
@@ -183,6 +194,26 @@ export const ReceptionRoutes: RouteWrapperProps[] = [
   {
     path: RECEPTION_PATHS.PAYMENT,
     element: <Payment />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+  {
+    path: RECEPTION_PATHS.INVOICE_LIST,
+    element: <InvoiceList />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+  {
+    path: RECEPTION_PATHS.CUSTOMER_LIST,
+    element: <Customers />,
+    allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+  {
+    path: RECEPTION_PATHS.NO_PERMISSION,
+    element: <NoPermission />,
+    allowedRoles: [],
+  },
+  {
+    path: RECEPTION_PATHS.CUSTOMER_DETAIL,
+    element: <CustomerDetail />,
     allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
   },
 ]

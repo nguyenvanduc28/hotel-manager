@@ -1,0 +1,155 @@
+.modal-title {
+  font-size: 2.4rem !important;
+  padding: 20px 24px !important;
+  font-weight: bold;
+}
+
+.modal-content {
+  padding: 24px !important;
+  width: 100%;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+}
+
+.invoice-details {
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 1.6rem;
+
+    &.total {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 2px solid #eee;
+      font-weight: bold;
+      font-size: 2rem;
+    }
+
+    .label {
+      font-weight: bold;
+    }
+
+    .value {
+      font-weight: 500;
+      color: #333;
+
+      &.deposit {
+        color: #dc3545;
+      }
+
+      &.paid {
+        color: #28a745;
+      }
+
+      &.pending {
+        color: #ffc107;
+      }
+    }
+  }
+}
+
+.detail-section {
+  margin-bottom: 1rem;
+}
+
+.clickable {
+  cursor: pointer;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.with-arrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.arrow {
+  position: absolute;
+  top: 3px;
+  right: -1.6rem;
+  transition: transform 0.5s ease-in-out;
+  color: #007bff;
+  
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.view-detail-button {
+  font-size: 1.4rem;
+  color: #007bff;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  font-weight: 500;
+}
+
+.detail-dropdown {
+  overflow: hidden;
+  max-height: 0;
+//   opacity: 0;
+  transition: all 0.5s ease-in-out;
+  padding-left: 2.5rem;
+  border-radius: 4px;
+  margin-bottom: 0;
+  font-style: italic;
+
+  &.expanded {
+    max-height: 500px;
+    // opacity: 1;
+    margin-bottom: 2rem;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    
+    .table-header {
+      background-color: #f8f9fa;
+      
+      th {
+        padding: 1.2rem;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 1px solid #dee2e6;
+        font-size: 1.4rem;
+      }
+    }
+    
+    .table-body {
+      .table-row {
+        &:hover {
+          background-color: #f8f9fa;
+        }
+        
+        td {
+          padding: 1.2rem;
+          border-bottom: 1px solid #dee2e6;
+          font-size: 1.4rem;
+          
+          &.price-cell {
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+} 

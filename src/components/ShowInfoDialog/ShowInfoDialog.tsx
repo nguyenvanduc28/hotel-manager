@@ -27,6 +27,11 @@ const ShowInfoDialog: React.FC<ShowInfoDialogProps> = ({
 }) => {
   return (
     <Dialog
+      sx={{
+        '& .MuiBackdrop-root': {
+          backgroundColor: 'rgb(0 0 0 / 0.3)'
+        }
+      }}
       open={open}
       onClose={onClose}
       slotProps={{ backdrop: { style: backdropStyle } }}

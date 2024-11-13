@@ -15,6 +15,7 @@ export const ADMIN_PATHS = {
   ROLES: "roles",
   CUSTOMERS: "customers",
   CUSTOMER_CREATE:"customers/create",
+  CUSTOMER_DETAIL: "customers/:id",
   SERVICES: "services",
   SERVICE_USAGE: "service-usage",
   INVENTORY: "inventory",
@@ -24,6 +25,7 @@ export const ADMIN_PATHS = {
   REPORT_BILL_REVENUE: "report-bill-revenue",
   INVOICES: "invoices",
   HOTEL_SETTING: "hotel-setting",
+  NO_PERMISSION: "no-permission",
 };
 
 export const RECEPTION_PATHS = {
@@ -32,4 +34,8 @@ export const RECEPTION_PATHS = {
   ROOM_LIST:"room/list",
   CHECKOUT:"checkout/:id",
   PAYMENT:"checkout/:id/payment",
+  INVOICE_LIST:"invoice/list",
+  CUSTOMER_LIST:"customer/list",
+  CUSTOMER_DETAIL: "customer/:id",
+  NO_PERMISSION: "no-permission",
 }

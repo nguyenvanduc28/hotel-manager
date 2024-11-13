@@ -38,7 +38,18 @@ export type RoomInfoForm = {
     roomType: RoomTypeForm;
     consumables?: ConsumableForm[];
     equipmentList?: EquipmentForm[];
+    imageList?: ImageForm[];
 };
+export type ImageForm = {
+    id: number;
+    url: string;
+    type?: string;
+    size?: number;
+    roomId?: number;
+    publicId?: string;
+    fileName?: string;
+    description?: string;
+}
 
 export type EmployeeInfo = Employee & {
     roles?: Role[];

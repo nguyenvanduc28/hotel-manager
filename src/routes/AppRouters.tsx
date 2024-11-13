@@ -10,9 +10,10 @@ import ReceptionLayout from "../layouts/ReceptionLayout/ReceptionLayout";
 
 interface ProtectedRouteProps {
   roles: string[];
+  linkToNoPermission?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles, linkToNoPermission = "/no-permission" }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -21,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
       if (!user) {
         navigate("/login");
       } else if (!user.roles.some((role) => roles.includes(role.name))) {
-        navigate("/no-permission");
+        navigate(linkToNoPermission);
       }
     }
   }, [loading, user, navigate, roles]);
@@ -34,12 +35,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
 const AppRouters: React.FC = () => {
   return (
     <Routes>
-      <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
+      <Route element={<ProtectedRoute roles={["ADMIN", "RECEPTIONIST", "EMPLOYEE", "MANAGER", "SUPER_ADMIN", "DIRECTOR", "ACCOUNTANT", "SUPER_ADMIN"]} />}>
         <Route path="/admin" element={<AdminLayout />}>
           {AdminRouters.map((route) => (
             <Route
               key={route.path}
-              element={<ProtectedRoute roles={route.allowedRoles} />}
+              element={<ProtectedRoute roles={route.allowedRoles} linkToNoPermission={"/admin/no-permission"} />}
             >
               <Route path={route.path} element={route.element} />
             </Route>
@@ -49,7 +50,7 @@ const AppRouters: React.FC = () => {
           {ReceptionRoutes.map((route) => (
             <Route
               key={route.path}
-              element={<ProtectedRoute roles={route.allowedRoles} />}
+              element={<ProtectedRoute roles={route.allowedRoles} linkToNoPermission={"/reception/no-permission"} />}
             >
               <Route path={route.path} element={route.element} />
             </Route>

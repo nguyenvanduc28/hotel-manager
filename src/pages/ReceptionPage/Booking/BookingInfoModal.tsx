@@ -183,7 +183,14 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
 
   return (
     <>
-      <Dialog open={open} onClose={onClose}>
+      <Dialog sx={{
+        '& .MuiBackdrop-root': {
+          backgroundColor: 'rgb(0 0 0 / 0.3)'
+        }
+        }} 
+        open={open} 
+        onClose={onClose}
+      >
         <div className={cx("modal")}>
           <div className={cx("modal-header")}>
             <Typography variant="h3" sx={{ ...currentStatusStyle, mb: 2 }}>

@@ -200,6 +200,11 @@ const RoomAmenityCategories = () => {
       </div>
 
       <Dialog
+        sx={{
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgb(0 0 0 / 0.3)'
+          }
+        }}
         open={openModal}
         onClose={() => setOpenModal(false)}
         hideBackdrop

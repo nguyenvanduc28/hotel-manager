@@ -21,6 +21,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { Consumables, Equipments, RoomType } from "../../../types/hotel";
 import { useFormValidation } from "../../../hooks/useFormValidation";
+import { uploadMultipleImages } from "../../../apis/imageApis/imageApis";
 
 type RoomListEditProps = {};
 
@@ -59,9 +60,11 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
     hasCourtyardView: false,
     hasFreeWifi: true,
     hasSoundproofing: false,
+    imageList: [],
   });
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
 
   const validationRules = {
     roomNumber: [
@@ -151,6 +154,12 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
     fetchRoomTypes();
   }, [id]);
 
+  useEffect(() => {
+    if (roomForm.imageList) {
+      setPreviewImages(roomForm.imageList.map(image => image.url));
+    }
+  }, [roomForm.imageList]);
+
   const handleSave = async () => {
     if (!validateForm(roomForm)) {
       return;
@@ -194,12 +203,82 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
     return JSON.stringify(originalRoomData) !== JSON.stringify(roomForm);
   };
 
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    
+    const filesArray = Array.from(e.target.files);
+    
+    // Create preview URLs
+    const previews = filesArray.map(file => URL.createObjectURL(file));
+    setPreviewImages(prev => [...prev, ...previews]);
+    
+    try {
+      setIsUploading(true);
+      const uploadedUrls = await uploadMultipleImages(filesArray);
+      handleChange('imageList', [...(roomForm.imageList || []), ...uploadedUrls]);
+      console.log("Images uploaded successfully:", uploadedUrls);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <Container
       title="Chỉnh sửa phòng"
       linkToBack={"/admin/" + ADMIN_PATHS.ROOM_LIST}
       titleToBack="Quay trở lại"
     >
+      <div className={cx("box")}>
+        <div className={cx("box-item")}>
+          <div className={cx("upload-section")}>
+            <h3>Tải lên ảnh phòng</h3>
+            <div className={cx("image-upload-container")}>
+              <label className={cx("upload-button")}>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+                <div className={cx("add-image-button")}>
+                  <span>+</span>
+                </div>
+              </label>
+              
+              <div className={cx("preview-container")}>
+                {previewImages.map((preview, index) => (
+                  <div key={index} className={cx("preview-image-wrapper")}>
+                    <img 
+                      src={preview} 
+                      alt={`Preview ${index + 1}`} 
+                      className={cx("preview-image")}
+                    />
+                    <button
+                      className={cx("remove-image")}
+                      onClick={() => {
+                        setPreviewImages(prev => prev.filter((_, i) => i !== index));
+                        handleChange('imageList', 
+                          (roomForm.imageList || []).filter((_, i) => i !== index)
+                        );
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p className={cx("upload-note")}>
+              Chọn một hoặc nhiều ảnh để tải lên. Chấp nhận các định dạng: JPG, PNG, GIF
+            </p>
+          </div>
+        </div>
+      </div>
       <div className={cx("box")}>
         <div className={cx("box-item")}>
           <InputText
@@ -425,7 +504,7 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
           icon={<SaveOutlinedIcon />}
           content="Lưu"
           onClick={handleSave}
-          disabled={!isFormDirty()}
+          disabled={!isFormDirty() || isUploading}
         />
       </div>
     </Container>

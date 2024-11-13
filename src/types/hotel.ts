@@ -23,6 +23,16 @@ export type HotelInfo = {
     status: string;
 };
 
+export type Image = {
+    id: number;
+    url: string;
+    type?: string;
+    size?: number;
+    roomId?: number;
+    publicId?: string;
+    fileName?: string;
+    description?: string;
+}
 
 export type WarehouseForm = {
     id?: number;
@@ -68,6 +78,7 @@ export type RoomItem = {
     hasSoundproofing?: boolean;
     size?:number;
     images?:string;
+    imageList?: Image[];
 };
 
 export type ConsumableCategories = {
@@ -197,3 +208,13 @@ export type Booking = {
     consumablesUsed?: BookingConsumable[];
     equipmentDamagedList?: BookingEquipmentDamaged[];
 };
+
+export type Invoice = {
+    id?: number;
+    totalAmount?: number;
+    paymentMethod?: string;
+    booking?: Booking;
+    customer?: Customer;
+    issueDate?: number;
+    paymentStatus?: string;
+}

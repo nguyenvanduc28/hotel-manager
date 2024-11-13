@@ -673,12 +673,9 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
               <div className={cx("item-box-wrapper", "item-box--value")}>
                 <div className={cx("item-left")}>
                   <div className={cx("item-image")}>
-                    {room.images ? (
+                    {room.imageList ? (
                       <img
-                        src={
-                          JSON.parse(room.images.replace(/,\]$/, "]"))[0] ||
-                          "default-image-url.jpg"
-                        }
+                        src={room.imageList[0].url || ''}
                         alt="imageroom"
                       />
                     ) : (

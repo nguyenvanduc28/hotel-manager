@@ -6,7 +6,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import styles from "./CustomerList.module.scss";
 import classNames from "classnames/bind";
 import Search from "../../../components/Search/Search";
-import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
+import { ADMIN_PATHS, RECEPTION_PATHS } from "../../../constants/admin/adminPath";
 import { useNavigate } from "react-router-dom";
 import { Customer } from "../../../types/hotel";
 import { getCustomers } from "../../../apis/bookingApis/bookingApis";
@@ -31,7 +31,7 @@ const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Tên",
-    flex: 1,
+    flex: 1.5,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
@@ -41,7 +41,7 @@ const columns: GridColDef[] = [
   {
     field: "email",
     headerName: "Email",
-    flex: 2,
+    flex: 1.8,
     headerClassName: "datagrid-header",
     cellClassName: "datagrid-cell",
     headerAlign: "left",
@@ -154,6 +154,14 @@ const Customers = () => {
     console.log(input);
   };
 
+  const handleRowClick = (id: string) => {
+    const currentPath = window.location.pathname;
+    const path = currentPath.startsWith('/admin') ? 
+    '/admin/' + ADMIN_PATHS.CUSTOMER_DETAIL.replace(":id", id)
+    : '/reception/' + RECEPTION_PATHS.CUSTOMER_DETAIL.replace(":id", id);
+    navigate(path);
+  };
+
   return (
     <Container
       fullscreen
@@ -165,8 +173,6 @@ const Customers = () => {
           onClick={handleAddCustomer}
         />
       }
-      linkToBack="/admin"
-      titleToBack="Quay trở lại trang admin"
     >
       <div className={cx("customer-list-box")}>
         <div className={cx("search")}>
@@ -185,6 +191,7 @@ const Customers = () => {
               disableColumnSorting={true}
               rowSelection={false}
               hideFooterPagination={true}
+              onRowClick={(params) => handleRowClick(params.row.id)}
             />
           )}
         </div>

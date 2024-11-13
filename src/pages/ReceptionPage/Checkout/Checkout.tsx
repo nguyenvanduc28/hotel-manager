@@ -439,6 +439,12 @@ const Checkout = () => {
 
   const renderConfirmCheckout = () => (
     <Dialog
+      sx={{
+        '& .MuiBackdrop-root': {
+          backgroundColor: 'rgb(0 0 0 / 0.3)'
+        }
+      }}
+
       open={isConfirmCheckoutOpen}
       onClose={() => setIsConfirmCheckoutOpen(false)}
     >

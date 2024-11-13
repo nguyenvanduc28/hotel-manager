@@ -32,7 +32,18 @@ export const getInvoicesByCustomerId = async (customerId: number) => {
         console.error(errorMessage);
         throw new Error(errorMessage);
     }
-}; 
+};
+
+export const getInvoiceByBookingId = async (bookingId: number) => {
+    try {
+        const response = await axiosInstance.get(`/admin/invoices/booking/${bookingId}`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy thông tin hóa đơn theo booking ID thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
 
 export const createInvoice = async (bookingDto: Booking) => {
     try {
@@ -43,4 +54,9 @@ export const createInvoice = async (bookingDto: Booking) => {
         console.error(errorMessage);
         throw new Error(errorMessage);
     }
+};
+
+export const checkInvoiceExistsByBookingId = async (bookingId: number) => {
+    const response = await axiosInstance.get(`/admin/invoices/check-invoice-exists/${bookingId}`);
+    return response.data;
 };

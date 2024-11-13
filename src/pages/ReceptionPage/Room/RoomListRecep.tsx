@@ -376,15 +376,6 @@ const RoomListRecep = () => {
   return (
     <Container
       title="Danh sách phòng"
-      button={
-        <Button
-          icon={<AddCircleOutlineIcon />}
-          content="Thêm phòng"
-          onClick={handleAddRoom}
-        />
-      }
-      linkToBack="/admin"
-      titleToBack="Quay trở lại trang admin"
     >
       <div className={cx("room-list-box")}>
         <div className={cx("search")}>

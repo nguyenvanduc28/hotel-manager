@@ -56,6 +56,11 @@ const ConsumablesModal = ({ open, onClose, rooms, onSave, consumablesSelected }:
 
   return (
     <Dialog 
+      sx={{
+        '& .MuiBackdrop-root': {
+          backgroundColor: 'rgb(0 0 0 / 0.3)'
+        }
+      }}
       open={open} 
       onClose={onClose}
       maxWidth="md"

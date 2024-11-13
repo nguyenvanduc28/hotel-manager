@@ -29,7 +29,16 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
     navigate(link);
   };
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog sx={{
+      '& .MuiBackdrop-root': {
+        backgroundColor: 'rgb(0 0 0 / 0.3)'
+      }
+      }} 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="md" 
+      fullWidth
+    >
       <div className={cx("modal-content")}>
         <div className={cx("title")}>Thông tin phòng</div>
         <div className={cx("divider")} />
@@ -41,25 +50,25 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
               <td>
                 <strong className={cx("info-title")}>Số phòng</strong>
               </td>
-              <td className={cx("info-value")}>{roomInfo.roomNumber}</td>
+              <td className={cx("info-value")}>{roomInfo.roomNumber || "_"}</td>
             </tr>
             <tr>
               <td>
                 <strong className={cx("info-title")}>Tầng</strong>
               </td>
-              <td className={cx("info-value")}>{roomInfo.floor}</td>
+              <td className={cx("info-value")}>{roomInfo.floor || "_"}</td>
             </tr>
             <tr>
               <td>
                 <strong className={cx("info-title")}>Mô tả</strong>
               </td>
-              <td className={cx("info-value")}>{roomInfo.description}</td>
+              <td className={cx("info-value")}>{roomInfo.description || "_"}</td>
             </tr>
             <tr>
               <td>
                 <strong className={cx("info-title")}>Diện tích</strong>
               </td>
-              <td className={cx("info-value")}>{roomInfo.size} m²</td>
+              <td className={cx("info-value")}>{roomInfo.size || "_"} m²</td>
             </tr>
             <tr>
               <td>
@@ -73,14 +82,14 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
               <td>
                 <strong className={cx("info-title")}>Loại phòng</strong>
               </td>
-              <td className={cx("info-value")}>{roomInfo.roomType?.name}</td>
+              <td className={cx("info-value")}>{roomInfo.roomType?.name || "_"}</td>
             </tr>
             <tr>
               <td>
                 <strong className={cx("info-title")}>Số giường đơn</strong>
               </td>
               <td className={cx("info-value")}>
-                {roomInfo.roomType?.singleBedCount}
+                {roomInfo.roomType?.singleBedCount || "_"}
               </td>
             </tr>
             <tr>
@@ -88,7 +97,7 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
                 <strong className={cx("info-title")}>Số giường đôi</strong>
               </td>
               <td className={cx("info-value")}>
-                {roomInfo.roomType?.doubleBedCount}
+                {roomInfo.roomType?.doubleBedCount || "_"}
               </td>
             </tr>
             <tr>
@@ -114,7 +123,7 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
                 <strong className={cx("info-title")}>Sức chứa tối đa</strong>
               </td>
               <td className={cx("info-value")}>
-                {roomInfo.roomType?.maxOccupancy}
+                {roomInfo.roomType?.maxOccupancy || "_"}
               </td>
             </tr>
             <tr>
@@ -122,7 +131,7 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
                 <strong className={cx("info-title")}>Giá cơ bản mỗi đêm</strong>
               </td>
               <td className={cx("info-value")}>
-                {roomInfo.roomType?.basePricePerNight?.toLocaleString()}đ
+                {roomInfo.roomType?.basePricePerNight?.toLocaleString() || "_"}đ
               </td>
             </tr>
           </tbody>
@@ -323,10 +332,10 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
             <tbody className={cx("info-tbody")}>
               {roomInfo.consumables.map((consumable) => (
                 <tr key={consumable.id}>
-                  <td className={cx("info-value")}>{consumable.name}</td>
-                  <td className={cx("info-value")}>{consumable.quantity}</td>
-                  <td className={cx("info-value")}>{consumable.unit}</td>
-                  <td>{consumable.price?.toLocaleString()}đ</td>
+                  <td className={cx("info-value")}>{consumable.name || "_"  }</td>
+                  <td className={cx("info-value")}>{consumable.quantity || "_"}</td>
+                  <td className={cx("info-value")}>{consumable.unit || "_"}</td>
+                  <td>{consumable.price?.toLocaleString() || "_"}đ</td>
                 </tr>
               ))}
             </tbody>
@@ -348,8 +357,8 @@ const RoomIndoModal: React.FC<BookingInfoModalProps> = ({
             <tbody className={cx("info-tbody")}>
               {roomInfo.equipmentList.map((equipment) => (
                 <tr key={equipment.id}>
-                  <td className={cx("info-value")}>{equipment.name}</td>
-                  <td className={cx("info-value")}>{equipment.status}</td>
+                  <td className={cx("info-value")}>{equipment.name || "_"}</td>
+                  <td className={cx("info-value")}>{equipment.status || "_"}</td>
                   <td className={cx("info-value")}>
                     {equipment.installationDate &&
                       moment
