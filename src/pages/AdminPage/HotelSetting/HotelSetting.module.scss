@@ -1,0 +1,104 @@
+.form-row {
+  display: flex;
+  gap: 20px;
+  
+  > * {
+    flex: 1;
+  }
+} 
+
+.box {
+  margin-bottom: 24px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.button-save {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.upload-section {
+  margin-bottom: 20px;
+
+  h3 {
+    margin-bottom: 12px;
+  }
+}
+
+.image-upload-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.upload-button {
+  cursor: pointer;
+}
+
+.add-image-button {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #666;
+  
+  &:hover {
+    border-color: #999;
+    color: #999;
+  }
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-image-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.remove-image {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-note {
+  margin-top: 10px;
+  color: #666;
+  font-size: 0.9em;
+} 

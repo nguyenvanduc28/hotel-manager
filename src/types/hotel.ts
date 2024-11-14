@@ -1,26 +1,27 @@
 import {  BookingStatus, EMPLOYEE_STATUS, EquipmentStatus, GENDERS, Roles, RoomStatus } from "../constants/admin/constants";
 
 export type HotelInfo = {
-    hotelId: string;
+    id: number;
     name: string;
-    rating: number;
-    address: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    latitude: number;
-    longitude: number;
-    phoneNumber: string;
-    email: string;
+    rating?: number;
+    address?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    latitude?: number;
+    longitude?: number;
+    phoneNumber?: string;
+    email?: string;
     websiteUrl?: string;
-    numberOfRooms: number;
-    checkInTime: number;
-    checkOutTime: number;
-    description: string;
-    logoUrl: string;
-    totalStaff: number;
-    ownerName: string;
-    status: string;
+    numberOfRooms?: number;
+    checkInTime?: string;
+    checkOutTime?: string;
+    description?: string;
+    logoUrl?: string;
+    totalStaff?: number;
+    ownerName?: string;
+    status?: string;
+    images?: Image[];
 };
 
 export type Image = {
@@ -29,6 +30,7 @@ export type Image = {
     type?: string;
     size?: number;
     roomId?: number;
+    hotelId?: number;
     publicId?: string;
     fileName?: string;
     description?: string;

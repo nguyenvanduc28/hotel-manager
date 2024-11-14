@@ -673,7 +673,7 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
               <div className={cx("item-box-wrapper", "item-box--value")}>
                 <div className={cx("item-left")}>
                   <div className={cx("item-image")}>
-                    {room.imageList ? (
+                    {room.imageList && room.imageList.length > 0 ? (
                       <img
                         src={room.imageList[0].url || ''}
                         alt="imageroom"
