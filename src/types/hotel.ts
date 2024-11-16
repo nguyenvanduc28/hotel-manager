@@ -22,6 +22,20 @@ export type HotelInfo = {
     ownerName?: string;
     status?: string;
     images?: Image[];
+    isSmokingAllowed?: boolean;
+    hasPrivateKitchen?: boolean;
+    hasPrivateBathroom?: boolean;
+    hasBalcony?: boolean;
+    hasLakeView?: boolean;
+    hasGardenView?: boolean;
+    hasPoolView?: boolean;
+    hasMountainView?: boolean;
+    hasLandmarkView?: boolean;
+    hasCityView?: boolean;
+    hasRiverView?: boolean;
+    hasCourtyardView?: boolean;
+    hasFreeWifi?: boolean;
+    hasSoundproofing?: boolean;
 };
 
 export type Image = {

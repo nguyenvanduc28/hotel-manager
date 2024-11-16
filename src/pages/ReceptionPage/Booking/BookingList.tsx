@@ -346,17 +346,19 @@ const BookingList = () => {
     setOpenRow(true);
   };
 
-  const handleReload = useCallback(() => {
-    const statusValue =
-    tab === "all"
-        ? ""
-        : `${
-            BOOKING_STATUS[
-              tab as unknown as keyof typeof BOOKING_STATUS
-            ]
-          }`;
+  const handleReload = useCallback((tabToMove?: string) => {
+    let statusKey = tabToMove;
+    if (tabToMove) {
+      const foundKey = Object.entries(BOOKING_STATUS).find(([key, value]) => value === tabToMove)?.[0];
+      if (foundKey) {
+        statusKey = foundKey;
+      }
+    }
+    
+    setTab(statusKey as BookingStatus);
+    const statusValue = statusKey ? BOOKING_STATUS[statusKey as keyof typeof BOOKING_STATUS] : '';
     fetchBookings(statusValue);
-  }, [tab]);
+  }, []);
 
   return (
     <Container title="Danh sách đặt phòng" fullscreen>

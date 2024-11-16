@@ -16,13 +16,14 @@ import {
   unCheckInBooking,
 } from "../../../apis/bookingApis/bookingApis";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 interface BookingInfoModalProps {
   open: boolean;
   onClose: () => void;
   bookingData: Booking;
-  onReload: () => void;
+  onReload: (tabToMove?: string) => void;
 }
 
 const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
@@ -50,7 +51,8 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
   const requestUnconfirmBooking = async (bookingId: number) => {
     try {
       await unConfirmBooking(bookingId);
-      onReload();
+      toast.success("Hủy xác nhận đặt phòng thành công");
+      onReload(BOOKING_STATUS.Pending);
       onClose();
     } catch (error) {
       console.log("Lỗi hủy xác nhận đặt phòng", error);
@@ -77,10 +79,12 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
       action: async () => {
         try {
           await requestConfirmBooking(bookingData.id);
-          onReload();
+          toast.success("Xác nhận đặt phòng thành công");
+          onReload(BOOKING_STATUS.Confirmed);
           onClose();
         } catch (error) {
           console.error("Lỗi xác nhận đặt phòng:", error);
+          toast.error("Lỗi xác nhận đặt phòng");
         }
         setConfirmDialog({ ...confirmDialog, open: false });
       },
@@ -95,10 +99,12 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
       action: async () => {
         try {
           await requestCheckinBooking(bookingData.id);
-          onReload();
+          toast.success("Check-in thành công");
+          onReload(BOOKING_STATUS.CheckedIn);
           onClose();
         } catch (error) {
           console.error("Lỗi checkin:", error);
+          toast.error("Lỗi checkin");
         }
         setConfirmDialog({ ...confirmDialog, open: false });
       },
@@ -114,7 +120,7 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
 
   const handleCancel = () => {
     // Thêm logic để xử lý khi hủy
-    onReload();
+    onReload(BOOKING_STATUS.Canceled);
   };
 
   const handlePayment = () => {
@@ -153,10 +159,12 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
       action: async () => {
         try {
           await unCheckInBooking(bookingData.id);
-          onReload();
+          toast.success("Hủy check-in thành công");
+          onReload(BOOKING_STATUS.Confirmed);
           onClose();
         } catch (error) {
           console.error("Lỗi hủy check-in:", error);
+          toast.error("Lỗi hủy check-in");
         }
         setConfirmDialog({ ...confirmDialog, open: false });
       },
@@ -171,10 +179,12 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
       action: async () => {
         try {
           await unConfirmBooking(bookingData.id);
-          onReload();
+          toast.success("Hủy xác nhận đặt phòng thành công");
+          onReload(BOOKING_STATUS.Pending);
           onClose();
         } catch (error) {
           console.error("Lỗi hủy xác nhận đặt phòng:", error);
+          toast.error("Lỗi hủy xác nhận đặt phòng");
         }
         setConfirmDialog({ ...confirmDialog, open: false });
       },
