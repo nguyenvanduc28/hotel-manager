@@ -15,9 +15,9 @@ const Logo: React.FC<LogoProps> = ({ isCollapse = false }) => {
     <div className={cx("logoWrapper")}>
       <a href="/">
         <div className={cx("logo")}>
-          <img src={hotelInfo?.logoUrl} alt="logo" className={cx("logoImg")} />
+          <img src={hotelInfo?.logoUrl || "/HOTEL_BOOKING.png"} alt="logo" className={cx("logoImg")} />
           {!isCollapse && (
-            <div className={cx("hotelName")}>{hotelInfo?.name}</div>
+            <div className={cx("hotelName")}>{hotelInfo?.name || "Hotel Name"}</div>
           )}
         </div>
       </a>

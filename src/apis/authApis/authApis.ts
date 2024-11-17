@@ -55,3 +55,13 @@ export const verifyToken = async (payload: VerifyTokenPayload) => {
         throw error;
     }
 };
+
+export const registerApi = async (payload: RegisterPayload) => {
+    try {
+        const response = await axiosInstance.post('/admin/auth/register-admin', payload);
+        return response.data;
+    } catch (error) {
+        console.error('Đăng ký thất bại:', error);
+        throw error;
+    }
+};

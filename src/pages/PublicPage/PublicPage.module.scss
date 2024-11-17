@@ -1,0 +1,120 @@
+.public-page {
+  background-color: #f0f0f0;
+  .header {
+    background-color: #003B95;
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      .logo {
+        display: flex;
+        align-items: center;
+        color: #fff;
+        .logo-img {
+          width: 100px;
+          height: 100px;
+          object-fit: contain;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+      }
+      .header-slogan {
+        h2 {
+          font-size: 24px;
+          font-weight: 600;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+.main-content {
+  min-height: 80vh;
+  margin: 0 auto;
+  padding: 40px 20px;
+
+  .search-section {
+    margin-bottom: 40px;
+  }
+
+  .results-section {
+    width: 70%;
+    margin: 0 auto;
+    .search-results {
+      display: grid;
+      width: 100%;
+      grid-template-columns: auto auto;
+      gap: 10px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+      p {
+        font-size: 18px;
+        color: #666;
+      }
+    }
+  }
+}
+
+.footer {
+  background-color: #003B95;
+  color: #fff;
+  padding: 40px 0 20px;
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    padding: 0 20px;
+
+    .footer-section {
+      h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 20px;
+
+        a {
+          color: #fff;
+          text-decoration: none;
+          font-size: 14px;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+}

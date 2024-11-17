@@ -39,3 +39,7 @@ export const RECEPTION_PATHS = {
   CUSTOMER_DETAIL: "customer/:id",
   NO_PERMISSION: "no-permission",
 }
+
+export const PUBLIC_PATHS = {
+  PUBLIC_PAGE: "/",
+}

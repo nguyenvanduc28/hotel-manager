@@ -21,6 +21,7 @@ import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
 import Search from "../../../components/Search/Search";
 import { toast } from "react-toastify";
+import { Divider } from "@mui/material";
 
 const cx = classNames.bind(styles);
 
@@ -47,9 +48,9 @@ const LocationMarker = ({ position, onPositionChange }: any) => {
 };
 
 const HotelSetting = () => {
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const { hotelInfo, isLoading, updateHotelInfo } = useHotel();
+  const [originalHotelForm, setOriginalHotelForm] = useState<HotelInfo | null>(null);
   console.log(hotelInfo);
   const [mapCenter, setMapCenter] = useState(defaultPosition);
   const [hotelForm, setHotelForm] = useState<HotelInfo>({
@@ -73,11 +74,23 @@ const HotelSetting = () => {
     totalStaff: 0,
     ownerName: "",
     status: "",
+    hasWifi: false,
+    hasParking: false,
+    hasRestaurant: false,
+    hasSwimmingPool: false,
+    hasConferenceRoom: false,
+    has24HourFrontDesk: false,
+    hasBar: false,
+    hasElevator: false,
+    hasAirConditioning: false,
+    hasShuttle: false,
+    otherAmenities: "",
   });
 
   useEffect(() => {
     if (hotelInfo && !isLoading) {
       setHotelForm(hotelInfo);
+      setOriginalHotelForm(hotelInfo);
       setMapCenter([hotelInfo.latitude || defaultPosition[0], hotelInfo.longitude || defaultPosition[1]]);
     }
   }, [isLoading]);
@@ -151,6 +164,15 @@ const HotelSetting = () => {
     }));
   };
 
+  const hasChanges = () => {
+    if (!originalHotelForm) return false;
+    
+    return Object.keys(hotelForm).some((key) => {
+      const k = key as keyof HotelInfo;
+      return hotelForm[k] !== originalHotelForm[k];
+    });
+  };
+
   const handleSave = async () => {
     if (!validateForm(hotelForm)) {
       return;
@@ -190,10 +212,6 @@ const HotelSetting = () => {
     if (!e.target.files) return;
 
     const filesArray = Array.from(e.target.files);
-
-    // Create preview URLs
-    const previews = filesArray.map((file) => URL.createObjectURL(file));
-    setPreviewImages((prev) => [...prev, ...previews]);
 
     try {
       setIsUploading(true);
@@ -406,9 +424,6 @@ const HotelSetting = () => {
                       <button
                         className={cx("remove-image")}
                         onClick={() => {
-                          setPreviewImages((prev) =>
-                            prev.filter((_, i) => i !== index)
-                          );
                           handleChange(
                             "images",
                             (hotelForm.images || []).filter(
@@ -438,7 +453,7 @@ const HotelSetting = () => {
           placeholder="Nhập mô tả khách sạn"
         />
         <div className={cx('map-container')}>
-          <h3>Vị trí khách sạn trên bản đồ (Click để chọn vị trí)</h3>
+          <h3>Vị trí khách sạn trên bản đồ  <span className={cx('map-note')}> (Click để chọn vị trí)</span></h3>
           
           {/* Thêm phần tìm kiếm */}
           <div className={cx('search-container')}>
@@ -499,25 +514,123 @@ const HotelSetting = () => {
               title="Vĩ độ"
               type="number"
               placeholder="Nhập vĩ độ"
-              onChange={(e) => handleChange('latitude', parseFloat(e.target.value))}
+              onChange={(e) => {
+                handleChange('latitude', parseFloat(e.target.value));
+                // setMapCenter([parseFloat(e.target.value), mapCenter[1]]);
+              }}
             />
             <InputText
               value={hotelForm.longitude?.toString()}
               title="Kinh độ"
               type="number"
               placeholder="Nhập kinh độ"
-              onChange={(e) => handleChange('longitude', parseFloat(e.target.value))}
+              onChange={(e) => {
+                handleChange('longitude', parseFloat(e.target.value));
+                // setMapCenter([mapCenter[0], parseFloat(e.target.value)]);
+              }}
             />
           </div>
         </div>
+
+        <div className={cx("divider")}>
+          <Divider />
+        </div>
+        <h3>Tiện ích khách sạn</h3>
+        <div className={cx("description-detail")}>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasWifi}
+              onChange={(e) => handleChange("hasWifi", e.target.checked)}
+            />
+            <span>Wifi</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasParking}
+              onChange={(e) => handleChange("hasParking", e.target.checked)}
+            />
+            <span>Bãi đậu xe</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasRestaurant}
+              onChange={(e) => handleChange("hasRestaurant", e.target.checked)}
+            />
+            <span>Nhà hàng</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasSwimmingPool}
+              onChange={(e) => handleChange("hasSwimmingPool", e.target.checked)}
+            />
+            <span>Hồ bơi</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasConferenceRoom}
+              onChange={(e) => handleChange("hasConferenceRoom", e.target.checked)}
+            />
+            <span>Phòng hội nghị</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.has24HourFrontDesk}
+              onChange={(e) => handleChange("has24HourFrontDesk", e.target.checked)}
+            />
+            <span>Lễ tân 24 giờ</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasBar}
+              onChange={(e) => handleChange("hasBar", e.target.checked)}
+            />
+            <span>Quầy bar</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasElevator}
+              onChange={(e) => handleChange("hasElevator", e.target.checked)}
+            />
+            <span>Thang máy</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasAirConditioning}
+              onChange={(e) => handleChange("hasAirConditioning", e.target.checked)}
+            />
+            <span>Điều hòa</span>
+          </label>
+          <label className={cx("option")}>
+            <input
+              type="checkbox"
+              checked={hotelForm.hasShuttle}
+              onChange={(e) => handleChange("hasShuttle", e.target.checked)}
+            />
+            <span>Xe đưa đón</span>
+          </label>
+        </div>
+        <TextArea
+          title="Tiện ích khác"
+          value={hotelForm.otherAmenities}
+          onChange={(e) => handleChange("otherAmenities", e.target.value)}
+          placeholder="Nhập các tiện ích khác"
+        />
 
         <div className={cx("button-save")}>
           <Button
             icon={<SaveOutlinedIcon />}
             content="Lưu"
             onClick={handleSave}
-            disabled={isUploading}
-            // showToast={true}
+            disabled={isUploading || !hasChanges()}
           />
         </div>
       </div>

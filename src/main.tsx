@@ -7,7 +7,8 @@ import { HotelProvider } from "./contexts/HoltelContext.tsx";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <Router>
@@ -16,7 +17,7 @@ createRoot(document.getElementById("root")!).render(
         <App />
       </HotelProvider>
     </AuthProvider>
-    <ToastContainer />
+    <ToastContainer position="bottom-center" />
   </Router>
   // </StrictMode>
 );

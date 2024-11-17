@@ -40,6 +40,8 @@ import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import GroupRadio from "../../../components/GroupRadio/GroupRadio";
 import TextArea from "../../../components/TextArea/TextArea";
 import { searchCustomersByName } from "../../../apis/customerApis/customerApis";
+import SelectContainer from "../../../components/Select/SelectContainer";
+import { countries } from "../../../constants/regions";
 
 type BookingCreateProps = {};
 
@@ -950,19 +952,20 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
             <div className={cx("box-item")}>
               <InputText
                 value={customerForm.address}
-                variant="inline-group"
                 title="Địa chỉ"
                 placeholder="Nhập địa chỉ"
                 onChange={(e) => handleChangeCus("address", e.target.value)}
               />
             </div>
             <div className={cx("box-item")}>
-              <InputText
-                value={customerForm.nationality}
-                variant="inline-group"
+              <SelectContainer
                 title="Quốc tịch"
-                placeholder="Nhập quốc tịch"
-                onChange={(e) => handleChangeCus("nationality", e.target.value)}
+                value={customerForm.nationality}
+                onChange={(value) => handleChangeCus("nationality", value)}
+                options={countries.map((country) => ({
+                  value: country.name,
+                  label: country.name,
+                }))}
               />
             </div>
           </div>

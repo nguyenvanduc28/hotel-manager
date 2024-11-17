@@ -2,7 +2,8 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "../types/auth";
 import { useNavigate } from "react-router-dom";
 import { login as loginApi, verifyToken } from "../apis/authApis/authApis"; 
-import { Roles } from "../constants/admin/constants"; 
+import { register as registerApi } from "../apis/authApis/authApis";
+import { Role } from "../types/hotel";
 
 type UserWithToken = User & { token: string };
 
@@ -11,6 +12,7 @@ interface AuthContextType {
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
+  register: (username: string, password: string, roles: Role[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,9 +81,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 };
 
+const register = async (username: string, password: string, roles: Role[]) => {
+  setLoading(true);
+  try {
+    const data = await registerApi({ username, password, roles });
+    
+    const { token, user } = data;
+    const userWithToken = { ...user, token };
+
+    setUser(userWithToken);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userWithToken));
+
+    navigate("/admin/hotel-setting");
+  } catch (error) {
+    console.error("Đăng ký thất bại:", error);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, register }}>
       {!loading && children}
     </AuthContext.Provider>
   );

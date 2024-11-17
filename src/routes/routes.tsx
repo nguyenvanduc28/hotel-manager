@@ -14,7 +14,7 @@ import HotelSetting from "../pages/AdminPage/HotelSetting/HotelSetting";
 import { ROLES } from "../constants/auth/roleConstants";
 import EmployeeRole from "../pages/AdminPage/Employees/EmployeeRole";
 import ServiceUsage from "../pages/AdminPage/Services/ServiceUsage";
-import { ADMIN_PATHS, RECEPTION_PATHS } from "../constants/admin/adminPath";
+import { ADMIN_PATHS, PUBLIC_PATHS, RECEPTION_PATHS } from "../constants/admin/adminPath";
 import RoomAmenityCreate from "../pages/AdminPage/RoomAmenities/RoomAmenityCreate";
 import RoomTypeCreate from "../pages/AdminPage/RoomType/RoomTypeCreate";
 import RoomListCreate from "../pages/AdminPage/RoomList/RoomListCreate";
@@ -30,6 +30,7 @@ import Payment from "../pages/ReceptionPage/Payment/Payment";
 import InvoiceList from "../pages/ReceptionPage/Invoice/InvoiceList";
 import NoPermission from "../pages/NoPermission";
 import CustomerDetail from "../pages/AdminPage/Customers/CustomerDetail";
+import PublicPage from "../pages/PublicPage/PublicPage";
 
 export type RouteWrapperProps = {
   path: string;
@@ -215,6 +216,13 @@ export const ReceptionRoutes: RouteWrapperProps[] = [
     path: RECEPTION_PATHS.CUSTOMER_DETAIL,
     element: <CustomerDetail />,
     allowedRoles: [ROLES.ADMIN, ROLES.RECEPTIONIST],
+  },
+]
+export const PublicRoutes: RouteWrapperProps[] = [
+  {
+    path: PUBLIC_PATHS.PUBLIC_PAGE,
+    element: <PublicPage />,
+    allowedRoles: [],
   },
 ]
 export default AdminRoutes;

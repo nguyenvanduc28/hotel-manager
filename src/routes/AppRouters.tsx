@@ -2,11 +2,12 @@ import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import AdminLayout from "../layouts/AdminLayout/AdminLayout";
 import { useAuth } from "../hooks/useAuth";
 import NoPermission from "../pages/NoPermission";
-import AdminRouters, { ReceptionRoutes } from "./routes";
+import AdminRouters, { PublicRoutes, ReceptionRoutes } from "./routes";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import { useEffect } from "react";
 import NotFound from "../pages/NotFound";
 import ReceptionLayout from "../layouts/ReceptionLayout/ReceptionLayout";
+import RegisterPage from "../pages/AuthPage/RegisterPage";
 
 interface ProtectedRouteProps {
   roles: string[];
@@ -59,6 +60,10 @@ const AppRouters: React.FC = () => {
         <Route path="/no-permission" element={<NoPermission />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register-admin" element={<RegisterPage />} />
+      {PublicRoutes.map((route) => (
+        <Route key={route.path} path={route.path} element={route.element} />
+      ))}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

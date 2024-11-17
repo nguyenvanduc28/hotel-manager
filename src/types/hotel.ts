@@ -22,20 +22,20 @@ export type HotelInfo = {
     ownerName?: string;
     status?: string;
     images?: Image[];
-    isSmokingAllowed?: boolean;
-    hasPrivateKitchen?: boolean;
-    hasPrivateBathroom?: boolean;
-    hasBalcony?: boolean;
-    hasLakeView?: boolean;
-    hasGardenView?: boolean;
-    hasPoolView?: boolean;
-    hasMountainView?: boolean;
-    hasLandmarkView?: boolean;
-    hasCityView?: boolean;
-    hasRiverView?: boolean;
-    hasCourtyardView?: boolean;
-    hasFreeWifi?: boolean;
-    hasSoundproofing?: boolean;
+
+    // Tiện ích cơ bản
+    hasWifi?: boolean;        // Có Wifi
+    hasParking?: boolean;     // Có bãi đậu xe
+    hasRestaurant?: boolean;  // Có nhà hàng
+    hasSwimmingPool?: boolean; // Có hồ bơi
+    hasConferenceRoom?: boolean; // Có phòng hội nghị
+    has24HourFrontDesk?: boolean; // Có lễ tân 24 giờ
+    hasBar?: boolean;         // Có quầy bar
+    hasElevator?: boolean;    // Có thang máy
+    hasAirConditioning?: boolean; // Có điều hòa
+    hasShuttle?: boolean;     // Có chuyến xe đưa đón
+    
+    otherAmenities?: string;  // Tiện ích khác
 };
 
 export type Image = {
@@ -234,3 +234,28 @@ export type Invoice = {
     issueDate?: number;
     paymentStatus?: string;
 }
+
+export type HotelSearchResult = {
+    id: number;
+    name: string;
+    address: string;
+    description: string;
+    rating: number;
+    images: Image[];
+    availableRooms: RoomInfo[];
+    lowestPrice: number;
+    hasWifi?: boolean;
+    hasParking?: boolean;
+    hasRestaurant?: boolean;
+    hasSwimmingPool?: boolean;
+    hasConferenceRoom?: boolean;
+    has24HourFrontDesk?: boolean;
+    hasBar?: boolean;
+    hasElevator?: boolean;
+    hasAirConditioning?: boolean;
+    hasShuttle?: boolean;
+    otherAmenities?: string;
+    longitude?: number;
+    latitude?: number;
+    logoUrl?: string;
+};

@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import GroupRadio from "../../../components/GroupRadio/GroupRadio";
 import { GENDERS } from "../../../constants/admin/constants";
 import moment from "moment";
+import SelectContainer from "../../../components/Select/SelectContainer";
+import { countries } from "../../../constants/regions";
 
 type CustomerCreateProps = {};
 
@@ -89,19 +91,21 @@ const CustomerCreate: React.FC<CustomerCreateProps> = () => {
         <div className={cx("box-item")}>
           <InputText
             value={customerForm.address}
-            variant="inline-group"
+            // variant="inline-group"
             title="Địa chỉ"
             placeholder="Nhập địa chỉ"
             onChange={(e) => handleChange("address", e.target.value)}
           />
         </div>
         <div className={cx("box-item")}>
-          <InputText
-            value={customerForm.nationality}
-            variant="inline-group"
+          <SelectContainer
             title="Quốc tịch"
-            placeholder="Nhập quốc tịch"
-            onChange={(e) => handleChange("nationality", e.target.value)}
+            value={customerForm.nationality}
+            onChange={(value) => handleChange("nationality", value)}
+            options={countries.map((country) => ({
+              value: country.name,
+              label: country.name,
+            }))}
           />
         </div>
       </div>
@@ -125,7 +129,7 @@ const CustomerCreate: React.FC<CustomerCreateProps> = () => {
                 ? moment.unix(customerForm.birthDay).format("YYYY-MM-DD")
                 : ""
             }
-            variant="inline-group"
+            // variant="inline-group"
             title="Ngày sinh"
             type="date"
             onChange={(e) => {
