@@ -1,36 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './PublicPage.module.scss';
 import classNames from 'classnames/bind';
-import SearchBar from './components/SearchBar/SearchBar';
-import { searchHotels } from '../../apis/hotelApis';
-import { toast } from 'react-toastify';
-import HotelCard from './components/HotelCard/HotelCard';
-import { HotelSearchResult } from '../../types/hotel';
 const cx = classNames.bind(styles);
 
-const PublicPage = () => {
-  const [searchResults, setSearchResults] = useState<HotelSearchResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+const PublicPage = ({ children }: { children: React.ReactNode }) => {
 
-  const handleSearch = async (searchData: {
-    location: string;
-    checkIn: number;
-    checkOut: number;
-  }) => {
-    try {
-      setIsLoading(true);
-      const results = await searchHotels({
-        location: searchData.location,
-        checkInDate: searchData.checkIn / 1000,
-        checkOutDate: searchData.checkOut / 1000
-      });
-      setSearchResults(results);
-    } catch (error) {
-      toast.error((error as Error).message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className={cx('public-page')}>
@@ -46,27 +20,7 @@ const PublicPage = () => {
         </div>
       </header>
       
-      <main className={cx('main-content')}>
-        <div className={cx('search-section')}>
-          <SearchBar onSearch={handleSearch} />
-        </div>
-
-        <div className={cx('results-section')}>
-          {isLoading ? (
-            <div className={cx('loading')}>Đang tìm kiếm...</div>
-          ) : searchResults.length > 0 ? (
-            <div className={cx('search-results')}>
-              {searchResults.map((hotel) => (
-                  <HotelCard key={hotel.id} hotel={hotel} />
-              ))}
-            </div>
-          ) : (
-            <div className={cx('no-results')}>
-              <p>Hãy tìm kiếm địa điểm</p>
-            </div>
-          )}
-        </div>
-      </main>
+      {children}
 
       <footer className={cx('footer')}>
         <div className={cx('footer-content')}>

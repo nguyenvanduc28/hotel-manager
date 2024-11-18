@@ -166,12 +166,13 @@ export const getRoomById = async (id: number) => {
 
 
 
-export const getAvailableRooms = async (checkInDate: number, checkOutDate: number) => {
+export const getAvailableRooms = async (checkInDate: number, checkOutDate: number, hotelId: number) => {
     try {
         const response = await axiosInstance.get('/admin/rooms/available', {
             params: {
                 checkInDate,
-                checkOutDate
+                checkOutDate,
+                hotelId
             }
         });
         return response.data;

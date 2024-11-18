@@ -103,6 +103,7 @@ export type CustomerForm = {
     identityNumber?: string;
     address?: string;
     notes?: string;
+    hotelId?: number;
 }
 
 export type BookingForm = {
@@ -124,4 +125,5 @@ export type BookingForm = {
     rooms: RoomInfo[];
     consumablesUsed?: BookingConsumable[];
     equipmentDamagedList?: BookingEquipmentDamaged[];
+    hotelId?: number;
 };

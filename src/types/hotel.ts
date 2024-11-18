@@ -235,27 +235,27 @@ export type Invoice = {
     paymentStatus?: string;
 }
 
-export type HotelSearchResult = {
+export interface HotelSearchResult {
     id: number;
     name: string;
     address: string;
     description: string;
     rating: number;
     images: Image[];
-    availableRooms: RoomInfo[];
+    availableRoomCount: number;
     lowestPrice: number;
-    hasWifi?: boolean;
-    hasParking?: boolean;
-    hasRestaurant?: boolean;
-    hasSwimmingPool?: boolean;
-    hasConferenceRoom?: boolean;
-    has24HourFrontDesk?: boolean;
-    hasBar?: boolean;
-    hasElevator?: boolean;
-    hasAirConditioning?: boolean;
-    hasShuttle?: boolean;
-    otherAmenities?: string;
-    longitude?: number;
-    latitude?: number;
-    logoUrl?: string;
-};
+    hasWifi: boolean;
+    hasParking: boolean;
+    hasRestaurant: boolean;
+    hasSwimmingPool: boolean;
+    hasConferenceRoom: boolean;
+    has24HourFrontDesk: boolean;
+    hasBar: boolean;
+    hasElevator: boolean;
+    hasAirConditioning: boolean;
+    hasShuttle: boolean;
+    otherAmenities: string;
+    longitude: number;
+    latitude: number;
+    logoUrl: string;
+}

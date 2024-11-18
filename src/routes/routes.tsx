@@ -30,7 +30,10 @@ import Payment from "../pages/ReceptionPage/Payment/Payment";
 import InvoiceList from "../pages/ReceptionPage/Invoice/InvoiceList";
 import NoPermission from "../pages/NoPermission";
 import CustomerDetail from "../pages/AdminPage/Customers/CustomerDetail";
-import PublicPage from "../pages/PublicPage/PublicPage";
+import SearchPage from "../pages/PublicPage/SearchPage";
+import HotelInfo from "../pages/PublicPage/HotelInfo";
+import BookingPublic from "../pages/PublicPage/BookingPublic";
+import AlertBookingSuccess from "../pages/PublicPage/AlertBookingSuccess";
 
 export type RouteWrapperProps = {
   path: string;
@@ -221,7 +224,22 @@ export const ReceptionRoutes: RouteWrapperProps[] = [
 export const PublicRoutes: RouteWrapperProps[] = [
   {
     path: PUBLIC_PATHS.PUBLIC_PAGE,
-    element: <PublicPage />,
+    element: <SearchPage />,
+    allowedRoles: [],
+  },
+  {
+    path: PUBLIC_PATHS.HOTEL_INFO,
+    element: <HotelInfo />,
+    allowedRoles: [],
+  },
+  {
+    path: PUBLIC_PATHS.BOOKING_PUBLIC,
+    element: <BookingPublic />,
+    allowedRoles: [],
+  },
+  {
+    path: PUBLIC_PATHS.ALERT_BOOKING_SUCCESS,
+    element: <AlertBookingSuccess />,
     allowedRoles: [],
   },
 ]

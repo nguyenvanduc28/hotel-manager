@@ -34,6 +34,11 @@ export const getHotelInfo = async () => {
     return response.data;
 };
 
+export const getHotelById = async (id: number) => {
+    const response = await axiosInstance.get(`/admin/hotels/get/${id}`);
+    return response.data;
+};
+
 export const searchHotels = async (params: SearchParams) => {
   try {
     const response = await axiosInstance.get('/api/search/hotels', {

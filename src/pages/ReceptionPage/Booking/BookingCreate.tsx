@@ -42,6 +42,7 @@ import TextArea from "../../../components/TextArea/TextArea";
 import { searchCustomersByName } from "../../../apis/customerApis/customerApis";
 import SelectContainer from "../../../components/Select/SelectContainer";
 import { countries } from "../../../constants/regions";
+import { useHotel } from "../../../hooks/useHotel";
 
 type BookingCreateProps = {};
 
@@ -369,6 +370,7 @@ const hiddenColumns: GridColDef[] = [
 ];
 
 const BookingCreate: React.FC<BookingCreateProps> = () => {
+  const { hotelInfo } = useHotel();
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openModalCus, setOpenModalCus] = useState<boolean>(false);
@@ -432,10 +434,11 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
   };
   const fetchAvailableRooms = async (
     checkInDate: number,
-    checkOutDate: number
+    checkOutDate: number,
+    hotelId: number
   ) => {
     try {
-      const rooms = await getAvailableRooms(checkInDate, checkOutDate);
+      const rooms = await getAvailableRooms(checkInDate, checkOutDate, hotelId);
       setRoomList(rooms);
     } catch (error) {
       console.error("Failed to fetch available rooms:", error);
@@ -582,7 +585,8 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                   if (nights > 0) {
                     fetchAvailableRooms(
                       bookingForm.checkInDate,
-                      checkOutTimestamp
+                      checkOutTimestamp,
+                      hotelInfo?.id || 0
                     );
                   }
                 }}

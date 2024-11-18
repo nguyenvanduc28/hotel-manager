@@ -42,4 +42,7 @@ export const RECEPTION_PATHS = {
 
 export const PUBLIC_PATHS = {
   PUBLIC_PAGE: "/",
+  HOTEL_INFO: "/hotel/info",
+  BOOKING_PUBLIC: "/booking/public",
+  ALERT_BOOKING_SUCCESS: "/alert-booking-success",
 }

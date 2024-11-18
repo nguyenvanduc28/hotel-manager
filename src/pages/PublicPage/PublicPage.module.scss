@@ -29,39 +29,6 @@
     }
   }
 }
-.main-content {
-  min-height: 80vh;
-  margin: 0 auto;
-  padding: 40px 20px;
-
-  .search-section {
-    margin-bottom: 40px;
-  }
-
-  .results-section {
-    width: 70%;
-    margin: 0 auto;
-    .search-results {
-      display: grid;
-      width: 100%;
-      grid-template-columns: auto auto;
-      gap: 10px;
-    }
-
-    .no-results {
-      text-align: center;
-      padding: 40px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
-      p {
-        font-size: 18px;
-        color: #666;
-      }
-    }
-  }
-}
 
 .footer {
   background-color: #003B95;

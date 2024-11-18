@@ -7,14 +7,25 @@ import {
   MeetingRoom, AccessTime, LocalBar, Elevator,
   AcUnit, AirportShuttle, LocationOn 
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { PUBLIC_PATHS } from '../../../../constants/admin/adminPath';
 
 const cx = classNames.bind(styles);
 
 interface HotelCardProps {
   hotel: HotelSearchResult;
+  checkInDate: number;
+  checkOutDate: number;
 }
 
-const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
+const HotelCard: React.FC<HotelCardProps> = ({ hotel, checkInDate, checkOutDate }) => {
+  const navigate = useNavigate();
+  
+  const handleCardClick = () => {
+    const path = `${PUBLIC_PATHS.HOTEL_INFO}?hotelId=${hotel.id}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`;
+    navigate(path);
+  };
+
   const googleMapsUrl = `https://www.google.com/maps?q=${hotel.latitude},${hotel.longitude}`;
 
   const amenities = [
@@ -31,7 +42,7 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
   ];
 
   return (
-    <div className={cx('hotel-card')}>
+    <div className={cx('hotel-card')} onClick={handleCardClick}>
       <div className={cx('hotel-image')}>
         <img 
           src={hotel.images?.[0]?.url || '/hotel-placeholder.jpg'} 
@@ -77,7 +88,7 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
 
         <div className={cx('hotel-footer')}>
           <div className={cx('room-info')}>
-            <span>Còn {hotel.availableRooms.length} phòng trống</span>
+            <span>Còn {hotel.availableRoomCount} phòng trống</span>
           </div>
           <div className={cx('price-info')}>
             <span className={cx('price-label')}>Giá từ</span>
