@@ -670,8 +670,34 @@ const BookingPublic = () => {
                                 <span>Số đêm:</span>
                                 <span>{totalNights} đêm</span>
                             </div>
+                            <div className={cx('detail-item')}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <input 
+                                        type="checkbox"
+                                        id="guaranteedBooking"
+                                        checked={bookingForm.isGuaranteed}
+                                        onChange={(e) => {
+                                            const isGuaranteed = e.target.checked;
+                                            const deposit = isGuaranteed ? (bookingForm.totalCost || 0) * 0.2 : 0;
+                                            setBookingForm(prev => ({
+                                                ...prev,
+                                                isGuaranteed,
+                                                deposit
+                                            }));
+                                        }}
+                                        style={{ width: '16px', height: '16px' }}
+                                    />
+                                    <label className={cx('guaranteed-label')} htmlFor="guaranteedBooking">Đặt phòng đảm bảo?</label>
+                                </div>
+                            </div>
+                            {bookingForm.isGuaranteed && (
+                                <div className={cx('detail-item')}>
+                                    <span>Tiền đặt cọc:</span>
+                                    <span>{bookingForm.deposit?.toLocaleString() || 0} VNĐ</span>
+                                </div>
+                            )}
                             <div className={cx('detail-item', 'total-cost')}>
-                                <span>Tổng tiền:</span>
+                                <span>Tổng tiền phòng:</span>
                                 <span>{bookingForm.totalCost?.toLocaleString() || 0} VNĐ</span>
                             </div>
                         </div>
