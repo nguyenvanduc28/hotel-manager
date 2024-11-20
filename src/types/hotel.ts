@@ -147,13 +147,13 @@ export type EmployeeStatus = typeof EMPLOYEE_STATUS[keyof typeof EMPLOYEE_STATUS
 export type Employee = {
     id?: string;
     name?: string;
-    dateOfBirth?: number;
+    birthDay?: number;
     gender?: Genders;
-    nationalId?: string;
+    nationality?: string;
     phoneNumber?: string;
     email?: string;
     address?: string;
-    startDate?: string;
+    startDate?: number;
     status?: EmployeeStatus;
     profilePictureUrl?: string;
     emergencyContactName?: string;
@@ -161,6 +161,7 @@ export type Employee = {
     emergencyContactPhone?: string;
     notes?: string;
     positionName?: string;
+    user?: AuthUser;
 };
 
 export type Customer = {
@@ -259,3 +260,10 @@ export interface HotelSearchResult {
     latitude: number;
     logoUrl: string;
 }
+
+
+export interface AuthUser {
+    username: string;
+    password: string;
+    roles: Role[];
+  }

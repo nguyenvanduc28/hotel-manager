@@ -34,6 +34,7 @@ import SearchPage from "../pages/PublicPage/SearchPage";
 import HotelInfo from "../pages/PublicPage/HotelInfo";
 import BookingPublic from "../pages/PublicPage/BookingPublic";
 import AlertBookingSuccess from "../pages/PublicPage/AlertBookingSuccess";
+import EmployeeAction from "../pages/AdminPage/Employees/EmployeeAction";
 
 export type RouteWrapperProps = {
   path: string;
@@ -101,6 +102,11 @@ const AdminRoutes: RouteWrapperProps[] = [
   {
     path: ADMIN_PATHS.EMPLOYEES,
     element: <Employees />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
+    path: ADMIN_PATHS.EMPLOYEE_ACTION,
+    element: <EmployeeAction />,
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {

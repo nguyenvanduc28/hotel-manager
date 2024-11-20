@@ -9,7 +9,11 @@ import { StyledChip } from "../../../components/StyledChip/StyledChip";
 import { EmployeeInfo } from "../../../types/forms";
 import { EMPLOYEE_STATUS, GENDERS } from "../../../constants/admin/constants";
 import ShowInfoDialog from "../../../components/ShowInfoDialog/ShowInfoDialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllEmployees } from "../../../apis/employeeApis";
+import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
 const cx = classNames.bind(styles);
 
 const columns: GridColDef[] = [
@@ -23,6 +27,28 @@ const columns: GridColDef[] = [
     renderHeader: () => <span style={{ paddingLeft: "10px" }}>ID</span>,
     renderCell: (params) => (
       <span style={{ paddingLeft: "10px" }}>{params.row.id}</span>
+    ),
+  },
+  {
+    field: "profilePictureUrl",
+    headerName: "Ảnh",
+    flex: 0.8,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    headerAlign: "left",
+    renderHeader: () => <span>Ảnh</span>,
+    renderCell: (params) => (
+      <img 
+        src={params.row.profilePictureUrl || '/default-avatar.png'} 
+        alt="Avatar"
+        style={{ 
+          marginTop:"3px",
+          width: '40px', 
+          height: '40px', 
+          borderRadius: '50%',
+          objectFit: 'cover'
+        }}
+      />
     ),
   },
   {
@@ -86,55 +112,28 @@ const columns: GridColDef[] = [
   },
 ];
 
-const data: EmployeeInfo[] = [
-  {
-    id: "1",
-    name: "Nguyễn Văn A",
-    gender: "Nam",
-    phoneNumber: "0123456789",
-    status: "Đang làm việc",
-    positionName: "Quản lý",
-    dateOfBirth: 19900101,
-    nationalId: "123456789",
-    email: "nguyenvana@email.com",
-    address: "123 Đường ABC, Quận XYZ",
-    startDate: "2022-01-15",
-    profilePictureUrl: "",
-    emergencyContactName: "Nguyễn Thị B",
-    emergencyContactRelationship: "Mẹ",
-    emergencyContactPhone: "0987654321",
-    notes: "Rất chăm chỉ",
-    roles: [
-      { id: 1, name: "ADMIN" },
-      { id: 2, name: "RECEPTIONIST" },
-    ],
-  },
-  {
-    id: "2",
-    name: "Trần Thị B",
-    gender: "Nữ",
-    phoneNumber: "0987654321",
-    status: "Đã nghỉ việc",
-    positionName: "Nhân viên",
-    dateOfBirth: 19891231,
-    nationalId: "987654321",
-    email: "tranthib@email.com",
-    address: "456 Đường DEF, Quận ABC",
-    startDate: "2020-06-20",
-    profilePictureUrl: "",
-    emergencyContactName: "Trần Văn C",
-    emergencyContactRelationship: "Cha",
-    emergencyContactPhone: "0123456789",
-    notes: "Có kinh nghiệm lâu năm",
-    roles: [{ id: 2, name: "Employee" }],
-  },
-  // Thêm các nhân viên khác vào đây
-];
 const Employees = () => {
-  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInfo | null>(
-    null
-  );
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeInfo | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [employees, setEmployees] = useState<EmployeeInfo[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllEmployees();
+        setEmployees(response);
+      } catch (error) {
+        console.error("Failed to fetch employees:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
 
   const handleRowClick = (params: any) => {
     setSelectedEmployee(params.row);
@@ -156,7 +155,7 @@ const Employees = () => {
       button={
         <Button
           content="Thêm nhân viên"
-          onClick={() => console.log("Thêm nhân viên")}
+          onClick={() => navigate("/admin/" + ADMIN_PATHS.EMPLOYEE_ACTION + "?mode=create")}
         />
       }
     >
@@ -166,11 +165,12 @@ const Employees = () => {
         </div>
         <div className={cx("list")}>
           <DataGrid
+            loading={loading}
             style={{ fontSize: "1.4rem", cursor: "pointer" }}
             className={cx("data")}
-            rows={data}
+            rows={employees}
             columns={columns}
-            rowCount={data.length}
+            rowCount={employees.length}
             onRowClick={handleRowClick}
             rowSelection={false}
             hideFooterPagination={true}
@@ -183,59 +183,97 @@ const Employees = () => {
           open={openDialog}
           onClose={handleCloseDialog}
           title="Thông tin nhân viên"
+          isEditButton={true}
+          onClickEditButton={() => navigate("/admin/" + ADMIN_PATHS.EMPLOYEE_ACTION + "?mode=edit&id=" + selectedEmployee.id)}
+          editButtonText="Sửa"
         >
-          <div>
-            <p>
-              <strong>ID:</strong> {selectedEmployee.id}
-            </p>
-            <p>
-              <strong>Tên:</strong> {selectedEmployee.name}
-            </p>
-            <p>
-              <strong>Giới tính:</strong> {selectedEmployee.gender}
-            </p>
-            <p>
-              <strong>Số điện thoại:</strong> {selectedEmployee.phoneNumber}
-            </p>
-            <p>
-              <strong>Email:</strong> {selectedEmployee.email}
-            </p>
-            <p>
-              <strong>Địa chỉ:</strong> {selectedEmployee.address}
-            </p>
-            <p>
-              <strong>Ngày sinh:</strong> {selectedEmployee.dateOfBirth}
-            </p>
-            <p>
-              <strong>Mã số nhân viên:</strong> {selectedEmployee.nationalId}
-            </p>
-            <p>
-              <strong>Trạng thái:</strong> {selectedEmployee.status}
-            </p>
-            <p>
-              <strong>Ngày bắt đầu:</strong> {selectedEmployee.startDate}
-            </p>
-            <p>
-              <strong>Chức vụ:</strong> {selectedEmployee.positionName}
-            </p>
-            <p>
-              <strong>Người liên hệ khẩn cấp:</strong>{" "}
-              {selectedEmployee.emergencyContactName} (
-              {selectedEmployee.emergencyContactRelationship})
-            </p>
-            <p>
-              <strong>Số điện thoại khẩn cấp:</strong>{" "}
-              {selectedEmployee.emergencyContactPhone}
-            </p>
-            <p>
-              <strong>Ghi chú:</strong> {selectedEmployee.notes}
-            </p>
-            {selectedEmployee.roles && selectedEmployee.roles.length > 0 && (
-              <p>
-                <strong>Vai trò:</strong>{" "}
-                {selectedEmployee.roles.map((role) => role.name).join(", ")}
-              </p>
-            )}
+          <div className={cx("employee-info-dialog")}>
+            <div className={cx("info-header")}>
+              <img 
+                src={selectedEmployee.profilePictureUrl || '/default-avatar.png'}
+                alt={selectedEmployee.name}
+                className={cx("avatar")}
+              />
+              <div className={cx("basic-info")}>
+                <h2>{selectedEmployee.name}</h2>
+                <p className={cx("position")}>{selectedEmployee.positionName ? selectedEmployee.positionName : "_"}</p>
+                <StyledChip
+                  label={selectedEmployee.status}
+                  color={selectedEmployee.status === EMPLOYEE_STATUS.ACTIVE ? "success" : "error"}
+                />
+              </div>
+            </div>
+
+            <div className={cx("info-grid")}>
+              <div className={cx("info-section")}>
+                <h3>Thông tin cá nhân</h3>
+                <div className={cx("info-item")}>
+                  <span>ID:</span>
+                  <span>{selectedEmployee.id}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Giới tính:</span>
+                  <span>{selectedEmployee.gender}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Ngày sinh:</span>
+                  <span>{selectedEmployee.birthDay ? moment.unix(selectedEmployee.birthDay).format("DD/MM/YYYY") : "_"}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Số điện thoại:</span>
+                  <span>{selectedEmployee.phoneNumber ? selectedEmployee.phoneNumber : "_"}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Email:</span>
+                  <span>{selectedEmployee.email ? selectedEmployee.email : "_"}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Địa chỉ:</span>
+                  <span>{selectedEmployee.address ? selectedEmployee.address : "_"}</span>
+                </div>
+              </div>
+
+              <div className={cx("info-section")}>
+                <h3>Thông tin công việc</h3>
+                <div className={cx("info-item")}>
+                  <span>Mã số nhân viên:</span>
+                  <span>{selectedEmployee.nationality ? selectedEmployee.nationality : "_"}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Ngày bắt đầu:</span>
+                  <span>{selectedEmployee.startDate ? moment.unix(selectedEmployee.startDate).format("DD/MM/YYYY") : "_"}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Vai trò:</span>
+                  <span>
+                    {selectedEmployee.roles?.map((role) => role.name).join(", ") || "Chưa có"}
+                  </span>
+                </div>
+              </div>
+
+              <div className={cx("info-section")}>
+                <h3>Thông tin liên hệ khẩn cấp</h3>
+                <div className={cx("info-item")}>
+                  <span>Người liên hệ:</span>
+                  <span>{selectedEmployee.emergencyContactName ? selectedEmployee.emergencyContactName : "_"}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Mối quan hệ:</span>
+                  <span>{selectedEmployee.emergencyContactRelationship ? selectedEmployee.emergencyContactRelationship : "_"}</span>
+                </div>
+                <div className={cx("info-item")}>
+                  <span>Số điện thoại:</span>
+                  <span>{selectedEmployee.emergencyContactPhone ? selectedEmployee.emergencyContactPhone : "_"}</span>
+                </div>
+              </div>
+
+              {selectedEmployee.notes && (
+                <div className={cx("info-section", "full-width")}>
+                  <h3>Ghi chú</h3>
+                  <p className={cx("notes")}>{selectedEmployee.notes ? selectedEmployee.notes : "_"}</p>
+                </div>
+              )}
+            </div>
           </div>
         </ShowInfoDialog>
       )}

@@ -168,7 +168,7 @@ export const getRoomById = async (id: number) => {
 
 export const getAvailableRooms = async (checkInDate: number, checkOutDate: number, hotelId: number) => {
     try {
-        const response = await axiosInstance.get('/admin/rooms/available', {
+        const response = await axiosInstance.get('/api/search/room/avai', {
             params: {
                 checkInDate,
                 checkOutDate,

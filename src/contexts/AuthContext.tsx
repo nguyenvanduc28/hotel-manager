@@ -51,8 +51,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userWithToken));
-
-      navigate("/dashboard");
+      if (user.roles.some((role: Role) => role.name === "RECEPTIONIST")) {
+        navigate("/reception/booking/list");
+      } else {
+        navigate("/admin");
+      }
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);
     } finally {

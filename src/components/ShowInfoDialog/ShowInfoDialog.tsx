@@ -14,6 +14,9 @@ interface ShowInfoDialogProps extends DialogProps {
   title: string;
   children: React.ReactNode;
   backdropStyle?: React.CSSProperties;
+  isEditButton?: boolean;
+  onClickEditButton?: () => void;
+  editButtonText?: string;
 
 }
 
@@ -23,6 +26,9 @@ const ShowInfoDialog: React.FC<ShowInfoDialogProps> = ({
   title,
   children,
   backdropStyle,
+  isEditButton,
+  onClickEditButton,
+  editButtonText,
   ...rest
 }) => {
   return (
@@ -38,8 +44,27 @@ const ShowInfoDialog: React.FC<ShowInfoDialogProps> = ({
       {...rest}
     >
       <DialogTitle style={{ fontSize: "2rem" }}>{title}</DialogTitle>
-      <DialogContent style={{ fontSize: "1.6rem" }}>{children}</DialogContent>
+      <DialogContent sx={{ 
+        fontSize: "1.6rem",
+        maxHeight: "80vh",
+        overflowY: "auto",
+        "&::-webkit-scrollbar": {
+          width: "8px"
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "#f1f1f1",
+          borderRadius: "4px"
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#888",
+          borderRadius: "4px"
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          background: "#555"
+        }
+      }}>{children}</DialogContent>
       <DialogActions>
+        {isEditButton && <Button onClick={onClickEditButton} content={editButtonText || "Sửa"} />}
         <Button onClick={onClose} content="Đóng" />
       </DialogActions>
     </Dialog>
