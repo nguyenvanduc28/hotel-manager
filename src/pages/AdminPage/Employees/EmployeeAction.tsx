@@ -13,7 +13,7 @@ import GroupRadio from "../../../components/GroupRadio/GroupRadio";
 import { GENDERS, EMPLOYEE_STATUS } from "../../../constants/admin/constants";
 import moment from "moment";
 import { Employee } from "../../../types/hotel";
-import { createEmployee, getEmployeeById } from "../../../apis/employeeApis";
+import { createEmployee, getEmployeeById, updateEmployee } from "../../../apis/employeeApis";
 import { ROLES_DATA } from "../../../constants/auth/roleConstants";
 import { uploadMultipleImages } from "../../../apis/imageApis/imageApis";
 
@@ -38,6 +38,7 @@ const EmployeeAction: React.FC = () => {
     gender: undefined,
     birthDay: undefined,
     nationality: "",
+    identityNumber: "",
     address: "",
     startDate: moment().unix(),
     status: EMPLOYEE_STATUS.ACTIVE,
@@ -55,7 +56,10 @@ const EmployeeAction: React.FC = () => {
 
   const fetchEmployee = async () => {
     const result = await getEmployeeById(Number(id));
-    setEmployeeForm(result);
+    setEmployeeForm(prev => ({
+      ...prev,
+      ...result,
+    }));
   };
 
   useEffect(() => {
@@ -104,9 +108,15 @@ const EmployeeAction: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      const result = await createEmployee(employeeForm);
-      console.log("Nhân viên đã được tạo:", result);
-      navigate("/admin/" + ADMIN_PATHS.EMPLOYEES);
+      if (mode === "create") {
+        const result = await createEmployee(employeeForm);
+        console.log("Nhân viên đã được tạo:", result);
+        navigate("/admin/" + ADMIN_PATHS.EMPLOYEES);
+      } else if (mode === "edit") {
+        const result = await updateEmployee(Number(id), employeeForm);
+        console.log("Nhân viên đã được cập nhật:", result);
+        navigate("/admin/" + ADMIN_PATHS.EMPLOYEES);
+      }
     } catch (error) {
       console.error("Lỗi khi tạo nhân viên:", error);
     }
@@ -138,30 +148,9 @@ const EmployeeAction: React.FC = () => {
                   style={{ display: 'none' }}
                 />
                 <div className={cx("add-image-button")}>
-                  <span>+</span>
+                  {employeeForm.profilePictureUrl ? <img className={cx("avatar-image")} src={employeeForm.profilePictureUrl} alt="Avatar" /> : <span>+</span>} 
                 </div>
               </label>
-              
-              <div className={cx("preview-container")}>
-                {previewImages.map((preview, index) => (
-                  <div key={index} className={cx("preview-image-wrapper")}>
-                    <img 
-                      src={preview} 
-                      alt="Avatar preview" 
-                      className={cx("preview-image")}
-                    />
-                    <button
-                      className={cx("remove-image")}
-                      onClick={() => {
-                        setPreviewImages([]);
-                        handleChange('profilePictureUrl', null);
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
             </div>
             <p className={cx("upload-note")}>
               Chọn ảnh đại diện. Chấp nhận các định dạng: JPG, PNG, GIF
@@ -186,17 +175,20 @@ const EmployeeAction: React.FC = () => {
             title="Tên đăng nhập"
             placeholder="Nhập tên đăng nhập"
             onChange={(e) => handleChange("username", e.target.value)}
+            disabled={mode === "edit"}
           />
         </div>
-        <div className={cx("box-item")}>
-          <InputText
+          <div className={cx("box-item")}>
+        {mode === "create" && (
+            <InputText
             value={employeeForm.user?.password}
             title="Mật khẩu"
             type="password"
             placeholder="Nhập mật khẩu"
             onChange={(e) => handleChange("password", e.target.value)}
-          />
-        </div>
+            />
+          )}
+          </div>
       </div>
     
       <div className={cx("box-role")}>
@@ -245,7 +237,7 @@ const EmployeeAction: React.FC = () => {
 
       {/* Personal Information */}
       <div className={cx("box")}>
-        <div className={cx("box-item")}>
+      <div className={cx("box-item")}>
           <GroupRadio
             title="Giới tính"
             value={employeeForm.gender}
@@ -259,6 +251,14 @@ const EmployeeAction: React.FC = () => {
         </div>
         <div className={cx("box-item")}>
           <InputText
+            value={employeeForm.identityNumber}
+            title="Số CCCD/CMND"
+            placeholder="Nhập số CCCD/CMND"
+            onChange={(e) => handleChange("identityNumber", e.target.value)}
+          />
+        </div>
+        <div className={cx("box-item")}>
+          <InputText
             value={employeeForm.birthDay ? moment.unix(employeeForm.birthDay).format("YYYY-MM-DD") : ""}
             title="Ngày sinh"
             type="date"
@@ -268,6 +268,8 @@ const EmployeeAction: React.FC = () => {
             }}
           />
         </div>
+      </div>
+      <div className={cx("box")}>
         <div className={cx("box-item")}>
           <InputText
             value={employeeForm.nationality}

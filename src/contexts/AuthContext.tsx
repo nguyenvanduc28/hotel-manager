@@ -3,7 +3,8 @@ import { User } from "../types/auth";
 import { useNavigate } from "react-router-dom";
 import { login as loginApi, verifyToken } from "../apis/authApis/authApis"; 
 import { register as registerApi } from "../apis/authApis/authApis";
-import { Role } from "../types/hotel";
+import { Employee, Role } from "../types/hotel";
+import { getEmployeeInfo } from "../apis/employeeApis";
 
 type UserWithToken = User & { token: string };
 
@@ -13,6 +14,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   register: (username: string, password: string, roles: Role[]) => Promise<void>;
+  employeeInfo: Employee | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,13 +23,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserWithToken | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
-
+  const [employeeInfo, setEmployeeInfo] = useState<Employee | null>(null);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       checkToken(token).then((user) => {
         if (user) {
           setUser(user);
+          fetchEmployeeInfo();
         } else {
           logout();
         }
@@ -37,6 +40,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   }, []);
+
+  const fetchEmployeeInfo = async () => {
+    const data = await getEmployeeInfo();
+    setEmployeeInfo(data);
+  }
 
   const login = async (username: string, password: string) => {
     setLoading(true);
@@ -51,6 +59,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userWithToken));
+      fetchEmployeeInfo();
+      
       if (user.roles.some((role: Role) => role.name === "RECEPTIONIST")) {
         navigate("/reception/booking/list");
       } else {
@@ -65,6 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
+    setEmployeeInfo(null);
     localStorage.clear();
     navigate("/login");
   };
@@ -106,7 +117,7 @@ const register = async (username: string, password: string, roles: Role[]) => {
 };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, register }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, register, employeeInfo }}>
       {!loading && children}
     </AuthContext.Provider>
   );

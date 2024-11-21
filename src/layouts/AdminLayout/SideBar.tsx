@@ -102,11 +102,6 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
                 link="/admin/employees"
                 isCollapse={isCollapse}
               />
-              <MenuItem
-                title="Vai trò nhân viên"
-                link="/admin/roles"
-                isCollapse={isCollapse}
-              />
             </SubMenu>
           )}
 

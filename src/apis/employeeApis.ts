@@ -44,3 +44,14 @@ export const updateEmployee = async (id: number, employeeDto: Employee) => {
         throw new Error(errorMessage);
     }
 };
+
+export const getEmployeeInfo = async () => {
+    try {
+        const response = await axiosInstance.get('/admin/employee/getInfoEmployee');
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy thông tin nhân viên thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+}

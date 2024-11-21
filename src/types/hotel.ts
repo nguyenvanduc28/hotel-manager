@@ -151,6 +151,7 @@ export type Employee = {
     gender?: Genders;
     nationality?: string;
     phoneNumber?: string;
+    identityNumber?: string;
     email?: string;
     address?: string;
     startDate?: number;

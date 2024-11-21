@@ -236,8 +236,8 @@ const Employees = () => {
               <div className={cx("info-section")}>
                 <h3>Thông tin công việc</h3>
                 <div className={cx("info-item")}>
-                  <span>Mã số nhân viên:</span>
-                  <span>{selectedEmployee.nationality ? selectedEmployee.nationality : "_"}</span>
+                  <span>CCCD:</span>
+                  <span>{selectedEmployee.identityNumber ? selectedEmployee.identityNumber : "_"}</span>
                 </div>
                 <div className={cx("info-item")}>
                   <span>Ngày bắt đầu:</span>

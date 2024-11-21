@@ -23,6 +23,23 @@
     }
   }
 
-  .header-menu {
+  .header-account {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    .header-account-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .header-account-logout {
+      margin-left: 10px;
+      position: absolute;
+      top: 50px;
+      right: 0;
+    }
   }
+  
 }

@@ -35,7 +35,10 @@ const ShowInfoDialog: React.FC<ShowInfoDialogProps> = ({
     <Dialog
       sx={{
         '& .MuiBackdrop-root': {
-          backgroundColor: 'rgb(0 0 0 / 0.3)'
+          backgroundColor: 'rgb(0 0 0 / 0.3)',
+        },
+        '& .MuiDialog-paper': {
+          maxWidth: "650px"
         }
       }}
       open={open}

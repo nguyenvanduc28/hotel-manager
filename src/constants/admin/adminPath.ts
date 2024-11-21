@@ -13,7 +13,6 @@ export const ADMIN_PATHS = {
   BOOKING_CREATE: "bookings/create",
   EMPLOYEES: "employees",
   EMPLOYEE_ACTION: "employees/action",
-  ROLES: "roles",
   CUSTOMERS: "customers",
   CUSTOMER_CREATE:"customers/create",
   CUSTOMER_DETAIL: "customers/:id",
