@@ -41,6 +41,15 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        // Kiểm tra lỗi kết nối server
+        if (!error.response) {
+            // Có thể hiển thị thông báo lỗi hoặc xử lý theo logic của bạn
+            console.error('Không thể kết nối đến server. Vui lòng kiểm tra kết nối của bạn hoặc server có thể chưa khởi động.');
+            return Promise.reject({
+                message: 'Không thể kết nối đến server. Vui lòng thử lại sau.'
+            });
+        }
+
         // Kiểm tra lỗi 401 và xử lý
         if (error.response.status === 401 && originalRequest.url !== '/admin/auth/login') {
             router.push('/login');

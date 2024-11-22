@@ -17,6 +17,7 @@ import moment from "moment";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import RoomIndoModal from "./RoomIndoModal";
+import Loading from "../../../components/Loading/Loading";
 const cx = classNames.bind(styles);
 
 const defaultColumns: GridColDef[] = [
@@ -402,7 +403,7 @@ const RoomList = () => {
         </div>
         <div className={cx("list")}>
           {loading ? (
-            <p>Đang tải dữ liệu...</p>
+            <Loading />
           ) : (
             <>
               <ColumnFilter

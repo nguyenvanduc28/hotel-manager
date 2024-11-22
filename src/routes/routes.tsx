@@ -110,11 +110,6 @@ const AdminRoutes: RouteWrapperProps[] = [
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {
-    path: ADMIN_PATHS.ROLES,
-    element: <EmployeeRole />,
-    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
-  },
-  {
     path: ADMIN_PATHS.CUSTOMERS,
     element: <Customers />,
     allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_MANAGER, ROLES.RECEPTIONIST],

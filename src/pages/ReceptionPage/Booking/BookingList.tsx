@@ -22,6 +22,7 @@ import {
 } from "../../../apis/bookingApis/bookingApis";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import BookingInfoModal from "./BookingInfoModal";
+import Loading from "../../../components/Loading/Loading";
 
 
 const cx = classNames.bind(styles);
@@ -388,7 +389,7 @@ const BookingList = () => {
         </div>
         <div className={cx("list")}>
           {loading ? (
-            <p>Đang tải dữ liệu...</p>
+            <Loading />
           ) : (
             <>
               <ColumnFilter

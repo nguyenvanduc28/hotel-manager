@@ -198,14 +198,15 @@ const EmployeeAction: React.FC = () => {
         <Select
           labelId="role-select-label"
           id="role-select"
-            multiple
+          multiple
+          disabled={employeeForm.user?.roles?.some(role => role.name === "ADMIN")}
           value={employeeForm.user?.roles?.map(role => role.name) || []}
           onChange={(event) => {
             const selectedRoles = event.target.value as string[];
             handleChange("roles", selectedRoles.map(value => ROLES_DATA.find(role => role.name === value)));
         }}
         renderValue={(selected) => (selected as string[]).join(', ')}
-        sx={{ width: '100%', marginBottom: '2rem', height: '3.5rem' }}
+        sx={{ width: '100%', fontSize: '16px', marginBottom: '2rem', height: '3.5rem' }}
         >
           {roleOptions.map((role) => (
             <MenuItem key={role.value} value={role.value}>

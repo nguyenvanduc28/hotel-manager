@@ -127,3 +127,18 @@ export type BookingForm = {
     equipmentDamagedList?: BookingEquipmentDamaged[];
     hotelId?: number;
 };
+
+export interface ServiceTypeForm {
+    id?: number;
+    name: string;
+    description?: string;
+}
+
+export interface ServiceItemForm {
+    id?: number;
+    serviceType: ServiceTypeForm;
+    name: string;
+    price: number;
+    description?: string;
+    image?: string;
+}

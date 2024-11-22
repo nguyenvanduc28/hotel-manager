@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { Customer } from "../../../types/hotel";
 import { getCustomers } from "../../../apis/bookingApis/bookingApis";
 import moment from "moment";
+import Loading from "../../../components/Loading/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -180,7 +181,7 @@ const Customers = () => {
         </div>
         <div className={cx("list")}>
           {loading ? (
-            <p>Đang tải dữ liệu...</p>
+            <Loading />
           ) : (
             <DataGrid
               style={{ fontSize: "1.4rem", cursor: "pointer" }}

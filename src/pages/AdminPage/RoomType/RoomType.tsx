@@ -9,6 +9,7 @@ import Search from "../../../components/Search/Search";
 import { ADMIN_PATHS } from "../../../constants/admin/adminPath";
 import { useNavigate } from "react-router-dom";
 import { getRoomTypes } from "../../../apis/roomApis/roomApis";
+import Loading from "../../../components/Loading/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -176,7 +177,7 @@ const RoomType = () => {
         </div>
         <div className={cx("list")}>
           {loading ? (
-            <p>Đang tải dữ liệu...</p>
+            <Loading />
           ) : (
             <DataGrid
               style={{ fontSize: "1.4rem" }}

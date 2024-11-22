@@ -11,6 +11,7 @@ import InvoiceModal from "../../../components/InvoiceModal/InvoiceModal";
 import { Visibility } from "@mui/icons-material";
 import { getBookingById } from "../../../apis/bookingApis/bookingApis";
 import { IconButton } from "@mui/material";
+import Loading from "../../../components/Loading/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -133,7 +134,7 @@ const InvoiceList = () => {
         </div>
         <div className={cx("list")}>
           {loading ? (
-            <p>Đang tải dữ liệu...</p>
+            <Loading />
           ) : (
             <DataGrid
               style={{ fontSize: "1.4rem", cursor: "pointer" }}

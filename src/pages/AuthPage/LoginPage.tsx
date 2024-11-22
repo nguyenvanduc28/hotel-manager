@@ -1,29 +1,24 @@
 import React, { useState } from "react";
-import { Button, TextField, Typography, Snackbar } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import styles from "./LoginPage.module.scss";
 import classNames from "classnames/bind";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 const LoginPage = () => {
   const { login } = useAuth();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   const handleLogin = async () => {
     try {
       await login(username, password);
     } catch (err) {
-      setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
-      setOpenSnackbar(true);
+      // toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
 
   return (
     <div style={{ maxWidth: "400px", margin: "auto", padding: "20px", fontSize:"16px"}}>
@@ -57,12 +52,6 @@ const LoginPage = () => {
       >
         Đăng Nhập
       </Button>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message={error}
-      />
     </div>
   );
 };

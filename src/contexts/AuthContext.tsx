@@ -5,6 +5,7 @@ import { login as loginApi, verifyToken } from "../apis/authApis/authApis";
 import { register as registerApi } from "../apis/authApis/authApis";
 import { Employee, Role } from "../types/hotel";
 import { getEmployeeInfo } from "../apis/employeeApis";
+import { toast } from "react-toastify";
 
 type UserWithToken = User & { token: string };
 
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         navigate("/admin");
       }
     } catch (error) {
-      console.error("Đăng nhập thất bại:", error);
+      toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
     } finally {
       setLoading(false);
     }

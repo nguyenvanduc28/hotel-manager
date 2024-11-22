@@ -268,3 +268,18 @@ export interface AuthUser {
     password: string;
     roles: Role[];
   }
+
+export interface ServiceType {
+    id: number;
+    name: string;
+    description?: string;
+}
+
+export interface ServiceItem {
+    id: number;
+    serviceType: ServiceType;
+    name: string;
+    price: number;
+    description?: string;
+    image?: string;
+}

@@ -12,6 +12,7 @@ import { ADMIN_PATHS, RECEPTION_PATHS } from "../../../constants/admin/adminPath
 import { Divider } from "@mui/material";
 import InvoiceModal from "../../../components/InvoiceModal/InvoiceModal";
 import { getBookingById } from "../../../apis/bookingApis/bookingApis";
+import Loading from "../../../components/Loading/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -133,7 +134,7 @@ const CustomerDetail = () => {
     >
       <div className={cx("customer-detail-box")}>
         {loading ? (
-          <p>Đang tải dữ liệu...</p>
+          <Loading />
         ) : (
           <>
             <div className={cx("customer-info")}>
