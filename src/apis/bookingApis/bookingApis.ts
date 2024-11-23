@@ -1,4 +1,4 @@
-import { BookingForm, CustomerForm } from "../../types/forms";
+import { BookingForm, BookingServiceItemForm, CustomerForm } from "../../types/forms";
 import { Booking } from "../../types/hotel";
 import axiosInstance from "../axiosInstance";
 
@@ -133,6 +133,39 @@ export const unCheckInBooking = async (bookingId: number) => {
         return response.data;
     } catch (error: unknown) {
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Hủy check-in thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const getBookingServiceItemList = async (bookingId: number) => {
+    try {
+        const response = await axiosInstance.get(`/admin/bookings/${bookingId}/service-item`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách dịch vụ thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const addBookingServiceItem = async (bookingId: number, payload: BookingServiceItemForm) => {
+    try {
+        const response = await axiosInstance.post(`/admin/bookings/${bookingId}/service-item`, payload);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Thêm dịch vụ thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const updateBookingServiceItemList = async (bookingId: number, payload: BookingServiceItemForm[]) => {
+    try {
+        const response = await axiosInstance.put(`/admin/bookings/${bookingId}/service-item`, payload);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Cập nhật danh sách dịch vụ thất bại';
         console.error(errorMessage);
         throw new Error(errorMessage);
     }

@@ -60,6 +60,10 @@ const calculateDamageTotal = (
   );
 };
 
+const calculateServicesTotal = (services: Booking["servicesUsed"]): number => {
+  return services?.reduce((total, item) => total + (item.totalPrice || 0), 0) || 0;
+};
+
 const calculateGrandTotal = (booking: Booking): number => {
   if (!booking) return 0;
   return (
@@ -69,6 +73,7 @@ const calculateGrandTotal = (booking: Booking): number => {
       booking.checkOutDate
     ) +
     calculateConsumablesTotal(booking.consumablesUsed) +
+    calculateServicesTotal(booking.servicesUsed) +
     calculateDamageTotal(booking.equipmentDamagedList) -
     (booking.deposit || 0)
   );
@@ -274,23 +279,22 @@ const Payment = () => {
                 <div className={cx("checkout-content-item-content-item-value")}>
                   {booking.rooms.map((room, index) => (
                     <div key={index} className={cx("room-item")}>
-                      <span className={cx("room-title")}>
-                        Phòng {room.roomNumber} - {room.roomType?.name}
-                      </span>
-                      <div className={cx("room-details")}>
-                        <span className={cx("room-detail")}>
-                          Giá cơ bản:{" "}
-                          {room.roomType?.basePricePerNight &&
-                            new Intl.NumberFormat("vi-VN").format(
-                              room.roomType?.basePricePerNight
-                            )}{" "}
-                          VND x{" "}
-                          {calculateNightCount(
-                            booking.checkInDate,
-                            booking.checkOutDate
-                          )}{" "}
-                          đêm
+                      <div className={cx("room-image-wrapper")}>
+                        <img 
+                          src={room.imageList?.[0].url || '/default-room.png'} 
+                          alt={room.roomType?.name} 
+                          className={cx("room-image")}
+                        />
+                      </div>
+                      <div className={cx("room-info")}>
+                        <span className={cx("room-title")}>
+                          Phòng {room.roomNumber} - {room.roomType?.name}
                         </span>
+                        <div className={cx("room-details")}>
+                          <span className={cx("room-detail")}>
+                            Giá cơ bản: {room.roomType?.basePricePerNight?.toLocaleString()} VND x {calculateNightCount(booking.checkInDate, booking.checkOutDate)} đêm
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -342,6 +346,63 @@ const Payment = () => {
                         className={cx("table-cell", "empty-cell")}
                       >
                         Không có đồ dùng sử dụng
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Danh sách dịch vụ đã sử dụng */}
+          <div className={cx("checkout-content-item")}>
+            <div className={cx("checkout-content-item-title")}>
+              Danh sách dịch vụ đã sử dụng
+            </div>
+            <div className={cx("checkout-content-item-content")}>
+              <table className={cx("data-table")}>
+                <thead className={cx("table-header")}>
+                  <tr>
+                    <th className={cx("header-cell")}>Hình ảnh</th>
+                    <th className={cx("header-cell")}>Mã dịch vụ</th>
+                    <th className={cx("header-cell")}>Tên dịch vụ</th>
+                    <th className={cx("header-cell")}>Loại</th>
+                    <th className={cx("header-cell")}>Đơn giá</th>
+                    <th className={cx("header-cell")}>Số lượng</th>
+                    <th className={cx("header-cell")}>Tổng tiền</th>
+                  </tr>
+                </thead>
+                <tbody className={cx("table-body")}>
+                  {booking?.servicesUsed && booking.servicesUsed.length > 0 ? (
+                    booking.servicesUsed?.map((item, index) => (
+                      <tr key={index} className={cx("table-row")}>
+                        <td className={cx("table-cell")}>
+                          {item.serviceItem?.image && (
+                            <img 
+                              src={item.serviceItem.image} 
+                              alt={item.serviceItem?.name} 
+                              className={cx("service-image")}
+                            />
+                          )}
+                        </td>
+                        <td className={cx("table-cell")}>{item.serviceItem?.id}</td>
+                        <td className={cx("table-cell")}>{item.serviceItem?.name}</td>
+                        <td className={cx("table-cell")}>
+                          {item.serviceItem?.serviceType?.name}
+                        </td>
+                        <td className={cx("table-cell", "price-cell")}>
+                          {item.serviceItem?.price?.toLocaleString()} VND
+                        </td>
+                        <td className={cx("table-cell")}>{item.quantity}</td>
+                        <td className={cx("table-cell", "price-cell")}>
+                          {item.totalPrice?.toLocaleString()} VND
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr className={cx("table-row")}>
+                      <td colSpan={7} className={cx("table-cell", "empty-cell")}>
+                        Không có dịch vụ sử dụng
                       </td>
                     </tr>
                   )}
@@ -435,6 +496,14 @@ const Payment = () => {
                   <span className={cx("summary-value")}>
                     {formatCurrency(
                       calculateDamageTotal(booking?.equipmentDamagedList)
+                    )}
+                  </span>
+                </div>
+                <div className={cx("summary-row")}>
+                  <span className={cx("summary-label")}>Tổng tiền dịch vụ:</span>
+                  <span className={cx("summary-value")}>
+                    {formatCurrency(
+                      calculateServicesTotal(booking?.servicesUsed)
                     )}
                   </span>
                 </div>

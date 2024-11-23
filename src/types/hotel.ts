@@ -225,6 +225,7 @@ export type Booking = {
     rooms: RoomInfo[];
     consumablesUsed?: BookingConsumable[];
     equipmentDamagedList?: BookingEquipmentDamaged[];
+    servicesUsed?: BookingServiceItem[];
 };
 
 export type Invoice = {
@@ -282,4 +283,13 @@ export interface ServiceItem {
     price: number;
     description?: string;
     image?: string;
+}
+
+export interface BookingServiceItem {
+    id?: number;
+    bookingId: number;
+    serviceItem: ServiceItem;
+    note?: string;
+    totalPrice?: number;
+    quantity?: number;
 }

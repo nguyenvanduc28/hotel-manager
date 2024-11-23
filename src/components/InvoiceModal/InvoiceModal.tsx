@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
-import { Invoice, Booking } from "../../types/hotel";
+import { Invoice, Booking, BookingServiceItem } from "../../types/hotel";
 import classNames from "classnames/bind";
 import styles from "./InvoiceModal.module.scss";
 import moment from "moment";
@@ -46,6 +46,10 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
     return damages?.reduce((total, item) => total + (item.damageFee || 0), 0) || 0;
   };
 
+  const calculateServiceItemsTotal = (serviceItems?: BookingServiceItem[]): number => {
+    return serviceItems?.reduce((total, item) => total + (item.totalPrice || 0), 0) || 0;
+  };
+
   const formatCurrency = (amount?: number): string => {
     return `${(amount || 0).toLocaleString('vi-VN')} VNĐ`;
   };
@@ -57,6 +61,7 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
   const [showRoomDetails, setShowRoomDetails] = useState(false);
   const [showConsumablesDetails, setShowConsumablesDetails] = useState(false);
   const [showDamageDetails, setShowDamageDetails] = useState(false);
+  const [showServiceDetails, setShowServiceDetails] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -162,6 +167,11 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
                     </tr>
                   </thead>
                   <tbody className={cx("table-body")}>
+                    {booking.consumablesUsed?.length === 0 && (
+                      <tr className={cx("table-row")}>
+                        <td className={cx("table-cell")} colSpan={5}>Không có đồ dùng nào</td>
+                      </tr>
+                    )}
                     {booking.consumablesUsed?.map((item, index) => (
                       <tr key={index} className={cx("table-row")}>
                         <td className={cx("table-cell")}>{item.consumableId}</td>
@@ -197,6 +207,11 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
                     </tr>
                   </thead>
                   <tbody className={cx("table-body")}>
+                    {booking.equipmentDamagedList?.length === 0 && (
+                      <tr className={cx("table-row")}>
+                        <td className={cx("table-cell")} colSpan={5}>Không có thiết bị nào</td>
+                      </tr>
+                    )}
                     {booking.equipmentDamagedList?.map((item, index) => (
                       <tr key={index} className={cx("table-row")}>
                         <td className={cx("table-cell")}>{item.equipmentId}</td>
@@ -204,6 +219,61 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
                         <td className={cx("table-cell")}>{item.equipmentCategory?.name}</td>
                         <td className={cx("table-cell")}>{item.damageDescription}</td>
                         <td className={cx("table-cell", "price-cell")}>{formatCurrency(item.damageFee)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Service Items section */}
+            <div className={cx("detail-section")}>
+              <div 
+                className={cx("detail-row", "clickable")} 
+                onClick={() => setShowServiceDetails(!showServiceDetails)}
+              >
+                <span className={cx("label")}>Tiền dịch vụ:</span>
+                <span className={cx("value", "with-arrow")}>
+                  {formatCurrency(calculateServiceItemsTotal(booking.servicesUsed))}
+                  <KeyboardArrowDown className={cx("arrow", { rotated: showServiceDetails })} />
+                </span>
+              </div>
+              <div className={cx("detail-dropdown", { expanded: showServiceDetails })}>
+                <table className={cx("data-table")}>
+                  <thead className={cx("table-header")}>
+                    <tr>
+                      <th className={cx("header-cell")}>Ảnh</th>
+                      <th className={cx("header-cell")}>Tên dịch vụ</th>
+                      <th className={cx("header-cell")}>Loại dịch vụ</th>
+                      <th className={cx("header-cell")}>Số lượng</th>
+                      <th className={cx("header-cell")}>Đơn giá</th>
+                      <th className={cx("header-cell")}>Ghi chú</th>
+                      <th className={cx("header-cell")}>Tổng tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody className={cx("table-body")}>
+                    {booking.servicesUsed?.length === 0 && (
+                      <tr className={cx("table-row")}>
+                        <td className={cx("table-cell")} colSpan={7}>Không có dịch vụ nào</td>
+                      </tr>
+                    )}
+                    {booking.servicesUsed?.map((item, index) => (
+                      <tr key={index} className={cx("table-row")}>
+                        <td className={cx("table-cell")}>
+                          <img 
+                            src={item.serviceItem.image || '/placeholder-image.jpg'} 
+                            alt={item.serviceItem.name}
+                            style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                          />
+                        </td>
+                        <td className={cx("table-cell")}>{item.serviceItem.name}</td>
+                        <td className={cx("table-cell")}>{item.serviceItem.serviceType.name}</td>
+                        <td className={cx("table-cell")}>{item.quantity}</td>
+                        <td className={cx("table-cell")}>{formatCurrency(item.serviceItem.price)}</td>
+                        <td className={cx("table-cell")}>{item.note || "-"}</td>
+                        <td className={cx("table-cell", "price-cell")}>
+                          {formatCurrency(item.totalPrice)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -219,7 +289,15 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
 
             <div className={cx("detail-row", "total")}>
               <span className={cx("label")}>Tổng cộng:</span>
-              <span className={cx("value")}>{formatCurrency(invoice.totalAmount)}</span>
+              <span className={cx("value")}>
+                {formatCurrency(
+                  calculateRoomTotal(booking.rooms, booking.checkInDate, booking.checkOutDate) +
+                  calculateConsumablesTotal(booking.consumablesUsed) +
+                  calculateDamageTotal(booking.equipmentDamagedList) +
+                  calculateServiceItemsTotal(booking.servicesUsed) -
+                  (booking.deposit || 0)
+                )}
+              </span>
             </div>
 
             <div className={cx("detail-row")}>

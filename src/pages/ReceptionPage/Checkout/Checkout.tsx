@@ -15,6 +15,7 @@ import {
 import ConsumablesModal from "../../../components/ConsumablesModal/ConsumablesModal";
 import EquipmentDamageModal from "../../../components/EquipmentDamageModal/EquipmentDamageModal";
 import { checkoutBooking } from "../../../apis/bookingApis/bookingApis";
+import ServiceModal from "../../../components/ServiceModal/ServiceModal";
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +27,7 @@ const Checkout = () => {
   const [isConsumablesModalOpen, setIsConsumablesModalOpen] = useState(false);
   const [isEquipmentDamageModalOpen, setIsEquipmentDamageModalOpen] = useState(false);
   const [isConfirmCheckoutOpen, setIsConfirmCheckoutOpen] = useState(false);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const navigate = useNavigate();
   // Fetch booking data
   useEffect(() => {
@@ -85,6 +87,10 @@ const Checkout = () => {
     );
   };
 
+  const calculateServicesTotal = (services: Booking["servicesUsed"]): number => {
+    return services?.reduce((total, item) => total + (item.totalPrice || 0), 0) || 0;
+  };
+
   const calculateGrandTotal = (): number => {
     if (!booking) return 0;
     return (
@@ -94,7 +100,8 @@ const Checkout = () => {
         booking.checkOutDate
       ) +
       calculateConsumablesTotal(booking.consumablesUsed) +
-      calculateDamageTotal(booking.equipmentDamagedList) -
+      calculateDamageTotal(booking.equipmentDamagedList) +
+      calculateServicesTotal(booking.servicesUsed) -
       (booking.deposit || 0)
     );
   };
@@ -118,6 +125,15 @@ const Checkout = () => {
 
   const handleAddDamagedEquipment = () => {
     setIsEquipmentDamageModalOpen(true);
+  };
+
+  const handleServiceUpdate = (updatedServices: Booking["servicesUsed"]) => {
+    if (!booking) return;
+    
+    setBooking({
+      ...booking,
+      servicesUsed: updatedServices
+    });
   };
 
   const handleConsumablesUpdate = (updatedConsumables: Booking["consumablesUsed"]) => {
@@ -363,6 +379,54 @@ const Checkout = () => {
     </div>
   );
 
+  const renderServicesList = () => (
+    <div className={cx("checkout-section")}>
+      <div className={cx("section-header")}>
+        <h3 className={cx("section-title")}>Danh sách dịch vụ sử dụng</h3>
+        <button className={cx("edit-button")} onClick={() => setIsServiceModalOpen(true)}>
+          <EditIcon className={cx("edit-icon")} />
+          <span className={cx("edit-text")}>Chỉnh sửa danh sách</span>
+        </button>
+      </div>
+      <div className={cx("section-content")}>
+        <table className={cx("data-table")}>
+          <thead className={cx("table-header")}>
+            <tr>
+              <th className={cx("header-cell")}>Tên dịch vụ</th>
+              <th className={cx("header-cell")}>Loại dịch vụ</th>
+              <th className={cx("header-cell")}>Đơn giá</th>
+              <th className={cx("header-cell")}>Số lượng</th>
+              <th className={cx("header-cell")}>Ghi chú</th>
+              <th className={cx("header-cell")}>Tổng tiền</th>
+            </tr>
+          </thead>
+          <tbody className={cx("table-body")}>
+            {booking?.servicesUsed && booking.servicesUsed.length > 0 ? (
+              booking.servicesUsed?.map((item, index) => (
+                <tr key={index} className={cx("table-row")}>
+                  <td className={cx("table-cell")}>{item.serviceItem.name}</td>
+                  <td className={cx("table-cell")}>{item.serviceItem.serviceType.name}</td>
+                  <td className={cx("table-cell")}>{item.serviceItem.price}</td>
+                  <td className={cx("table-cell")}>{item.quantity}</td>
+                  <td className={cx("table-cell")}>{item.note || '-'}</td>
+                  <td className={cx("table-cell", "price-cell")}>
+                    {item.totalPrice?.toLocaleString()} VND
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr className={cx("table-row")}>
+                <td colSpan={4} className={cx("table-cell", "empty-cell")}>
+                  Không có dịch vụ sử dụng
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
   const renderTotalSummary = () => (
     <div className={cx("checkout-section")}>
       <div className={cx("section-header")}>
@@ -401,6 +465,12 @@ const Checkout = () => {
             </span>
           </div>
           <div className={cx("summary-row")}>
+            <span className={cx("summary-label")}>Tổng tiền dịch vụ:</span>
+            <span className={cx("summary-value")}>
+              {formatCurrency(calculateServicesTotal(booking?.servicesUsed))}
+            </span>
+          </div>
+          <div className={cx("summary-row")}>
             <span className={cx("summary-label")}>Tiền cọc:</span>
             <span className={cx("summary-value", "deposit")}>
               - {formatCurrency(booking?.deposit)}
@@ -434,6 +504,16 @@ const Checkout = () => {
       rooms={booking?.rooms || []}
       onSave={handleEquipmentDamageUpdate}
       equipmentListDamaged={booking?.equipmentDamagedList || []}
+    />
+  );
+
+  const renderServiceModal = () => (
+    <ServiceModal
+      open={isServiceModalOpen}
+      onClose={() => setIsServiceModalOpen(false)}
+      bookingId={parseInt(id || '')}
+      onSave={handleServiceUpdate}
+      servicesUsed={booking?.servicesUsed || []}
     />
   );
 
@@ -490,6 +570,7 @@ const Checkout = () => {
         </div>
         {renderConsumablesList()}
         {renderDamagesList()}
+        {renderServicesList()}
         {renderTotalSummary()}
         <div className={cx("checkout-actions")}>
           <button 
@@ -502,6 +583,7 @@ const Checkout = () => {
         </div>
         {renderConsumablesModal()}
         {renderEquipmentDamageModal()}
+        {renderServiceModal()}
         {renderConfirmCheckout()}
       </div>
     </Container>

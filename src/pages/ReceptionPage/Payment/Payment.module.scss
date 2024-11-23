@@ -258,7 +258,6 @@
 
 .room-item {
   display: flex;
-  flex-direction: column;
   gap: 0.8rem;
   padding: 1.2rem;
   background-color: #ffffff;
@@ -270,24 +269,53 @@
     margin-bottom: 0;
   }
 
-  .room-title {
-    font-weight: 600;
-    font-size: 1.4rem;
-    color: #333;
+  .room-image-wrapper {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    .room-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
   }
 
-  .room-details {
+  .room-info {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+    justify-content: space-between;
 
-    .room-detail {
-      font-size: 1.3rem;
-      color: #666;
+    .room-title {
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: #333;
+    }
+
+    .room-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      .room-detail {
+        font-size: 1.3rem;
+        color: #666;
+      }
     }
   }
 }
+.service-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
 
+.table-cell {
+  vertical-align: middle;
+}
 .invoice-exists {
   color: #dc3545;
   font-weight: 600;

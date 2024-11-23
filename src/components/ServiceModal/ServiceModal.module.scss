@@ -1,0 +1,161 @@
+.error-message {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+}
+
+.selected-services,
+.available-services {
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1976d2;
+  }
+}
+
+.services-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  th {
+    background-color: #f5f5f5;
+    padding: 12px;
+    text-align: left;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  td {
+    padding: 12px;
+    font-size: 1.4rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  .item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .empty-cell {
+    text-align: center;
+    color: #666;
+    padding: 24px;
+    font-style: italic;
+  }
+
+  tbody tr {
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+}
+
+.type-select {
+  margin-bottom: 20px;
+
+  .MuiInputLabel-root {
+    font-size: 1.4rem;
+  }
+
+  .MuiSelect-select {
+    font-size: 1.4rem;
+  }
+}
+
+// Column widths
+.services-table {
+  th, td {
+    &:nth-child(1) { // Image column
+      width: 80px;
+    }
+    &:nth-child(2) { // Name column
+      width: 30%;
+    }
+    &:nth-child(3) { // Quantity/Price column
+      width: 120px;
+    }
+    &:nth-child(4) { // Total Price column
+      width: 150px;
+    }
+    &:nth-child(5) { // Notes column
+      width: auto;
+    }
+    &:nth-child(6) { // Action column
+      width: 100px;
+    }
+  }
+}
+
+// Custom scrollbar for the dialog content
+:global(.MuiDialogContent-root) {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #666;
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .services-table {
+    th, td {
+      padding: 8px;
+      font-size: 1.2rem;
+    }
+
+    .item-image {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+.quantity-input {
+  width: 70px;
+  padding: 8px;
+  font-size: 1.4rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.note-input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1.4rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

@@ -1,5 +1,5 @@
 import { BookingStatus, EquipmentStatus, RoomStatus } from "../constants/admin/constants";
-import { BookingConsumable, BookingEquipmentDamaged, ConsumableCategories, Customer, Employee, Genders, Role, RoomInfo } from "./hotel";
+import { BookingConsumable, BookingEquipmentDamaged, BookingServiceItem, ConsumableCategories, Customer, Employee, Genders, Role, RoomInfo } from "./hotel";
 
 export type RoomTypeForm = {
     id: number;
@@ -125,6 +125,7 @@ export type BookingForm = {
     rooms: RoomInfo[];
     consumablesUsed?: BookingConsumable[];
     equipmentDamagedList?: BookingEquipmentDamaged[];
+    servicesUsed?: BookingServiceItem[];
     hotelId?: number;
 };
 
@@ -141,4 +142,13 @@ export interface ServiceItemForm {
     price: number;
     description?: string;
     image?: string;
+}
+
+export interface BookingServiceItemForm {
+    id?: number;
+    bookingId: number;
+    serviceItem: ServiceItemForm;
+    note?: string;
+    totalPrice?: number;
+    quantity?: number;
 }

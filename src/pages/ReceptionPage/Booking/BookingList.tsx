@@ -19,10 +19,16 @@ import moment from "moment";
 import {
   searchBooking,
   searchBookingByCusName,
+  updateBookingServiceItemList,
 } from "../../../apis/bookingApis/bookingApis";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import BookingInfoModal from "./BookingInfoModal";
 import Loading from "../../../components/Loading/Loading";
+import ServiceModal from "../../../components/ServiceModal/ServiceModal";
+import { Button } from "@mui/material";
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+import { BookingServiceItemForm } from "../../../types/forms";
+import { toast } from "react-toastify";
 
 
 const cx = classNames.bind(styles);
@@ -41,240 +47,265 @@ const statusStyles: Record<BookingStatus, React.CSSProperties> = {
   [BOOKING_STATUS.Refunded]: { backgroundColor: "pink", color: "black" },
 };
 
-const defaultColumns: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    flex: 0.5,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span style={{ paddingLeft: "10px" }}>ID</span>,
-    renderCell: (params) => (
-      <span style={{ paddingLeft: "10px" }}>{params.row.id}</span>
-    ),
-  },
-  {
-    field: "customerName",
-    headerName: "Tên khách hàng",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Tên khách hàng</span>,
-    renderCell: (params) => <span>{params.row.customer?.name || "_"}</span>,
-  },
-  {
-    field: "status",
-    headerName: "Trạng thái",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Trạng thái</span>,
-    renderCell: (params) => {
-      const status = params.row.status as BookingStatus;
-      return (
-        <StyledChip
-          label={status}
-          style={statusStyles[status]}
-          // variant="outlined"
-        />
-      );
-    },
-  },
-  {
-    field: "checkInDate",
-    headerName: "Ngày nhận phòng",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Ngày nhận phòng</span>,
-    renderCell: (params) => {
-      const checkInDate = params.row.checkInDate;
-      return (
-        <span>
-          {checkInDate ? moment.unix(checkInDate).format("DD/MM/YYYY") : "_"}
-        </span>
-      );
-    },
-  },
-  {
-    field: "checkOutDate",
-    headerName: "Ngày trả phòng",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Ngày trả phòng</span>,
-    renderCell: (params) => {
-      const checkOutDate = params.row.checkOutDate;
-      return (
-        <span>
-          {checkOutDate
-            ? moment.unix(checkOutDate).format("DD/MM/YYYY")
-            : "_"}
-        </span>
-      );
-    },
-  },
-  {
-    field: "totalCost",
-    headerName: "Tổng chi phí",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Tổng chi phí</span>,
-    renderCell: (params) => (
-      <span>
-        {params.row.totalCost
-          ? `${params.row.totalCost.toLocaleString()} đ`
-          : "_"}
-      </span>
-    ),
-  },
-  {
-    field: "deposit",
-    headerName: "Tiền cọc",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Tiền cọc</span>,
-    renderCell: (params) => (
-      <span>
-        {params.row.deposit ? `${params.row.deposit.toLocaleString()} đ` : 0}
-      </span>
-    ),
-  },
-];
 
-const hiddenColumns: GridColDef[] = [
-  {
-    field: "bookingDate",
-    headerName: "Ngày đặt",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Ngày đặt</span>,
-    renderCell: (params) => {
-      const bookingDate = params.row.bookingDate;
-      return (
-        <span>
-          {bookingDate ? moment.unix(bookingDate).format("HH:mm DD.MM.YYYY") : "_"}
-        </span>
-      );
-    },
-  },
-  {
-    field: "estimatedArrivalTime",
-    headerName: "Thời gian đến dự kiến",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Thời gian đến dự kiến</span>,
-    renderCell: (params) => {
-      const arrivalTime = params.row.estimatedArrivalTime;
-      return (
-        <span>
-          {arrivalTime ? moment.unix(arrivalTime).format("HH:mm DD.MM.YYYY") : "_"}
-        </span>
-      );
-    },
-  },
-  {
-    field: "checkInTime",
-    headerName: "Thời gian check-in",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Thời gian check-in</span>,
-    renderCell: (params) => {
-      const checkInTime = params.row.checkInTime;
-      return (
-        <span>
-          {checkInTime ? moment.unix(checkInTime).format("HH:mm DD.MM.YYYY") : "_"}
-        </span>
-      );
-    },
-  },
-  {
-    field: "checkOutTime",
-    headerName: "Thời gian check-out",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Thời gian check-out</span>,
-    renderCell: (params) => {
-      const checkOutTime = params.row.checkOutTime;
-      return (
-        <span>
-          {checkOutTime ? moment.unix(checkOutTime).format("HH:mm DD.MM.YYYY") : "_"}
-        </span>
-      );
-    },
-  },
-  {
-    field: "numberOfAdults",
-    headerName: "Số người lớn",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Số người lớn</span>,
-    renderCell: (params) => <span>{params.row.numberOfAdults}</span>,
-  },
-  {
-    field: "numberOfChildren",
-    headerName: "Số trẻ em",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Số trẻ em</span>,
-    renderCell: (params) => <span>{params.row.numberOfChildren}</span>,
-  },
-  // {
-  //   field: "isGroup",
-  //   headerName: "Đặt nhóm",
-  //   flex: 1,
-  //   headerClassName: "datagrid-header",
-  //   cellClassName: "datagrid-cell",
-  //   headerAlign: "left",
-  //   renderHeader: () => <span>Đặt nhóm</span>,
-  //   renderCell: (params) => <span>{params.row.isGroup ? "Có" : "Không"}</span>,
-  // },
-  {
-    field: "isGuaranteed",
-    headerName: "Đảm bảo đặt phòng",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderHeader: () => <span>Đảm bảo đặt phòng</span>,
-    renderCell: (params) => (
-      <span>
-        {params.row.isGuaranteed ? (
-          <span>
-            <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
-          </span>
-        ) : (
-          <span>
-            <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
-          </span>
-        )}
-      </span>
-    ),
-  },
-];
 
 const BookingList = () => {
+  const defaultColumns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 0.5,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span style={{ paddingLeft: "10px" }}>ID</span>,
+      renderCell: (params) => (
+        <span style={{ paddingLeft: "10px" }}>{params.row.id}</span>
+      ),
+    },
+    {
+      field: "customerName",
+      headerName: "Tên khách hàng",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Tên khách hàng</span>,
+      renderCell: (params) => <span>{params.row.customer?.name || "_"}</span>,
+    },
+    {
+      field: "status",
+      headerName: "Trạng thái",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Trạng thái</span>,
+      renderCell: (params) => {
+        const status = params.row.status as BookingStatus;
+        return (
+          <StyledChip
+            label={status}
+            style={statusStyles[status]}
+            // variant="outlined"
+          />
+        );
+      },
+    },
+    {
+      field: "checkInDate",
+      headerName: "Ngày nhận phòng",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Ngày nhận phòng</span>,
+      renderCell: (params) => {
+        const checkInDate = params.row.checkInDate;
+        return (
+          <span>
+            {checkInDate ? moment.unix(checkInDate).format("DD/MM/YYYY") : "_"}
+          </span>
+        );
+      },
+    },
+    {
+      field: "checkOutDate",
+      headerName: "Ngày trả phòng",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Ngày trả phòng</span>,
+      renderCell: (params) => {
+        const checkOutDate = params.row.checkOutDate;
+        return (
+          <span>
+            {checkOutDate
+              ? moment.unix(checkOutDate).format("DD/MM/YYYY")
+              : "_"}
+          </span>
+        );
+      },
+    },
+    {
+      field: "totalCost",
+      headerName: "Tổng chi phí",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Tổng chi phí</span>,
+      renderCell: (params) => (
+        <span>
+          {params.row.totalCost
+            ? `${params.row.totalCost.toLocaleString()} đ`
+            : "_"}
+        </span>
+      ),
+    },
+    {
+      field: "deposit",
+      headerName: "Tiền cọc",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Tiền cọc</span>,
+      renderCell: (params) => (
+        <span>
+          {params.row.deposit ? `${params.row.deposit.toLocaleString()} đ` : 0}
+        </span>
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Thao tác",
+      flex: 0.7,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "center",
+      align: "center",
+      renderHeader: () => <span>Thao tác</span>,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenServiceModal(params.row);
+          }}
+          style={{ fontSize: "1.2rem" }}
+          startIcon={<AddBusinessIcon />}
+        >
+          Dịch vụ
+        </Button>
+      ),
+    },
+  ];
+  
+  const hiddenColumns: GridColDef[] = [
+    {
+      field: "bookingDate",
+      headerName: "Ngày đặt",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Ngày đặt</span>,
+      renderCell: (params) => {
+        const bookingDate = params.row.bookingDate;
+        return (
+          <span>
+            {bookingDate ? moment.unix(bookingDate).format("HH:mm DD.MM.YYYY") : "_"}
+          </span>
+        );
+      },
+    },
+    {
+      field: "estimatedArrivalTime",
+      headerName: "Thời gian đến dự kiến",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Thời gian đến dự kiến</span>,
+      renderCell: (params) => {
+        const arrivalTime = params.row.estimatedArrivalTime;
+        return (
+          <span>
+            {arrivalTime ? moment.unix(arrivalTime).format("HH:mm DD.MM.YYYY") : "_"}
+          </span>
+        );
+      },
+    },
+    {
+      field: "checkInTime",
+      headerName: "Thời gian check-in",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Thời gian check-in</span>,
+      renderCell: (params) => {
+        const checkInTime = params.row.checkInTime;
+        return (
+          <span>
+            {checkInTime ? moment.unix(checkInTime).format("HH:mm DD.MM.YYYY") : "_"}
+          </span>
+        );
+      },
+    },
+    {
+      field: "checkOutTime",
+      headerName: "Thời gian check-out",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Thời gian check-out</span>,
+      renderCell: (params) => {
+        const checkOutTime = params.row.checkOutTime;
+        return (
+          <span>
+            {checkOutTime ? moment.unix(checkOutTime).format("HH:mm DD.MM.YYYY") : "_"}
+          </span>
+        );
+      },
+    },
+    {
+      field: "numberOfAdults",
+      headerName: "Số người lớn",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Số người lớn</span>,
+      renderCell: (params) => <span>{params.row.numberOfAdults}</span>,
+    },
+    {
+      field: "numberOfChildren",
+      headerName: "Số trẻ em",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Số trẻ em</span>,
+      renderCell: (params) => <span>{params.row.numberOfChildren}</span>,
+    },
+    // {
+    //   field: "isGroup",
+    //   headerName: "Đặt nhóm",
+    //   flex: 1,
+    //   headerClassName: "datagrid-header",
+    //   cellClassName: "datagrid-cell",
+    //   headerAlign: "left",
+    //   renderHeader: () => <span>Đặt nhóm</span>,
+    //   renderCell: (params) => <span>{params.row.isGroup ? "Có" : "Không"}</span>,
+    // },
+    {
+      field: "isGuaranteed",
+      headerName: "Đảm bảo đặt phòng",
+      flex: 1,
+      headerClassName: "datagrid-header",
+      cellClassName: "datagrid-cell",
+      headerAlign: "left",
+      renderHeader: () => <span>Đảm bảo đặt phòng</span>,
+      renderCell: (params) => (
+        <span>
+          {params.row.isGuaranteed ? (
+            <span>
+              <CheckIcon style={{ color: "green", fontSize: "1.6rem" }} />
+            </span>
+          ) : (
+            <span>
+              <CloseIcon style={{ color: "red", fontSize: "1.6rem" }} />
+            </span>
+          )}
+        </span>
+      ),
+    },
+  ];
   const navigate = useNavigate();
   const [tab, setTab] = useState<BookingStatus | "all">("all");
   const [data, setData] = useState<Booking[]>([]);
@@ -300,6 +331,9 @@ const BookingList = () => {
     numberOfChildren: 0,
     rooms: [],
   });
+  const [openServiceModal, setOpenServiceModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
   const fetchBookings = async (status: string) => {
     try {
       setLoading(true);
@@ -361,6 +395,27 @@ const BookingList = () => {
     fetchBookings(statusValue);
   }, []);
 
+  const handleOpenServiceModal = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setOpenServiceModal(true);
+  };
+
+  const handleCloseServiceModal = () => {
+    setOpenServiceModal(false);
+    setSelectedBooking(null);
+  };
+
+  const handleUpdateServices = async (updatedServices: BookingServiceItemForm[]) => {
+    if (!selectedBooking) return;
+    try {
+      await updateBookingServiceItemList(selectedBooking.id, updatedServices);
+      toast.success("Cập nhật dịch vụ thành công");
+      handleReload(selectedBooking.status);
+    } catch (error) {
+      console.error('Failed to update services:', error);
+      toast.error("Cập nhật dịch vụ thất bại");
+    }
+  };
   return (
     <Container title="Danh sách đặt phòng" fullscreen>
       <div className={cx("booking-box")}>
@@ -418,6 +473,18 @@ const BookingList = () => {
         open={openRow}
         onReload={handleReload}
       />
+      {selectedBooking && (
+        <ServiceModal
+          open={openServiceModal}
+          onClose={handleCloseServiceModal}
+          bookingId={selectedBooking.id}
+          servicesUsed={selectedBooking.servicesUsed || []}
+          onSave={(updatedServices) => {
+            handleUpdateServices(updatedServices);
+            handleCloseServiceModal();
+          }}
+        />
+      )}
     </Container>
   );
 };
