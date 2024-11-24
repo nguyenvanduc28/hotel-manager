@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
 
 const ServiceLayout: React.FC = () => {

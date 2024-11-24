@@ -1,4 +1,4 @@
-import {  BookingStatus, EMPLOYEE_STATUS, EquipmentStatus, GENDERS, Roles, RoomStatus } from "../constants/admin/constants";
+import {  BookingServiceOrderStatus, BookingStatus, EMPLOYEE_STATUS, EquipmentStatus, GENDERS, Roles, RoomStatus } from "../constants/admin/constants";
 
 export type HotelInfo = {
     id: number;
@@ -225,7 +225,7 @@ export type Booking = {
     rooms: RoomInfo[];
     consumablesUsed?: BookingConsumable[];
     equipmentDamagedList?: BookingEquipmentDamaged[];
-    servicesUsed?: BookingServiceItem[];
+    servicesUsed?: BookingService;
 };
 
 export type Invoice = {
@@ -285,11 +285,27 @@ export interface ServiceItem {
     image?: string;
 }
 
-export interface BookingServiceItem {
+export interface BookingService {
     id?: number;
     bookingId: number;
-    serviceItem: ServiceItem;
-    note?: string;
     totalPrice?: number;
-    quantity?: number;
+    serviceOrders: BookingServiceOrder[];
+}
+
+export interface BookingServiceOrder {
+    id?: number;
+    bookingServiceId: number;
+    orderItems: OrderItem[];
+    totalPrice?: number;
+    orderCreatedAt?: number;
+    servicedAt?: number;
+    status?: BookingServiceOrderStatus;
+    note?: string;
+}
+
+export interface OrderItem {
+    id?: number;
+    serviceItem: ServiceItem;
+    quantity: number;
+    totalPrice: number;
 }

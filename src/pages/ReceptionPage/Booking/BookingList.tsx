@@ -19,7 +19,6 @@ import moment from "moment";
 import {
   searchBooking,
   searchBookingByCusName,
-  updateBookingServiceItemList,
 } from "../../../apis/bookingApis/bookingApis";
 import ColumnFilter from "../../../components/ColumnFilter/ColumnFilter";
 import BookingInfoModal from "./BookingInfoModal";
@@ -27,8 +26,6 @@ import Loading from "../../../components/Loading/Loading";
 import ServiceModal from "../../../components/ServiceModal/ServiceModal";
 import { Button } from "@mui/material";
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
-import { BookingServiceItemForm } from "../../../types/forms";
-import { toast } from "react-toastify";
 
 
 const cx = classNames.bind(styles);
@@ -405,17 +402,6 @@ const BookingList = () => {
     setSelectedBooking(null);
   };
 
-  const handleUpdateServices = async (updatedServices: BookingServiceItemForm[]) => {
-    if (!selectedBooking) return;
-    try {
-      await updateBookingServiceItemList(selectedBooking.id, updatedServices);
-      toast.success("Cập nhật dịch vụ thành công");
-      handleReload(selectedBooking.status);
-    } catch (error) {
-      console.error('Failed to update services:', error);
-      toast.error("Cập nhật dịch vụ thất bại");
-    }
-  };
   return (
     <Container title="Danh sách đặt phòng" fullscreen>
       <div className={cx("booking-box")}>
@@ -476,12 +462,11 @@ const BookingList = () => {
       {selectedBooking && (
         <ServiceModal
           open={openServiceModal}
-          onClose={handleCloseServiceModal}
-          bookingId={selectedBooking.id}
-          servicesUsed={selectedBooking.servicesUsed || []}
-          onSave={(updatedServices) => {
-            handleUpdateServices(updatedServices);
-            handleCloseServiceModal();
+          onClose={() => handleCloseServiceModal()}
+          bookingId={selectedBooking.id || 0}
+          servicesUsed={selectedBooking.servicesUsed || { bookingId: 0, serviceOrders: [] }}
+          onSave={(serviceOrders) => {
+            console.log(serviceOrders);
           }}
         />
       )}

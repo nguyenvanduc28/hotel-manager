@@ -1,5 +1,5 @@
-import { BookingForm, BookingServiceItemForm, CustomerForm } from "../../types/forms";
-import { Booking } from "../../types/hotel";
+import { BookingForm, BookingServiceOrderForm, CustomerForm } from "../../types/forms";
+import { Booking, BookingServiceOrder } from "../../types/hotel";
 import axiosInstance from "../axiosInstance";
 
 export const getCustomers = async () => {
@@ -138,34 +138,56 @@ export const unCheckInBooking = async (bookingId: number) => {
     }
 };
 
-export const getBookingServiceItemList = async (bookingId: number) => {
+export const confirmServicedForOrder = async (orderId: number) => {
     try {
-        const response = await axiosInstance.get(`/admin/bookings/${bookingId}/service-item`);
+        const response = await axiosInstance.post(`/admin/bookings/${orderId}/confirm-serviced`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Xác nhận hoàn thành dịch vụ thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const deleteServiceOrder = async (orderId: number) => {
+    try {
+        const response = await axiosInstance.post(`/admin/bookings/${orderId}/delete`);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Xóa đơn dịch vụ thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const createServiceOrder = async (bookingId: number, payload: BookingServiceOrderForm) => {
+    try {
+        const response = await axiosInstance.post(`/admin/bookings/${bookingId}/service-order`, payload);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Tạo đơn dịch vụ thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const updateServiceOrder = async (orderId: number, payload: BookingServiceOrder) => {
+    try {
+        const response = await axiosInstance.put(`/admin/bookings/${orderId}/service-order`, payload);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Cập nhật đơn dịch vụ thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const getServicesByBookingId = async (bookingId: number) => {
+    try {
+        const response = await axiosInstance.get(`/admin/bookings/${bookingId}/services`);
         return response.data;
     } catch (error: unknown) {
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách dịch vụ thất bại';
-        console.error(errorMessage);
-        throw new Error(errorMessage);
-    }
-};
-
-export const addBookingServiceItem = async (bookingId: number, payload: BookingServiceItemForm) => {
-    try {
-        const response = await axiosInstance.post(`/admin/bookings/${bookingId}/service-item`, payload);
-        return response.data;
-    } catch (error: unknown) {
-        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Thêm dịch vụ thất bại';
-        console.error(errorMessage);
-        throw new Error(errorMessage);
-    }
-};
-
-export const updateBookingServiceItemList = async (bookingId: number, payload: BookingServiceItemForm[]) => {
-    try {
-        const response = await axiosInstance.put(`/admin/bookings/${bookingId}/service-item`, payload);
-        return response.data;
-    } catch (error: unknown) {
-        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Cập nhật danh sách dịch vụ thất bại';
         console.error(errorMessage);
         throw new Error(errorMessage);
     }

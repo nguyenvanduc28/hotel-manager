@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
-import { Invoice, Booking, BookingServiceItem } from "../../types/hotel";
+import { Invoice, Booking, BookingService } from "../../types/hotel";
 import classNames from "classnames/bind";
 import styles from "./InvoiceModal.module.scss";
 import moment from "moment";
@@ -46,8 +46,15 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
     return damages?.reduce((total, item) => total + (item.damageFee || 0), 0) || 0;
   };
 
-  const calculateServiceItemsTotal = (serviceItems?: BookingServiceItem[]): number => {
-    return serviceItems?.reduce((total, item) => total + (item.totalPrice || 0), 0) || 0;
+  const calculateServiceItemsTotal = (bookingService?: BookingService): number => {
+    if (!bookingService?.serviceOrders) return 0;
+    
+    return bookingService.serviceOrders.reduce((orderTotal, order) => {
+      const orderItemsTotal = order.orderItems.reduce((itemTotal, item) => {
+        return itemTotal + (item.totalPrice || 0);
+      }, 0);
+      return orderTotal + orderItemsTotal;
+    }, 0);
   };
 
   const formatCurrency = (amount?: number): string => {
@@ -252,29 +259,43 @@ const InvoiceModal = ({ open, onClose, invoice, booking }: InvoiceModalProps) =>
                     </tr>
                   </thead>
                   <tbody className={cx("table-body")}>
-                    {booking.servicesUsed?.length === 0 && (
+                    {booking.servicesUsed && booking.servicesUsed.serviceOrders.length === 0 && (
                       <tr className={cx("table-row")}>
                         <td className={cx("table-cell")} colSpan={7}>Không có dịch vụ nào</td>
                       </tr>
                     )}
-                    {booking.servicesUsed?.map((item, index) => (
-                      <tr key={index} className={cx("table-row")}>
-                        <td className={cx("table-cell")}>
-                          <img 
-                            src={item.serviceItem.image || '/placeholder-image.jpg'} 
-                            alt={item.serviceItem.name}
-                            style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                          />
-                        </td>
-                        <td className={cx("table-cell")}>{item.serviceItem.name}</td>
-                        <td className={cx("table-cell")}>{item.serviceItem.serviceType.name}</td>
-                        <td className={cx("table-cell")}>{item.quantity}</td>
-                        <td className={cx("table-cell")}>{formatCurrency(item.serviceItem.price)}</td>
-                        <td className={cx("table-cell")}>{item.note || "-"}</td>
-                        <td className={cx("table-cell", "price-cell")}>
-                          {formatCurrency(item.totalPrice)}
-                        </td>
-                      </tr>
+                    {booking.servicesUsed?.serviceOrders?.map((order, orderIndex) => (
+                      <>
+                        {/* Order header row */}
+                        <tr key={`order-${orderIndex}`} className={cx("table-row", "order-header")}>
+                          <td className={cx("table-cell")} colSpan={7} style={{ backgroundColor: '#f5f5f5' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px' }}>
+                              <span>Đơn hàng #{order.id} - {moment.unix(order.orderCreatedAt || 0).format("HH:mm DD/MM/YYYY")}</span>
+                              <span>Trạng thái: {order.status}</span>
+                            </div>
+                          </td>
+                        </tr>
+                        {/* Order items */}
+                        {order.orderItems.map((item, itemIndex) => (
+                          <tr key={`order-${orderIndex}-item-${itemIndex}`} className={cx("table-row")}>
+                            <td className={cx("table-cell")}>
+                              <img 
+                                src={item.serviceItem.image || '/placeholder-image.jpg'} 
+                                alt={item.serviceItem.name}
+                                style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                              />
+                            </td>
+                            <td className={cx("table-cell")}>{item.serviceItem.name}</td>
+                            <td className={cx("table-cell")}>{item.serviceItem.serviceType.name}</td>
+                            <td className={cx("table-cell")}>{item.quantity}</td>
+                            <td className={cx("table-cell")}>{formatCurrency(item.serviceItem.price)}</td>
+                            <td className={cx("table-cell")}>{order.note || "-"}</td>
+                            <td className={cx("table-cell", "price-cell")}>
+                              {formatCurrency(item.totalPrice)}
+                            </td>
+                          </tr>
+                        ))}
+                      </>
                     ))}
                   </tbody>
                 </table>

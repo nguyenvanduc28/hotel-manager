@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from "./Checkout.module.scss";
-import { Booking } from "../../../types/hotel";
+import { Booking, BookingService } from "../../../types/hotel";
 import Container from "../../../components/Container/Container";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBookingById } from "../../../apis/bookingApis/bookingApis";
@@ -87,8 +87,15 @@ const Checkout = () => {
     );
   };
 
-  const calculateServicesTotal = (services: Booking["servicesUsed"]): number => {
-    return services?.reduce((total, item) => total + (item.totalPrice || 0), 0) || 0;
+  const calculateServiceItemsTotal = (bookingService?: BookingService): number => {
+    if (!bookingService?.serviceOrders) return 0;
+    
+    return bookingService.serviceOrders.reduce((orderTotal, order) => {
+      const orderItemsTotal = order.orderItems.reduce((itemTotal, item) => {
+        return itemTotal + (item.totalPrice || 0);
+      }, 0);
+      return orderTotal + orderItemsTotal;
+    }, 0);
   };
 
   const calculateGrandTotal = (): number => {
@@ -100,8 +107,8 @@ const Checkout = () => {
         booking.checkOutDate
       ) +
       calculateConsumablesTotal(booking.consumablesUsed) +
-      calculateDamageTotal(booking.equipmentDamagedList) +
-      calculateServicesTotal(booking.servicesUsed) -
+      calculateServiceItemsTotal(booking.servicesUsed) +
+      calculateDamageTotal(booking.equipmentDamagedList) -
       (booking.deposit || 0)
     );
   };
@@ -392,35 +399,54 @@ const Checkout = () => {
         <table className={cx("data-table")}>
           <thead className={cx("table-header")}>
             <tr>
+              <th className={cx("header-cell")}>Ảnh</th>
               <th className={cx("header-cell")}>Tên dịch vụ</th>
               <th className={cx("header-cell")}>Loại dịch vụ</th>
-              <th className={cx("header-cell")}>Đơn giá</th>
               <th className={cx("header-cell")}>Số lượng</th>
+              <th className={cx("header-cell")}>Đơn giá</th>
               <th className={cx("header-cell")}>Ghi chú</th>
               <th className={cx("header-cell")}>Tổng tiền</th>
             </tr>
           </thead>
           <tbody className={cx("table-body")}>
-            {booking?.servicesUsed && booking.servicesUsed.length > 0 ? (
-              booking.servicesUsed?.map((item, index) => (
-                <tr key={index} className={cx("table-row")}>
-                  <td className={cx("table-cell")}>{item.serviceItem.name}</td>
-                  <td className={cx("table-cell")}>{item.serviceItem.serviceType.name}</td>
-                  <td className={cx("table-cell")}>{item.serviceItem.price}</td>
-                  <td className={cx("table-cell")}>{item.quantity}</td>
-                  <td className={cx("table-cell")}>{item.note || '-'}</td>
-                  <td className={cx("table-cell", "price-cell")}>
-                    {item.totalPrice?.toLocaleString()} VND
-                  </td>
-                </tr>
-              ))
-            ) : (
+            {booking?.servicesUsed && booking.servicesUsed.serviceOrders.length === 0 && (
               <tr className={cx("table-row")}>
-                <td colSpan={4} className={cx("table-cell", "empty-cell")}>
-                  Không có dịch vụ sử dụng
-                </td>
+                <td className={cx("table-cell")} colSpan={7}>Không có dịch vụ nào</td>
               </tr>
             )}
+            {booking?.servicesUsed?.serviceOrders?.map((order, orderIndex) => (
+              <>
+                {/* Order header row */}
+                <tr key={`order-${orderIndex}`} className={cx("table-row", "order-header")}>
+                  <td className={cx("table-cell")} colSpan={7} style={{ backgroundColor: '#f5f5f5' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px' }}>
+                      <span style={{ fontStyle: 'italic' }}>Đơn hàng #{order.id} - {moment.unix(order.orderCreatedAt || 0).format("HH:mm DD/MM/YYYY")}</span>
+                      <span style={{ fontStyle: 'italic' }}>Trạng thái: {order.status}</span>
+                    </div>
+                  </td>
+                </tr>
+                {/* Order items */}
+                {order.orderItems.map((item, itemIndex) => (
+                  <tr key={`order-${orderIndex}-item-${itemIndex}`} className={cx("table-row")}>
+                    <td className={cx("table-cell")}>
+                      <img 
+                        src={item.serviceItem.image || '/placeholder-image.jpg'} 
+                        alt={item.serviceItem.name}
+                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                      />
+                    </td>
+                    <td className={cx("table-cell")}>{item.serviceItem.name}</td>
+                    <td className={cx("table-cell")}>{item.serviceItem.serviceType.name}</td>
+                    <td className={cx("table-cell")}>{item.quantity}</td>
+                    <td className={cx("table-cell")}>{formatCurrency(item.serviceItem.price)}</td>
+                    <td className={cx("table-cell")}>{order.note || "-"}</td>
+                    <td className={cx("table-cell", "price-cell")}>
+                      {formatCurrency(item.totalPrice)}
+                    </td>
+                  </tr>
+                ))}
+              </>
+            ))}
           </tbody>
         </table>
       </div>
@@ -467,7 +493,7 @@ const Checkout = () => {
           <div className={cx("summary-row")}>
             <span className={cx("summary-label")}>Tổng tiền dịch vụ:</span>
             <span className={cx("summary-value")}>
-              {formatCurrency(calculateServicesTotal(booking?.servicesUsed))}
+              {formatCurrency(calculateServiceItemsTotal(booking?.servicesUsed))}
             </span>
           </div>
           <div className={cx("summary-row")}>
@@ -511,9 +537,9 @@ const Checkout = () => {
     <ServiceModal
       open={isServiceModalOpen}
       onClose={() => setIsServiceModalOpen(false)}
-      bookingId={parseInt(id || '')}
+      bookingServiceId={booking?.id || 0}
+      servicesUsed={booking?.servicesUsed || { bookingId: 0, serviceOrders: [] }}
       onSave={handleServiceUpdate}
-      servicesUsed={booking?.servicesUsed || []}
     />
   );
 
