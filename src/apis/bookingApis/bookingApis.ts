@@ -83,6 +83,19 @@ export const confirmBooking = async (bookingId: number) => {
     }
 };
 
+export const changeStatusToOrderService = async (orderId: number, status: string) => {
+    try {
+        const response = await axiosInstance.post(`/admin/bookings/${orderId}/change-status`, null, {
+            params: { status }
+        });
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Thay đổi trạng thái đơn dịch vụ thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
 export const checkInBooking = async (bookingId: number) => {
     try {
         const response = await axiosInstance.post(`/admin/bookings/checkin/${bookingId}`);

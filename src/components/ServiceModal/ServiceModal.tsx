@@ -14,9 +14,10 @@ import classNames from "classnames/bind";
 import styles from "./ServiceModal.module.scss";
 import { BookingService, ServiceItem, ServiceType, BookingServiceOrder, OrderItem } from "../../types/hotel";
 import { getServiceTypeList, getServiceItemList } from "../../apis/serviceApis";
-import { updateServiceOrder, createServiceOrder, deleteServiceOrder, confirmServicedForOrder, getServicesByBookingId } from "../../apis/bookingApis/bookingApis";
+import { updateServiceOrder, createServiceOrder, deleteServiceOrder , getServicesByBookingId, changeStatusToOrderService } from "../../apis/bookingApis/bookingApis";
 import { toast } from "react-toastify";
 import moment from "moment";
+import { BOOKING_SERVICE_ORDER_STATUS } from "../../constants/admin/constants";
 
 const cx = classNames.bind(styles);
 
@@ -24,9 +25,15 @@ interface ServiceModalProps {
   open: boolean;
   onClose: () => void;
   bookingId: number;
+  bookingServiceId?: number;
 }
 
-const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
+const SERVICE_STATUSES = {
+  NEW: "Mới",
+  SERVICED: "Đã phục vụ"
+} as const;
+
+const ServiceModal = ({ open, onClose, bookingId, bookingServiceId }: ServiceModalProps) => {
   const [serviceOrderSelected, setServiceOrderSelected] = useState<BookingServiceOrder | null>(null);
   const [serviceItems, setServiceItems] = useState<ServiceItem[]>([]);
   const [serviceTypeItems, setServiceTypeItems] = useState<ServiceType[]>([]);
@@ -70,26 +77,40 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
     loadServiceItems();
   }, [selectedType]);
 
-  const handleConfirmService = async (order: BookingServiceOrder) => {
+  const handleStatusChange = async (orderId: number, newStatus: string) => {
     try {
-      if (order) {
-        await confirmServicedForOrder(order.id!);
-        loadServicesUsed();
-        toast.success('Xác nhận phục vụ đơn hàng thành công');
-      }
+      await changeStatusToOrderService(orderId, newStatus);
+      loadServicesUsed();
+      toast.success('Cập nhật trạng thái đơn hàng thành công');
     } catch (error) {
-      toast.error('Lỗi xác nhận phục vụ đơn hàng');
+      toast.error('Lỗi cập nhật trạng thái đơn hàng');
     }
-  }
+  };
 
-  const handleEditOrder = async (orderId: number, updatedOrder: BookingServiceOrder) => {
+  const handleCreateNewOrder = () => {
+    if (!bookingServiceId) return;
+    
+    setServiceOrderSelected({
+      bookingServiceId: bookingServiceId,
+      orderItems: [],
+      status: BOOKING_SERVICE_ORDER_STATUS.NEW,
+      note: ''
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleEditOrder = async (orderId: number | undefined, updatedOrder: BookingServiceOrder) => {
     try {
-      await updateServiceOrder(orderId, updatedOrder);
+      if (orderId) {
+        await updateServiceOrder(orderId, updatedOrder);
+      } else {
+        await createServiceOrder(bookingId, updatedOrder);
+      }
       loadServicesUsed();
       setEditDialogOpen(false);
-      toast.success('Cập nhật đơn hàng thành công');
+      toast.success(orderId ? 'Cập nhật đơn hàng thành công' : 'Tạo đơn hàng thành công');
     } catch (error) {
-      toast.error('Lỗi cập nhật đơn hàng');
+      toast.error(orderId ? 'Lỗi cập nhật đơn hàng' : 'Lỗi tạo đơn hàng');
     }
   };
 
@@ -166,11 +187,11 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {servicesUsed.serviceOrders ? servicesUsed.serviceOrders.map((order) => (
+                  {servicesUsed.serviceOrders && servicesUsed.serviceOrders.length > 0 ? servicesUsed.serviceOrders.map((order) => (
                     <tr key={order.id} onClick={() => setServiceOrderSelected(order)}>
                       <td>{order.id}</td>
-                      <td>{moment(order.orderCreatedAt).format('DD/MM/YYYY HH:mm')}</td>
-                      <td>{moment(order.servicedAt).format('DD/MM/YYYY HH:mm')}</td>
+                      <td>{order.orderCreatedAt ? moment(order.orderCreatedAt).format('DD/MM/YYYY HH:mm') : '_'}</td>
+                      <td>{order.servicedAt ? moment(order.servicedAt).format('DD/MM/YYYY HH:mm') : '_'}</td>
                       <td>{order.status}</td>
                       <td>
                         <button 
@@ -182,7 +203,21 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
                         >
                           Chỉnh sửa
                         </button>
-                        <button onClick={() => handleConfirmService(order)}>Xác nhận phục vụ</button>
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order.id!, e.target.value)}
+                          className={cx('status-select')}
+                          style={{ 
+                            marginLeft: '8px',
+                            padding: '4px 8px',
+                            fontSize: '1.4rem',
+                            borderRadius: '4px',
+                            border: '1px solid #ccc'
+                          }}
+                        >
+                          <option value={SERVICE_STATUSES.NEW.toString()}>{SERVICE_STATUSES.NEW}</option>
+                          <option value={SERVICE_STATUSES.SERVICED.toString()}>{SERVICE_STATUSES.SERVICED}</option>
+                        </select>
                       </td>
                     </tr>
                   )) : <tr><td colSpan={5} style={{ textAlign: 'center' }}>Không có dữ liệu</td></tr>}
@@ -193,7 +228,17 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
         </DialogContent>
 
         <DialogActions className={cx('dialog-actions')} sx={{ padding: "16px 24px", borderTop: "1px solid #e0e0e0" }}>
-          
+          <Button
+            variant="contained"
+            onClick={handleCreateNewOrder}
+            sx={{ 
+              fontSize: "1.4rem",
+              textTransform: "none",
+              minWidth: "100px"
+            }}
+          >
+            Thêm mới
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -235,7 +280,7 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
                 </tr>
               </thead>
               <tbody>
-                {serviceOrderSelected?.orderItems?.map((item) => (
+                {serviceOrderSelected?.orderItems && serviceOrderSelected?.orderItems.length > 0 ? serviceOrderSelected?.orderItems.map((item) => (
                   <tr key={item.id}>
                     <td>
                       <img 
@@ -244,7 +289,7 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
                         className={cx('item-image')}
                       />
                     </td>
-                    <td>{item.serviceItem?.name}</td>
+                    <td>{item.serviceItem?.name || '_'}</td>
                     <td>
                       <input
                         type="number"
@@ -268,7 +313,7 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
                         }}
                       />
                     </td>
-                    <td>{item.serviceItem?.price?.toLocaleString()}đ</td>
+                    <td>{item.serviceItem?.price?.toLocaleString() || 0}đ</td>
                     <td>{(item.quantity * (item.serviceItem?.price || 0)).toLocaleString()}đ</td>
                     <td>
                       <Button
@@ -288,7 +333,7 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
                       </Button>
                     </td>
                   </tr>
-                ))}
+                )) : <tr><td colSpan={6} style={{ textAlign: 'center' }}>Không có dịch vụ nào</td></tr>}
               </tbody>
               <tfoot>
                 <tr>
@@ -338,12 +383,12 @@ const ServiceModal = ({ open, onClose, bookingId }: ServiceModalProps) => {
                     <td>
                       <img 
                         src={item.image || '/default-service.png'} 
-                        alt={item.name}
+                        alt={item.name || '_'}
                         className={cx('item-image')}
                       />
                     </td>
-                    <td>{item.name}</td>
-                    <td>{item.price?.toLocaleString()}đ</td>
+                    <td>{item.name || '_'}</td>
+                    <td>{item.price?.toLocaleString() || 0}đ</td>
                     <td>
                       <Button
                         style={{fontSize: "11px"}}

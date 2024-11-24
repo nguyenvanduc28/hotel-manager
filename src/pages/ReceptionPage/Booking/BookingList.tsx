@@ -464,10 +464,7 @@ const BookingList = () => {
           open={openServiceModal}
           onClose={() => handleCloseServiceModal()}
           bookingId={selectedBooking.id || 0}
-          servicesUsed={selectedBooking.servicesUsed || { bookingId: 0, serviceOrders: [] }}
-          onSave={(serviceOrders) => {
-            console.log(serviceOrders);
-          }}
+          bookingServiceId={selectedBooking.servicesUsed?.id || 0}
         />
       )}
     </Container>

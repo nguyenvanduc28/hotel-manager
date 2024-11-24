@@ -1,4 +1,4 @@
-import { BookingServiceOrderStatus, BookingStatus, EquipmentStatus } from "../constants/admin/constants";
+import { BOOKING_SERVICE_ORDER_STATUS, BookingServiceOrderStatus, BookingStatus, EquipmentStatus } from "../constants/admin/constants";
 import { BookingConsumable, BookingEquipmentDamaged, BookingService, BookingServiceOrder, Customer, Employee, Genders, OrderItem, Role, RoomInfo } from "./hotel";
 
 export type RoomTypeForm = {
@@ -151,6 +151,6 @@ export interface BookingServiceOrderForm {
     totalPrice?: number;
     orderCreatedAt?: number;
     servicedAt?: number;
-    status?: BookingServiceOrderStatus;
+    status?: BOOKING_SERVICE_ORDER_STATUS;
     note?: string;
 }
