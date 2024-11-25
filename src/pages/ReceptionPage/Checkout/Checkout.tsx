@@ -538,8 +538,7 @@ const Checkout = () => {
       open={isServiceModalOpen}
       onClose={() => setIsServiceModalOpen(false)}
       bookingServiceId={booking?.id || 0}
-      servicesUsed={booking?.servicesUsed || { bookingId: 0, serviceOrders: [] }}
-      onSave={handleServiceUpdate}
+      bookingId={booking?.id || 0}
     />
   );
 

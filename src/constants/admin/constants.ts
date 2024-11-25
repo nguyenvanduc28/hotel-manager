@@ -60,6 +60,7 @@ export type BookingStatus = typeof BOOKING_STATUS[keyof typeof BOOKING_STATUS];
 
 export enum BOOKING_SERVICE_ORDER_STATUS {
     NEW = "Mới",
+    IN_PROGRESS = "Đang làm",
+    READY_TO_SERVE = "Sẵn sàng phục vụ",
     SERVICED = "Đã phục vụ",
 }
-export type BookingServiceOrderStatus = typeof BOOKING_SERVICE_ORDER_STATUS[keyof typeof BOOKING_SERVICE_ORDER_STATUS];

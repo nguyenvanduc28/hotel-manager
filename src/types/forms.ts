@@ -1,5 +1,5 @@
-import { BOOKING_SERVICE_ORDER_STATUS, BookingServiceOrderStatus, BookingStatus, EquipmentStatus } from "../constants/admin/constants";
-import { BookingConsumable, BookingEquipmentDamaged, BookingService, BookingServiceOrder, Customer, Employee, Genders, OrderItem, Role, RoomInfo } from "./hotel";
+import { BOOKING_SERVICE_ORDER_STATUS, BookingStatus, EquipmentStatus } from "../constants/admin/constants";
+import { BookingConsumable, BookingEquipmentDamaged, BookingService, Customer, Employee, Genders, OrderItem, Role, RoomInfo } from "./hotel";
 
 export type RoomTypeForm = {
     id: number;

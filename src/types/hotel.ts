@@ -1,4 +1,4 @@
-import {  BOOKING_SERVICE_ORDER_STATUS, BookingServiceOrderStatus, BookingStatus, EMPLOYEE_STATUS, EquipmentStatus, GENDERS, Roles, RoomStatus } from "../constants/admin/constants";
+import {  BOOKING_SERVICE_ORDER_STATUS, BookingStatus, EMPLOYEE_STATUS, EquipmentStatus, GENDERS, Roles, RoomStatus } from "../constants/admin/constants";
 
 export type HotelInfo = {
     id: number;

@@ -9,6 +9,8 @@ export const ROLES = {
     INVOICE_MANAGER: 'INVOICE_MANAGER', // Quyền quản lý hóa đơn và thanh toán
     HOTEL_INFO_MANAGER: 'HOTEL_INFO_MANAGER', // Quyền quản lý thông tin khách sạn
     SERVICE_COUNTER: 'SERVICE_COUNTER', // Quyền đứng quầy dịch vụ.
+    BAR_COUNTER: 'BAR_COUNTER', // Quyền đứng quầy bar
+    RESTAURANT_COUNTER: 'RESTAURANT_COUNTER', // Quyền đứng quầy nhà hàng
 };
 
 export const ROLES_DATA = [
@@ -22,4 +24,6 @@ export const ROLES_DATA = [
     {id: 8, name: 'INVOICE_MANAGER'}, // Quyền quản lý hóa đơn và thanh toán
     {id: 9, name: 'HOTEL_INFO_MANAGER'}, // Quyền quản lý thông tin khách sạn
     {id: 10, name: 'SERVICE_COUNTER'}, // Quyền đứng quầy dịch vụ.
+    {id: 11, name: 'BAR_COUNTER'}, // Quyền đứng quầy bar
+    {id: 12, name: 'RESTAURANT_COUNTER'}, // Quyền đứng quầy nhà hàng
 ];

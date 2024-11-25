@@ -12,9 +12,8 @@ import ReportServiceRevenue from "../pages/AdminPage/Reports/ServiceRevenue/Repo
 import ReportBillRevenue from "../pages/AdminPage/Reports/BillRevenue/ReportBillRevenue";
 import HotelSetting from "../pages/AdminPage/HotelSetting/HotelSetting";
 import { ROLES } from "../constants/auth/roleConstants";
-import EmployeeRole from "../pages/AdminPage/Employees/EmployeeRole";
 import ServiceUsage from "../pages/AdminPage/Services/ServiceUsage";
-import { ADMIN_PATHS, PUBLIC_PATHS, RECEPTION_PATHS } from "../constants/admin/adminPath";
+import { ADMIN_PATHS, PUBLIC_PATHS, RECEPTION_PATHS, SERVICE_COUNTER_PATHS } from "../constants/admin/adminPath";
 import RoomAmenityCreate from "../pages/AdminPage/RoomAmenities/RoomAmenityCreate";
 import RoomTypeCreate from "../pages/AdminPage/RoomType/RoomTypeCreate";
 import RoomListCreate from "../pages/AdminPage/RoomList/RoomListCreate";
@@ -35,6 +34,7 @@ import HotelInfo from "../pages/PublicPage/HotelInfo";
 import BookingPublic from "../pages/PublicPage/BookingPublic";
 import AlertBookingSuccess from "../pages/PublicPage/AlertBookingSuccess";
 import EmployeeAction from "../pages/AdminPage/Employees/EmployeeAction";
+import ServiceCounterLayout from "../pages/ServiceCounter/ServiceCounterLayout";
 
 export type RouteWrapperProps = {
   path: string;
@@ -241,6 +241,19 @@ export const PublicRoutes: RouteWrapperProps[] = [
   {
     path: PUBLIC_PATHS.ALERT_BOOKING_SUCCESS,
     element: <AlertBookingSuccess />,
+    allowedRoles: [],
+  },
+]
+
+export const ServiceCounterRoutes: RouteWrapperProps[] = [
+  {
+    path: SERVICE_COUNTER_PATHS.SERVICE_COUNTER,
+    element: <ServiceCounterLayout />,
+    allowedRoles: [ROLES.ADMIN, ROLES.SERVICE_COUNTER, ROLES.BAR_COUNTER, ROLES.RESTAURANT_COUNTER],
+  },
+  {
+    path: SERVICE_COUNTER_PATHS.NO_PERMISSION,
+    element: <NoPermission />,
     allowedRoles: [],
   },
 ]

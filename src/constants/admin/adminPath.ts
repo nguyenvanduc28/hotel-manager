@@ -50,3 +50,8 @@ export const PUBLIC_PATHS = {
   BOOKING_PUBLIC: "/booking/public",
   ALERT_BOOKING_SUCCESS: "/alert-booking-success",
 }
+
+export const SERVICE_COUNTER_PATHS = {
+  SERVICE_COUNTER: "/service-counter",
+  NO_PERMISSION: "/service-counter/no-permission",
+}

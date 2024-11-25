@@ -195,7 +195,7 @@ const ServiceModal = ({ open, onClose, bookingId, bookingServiceId }: ServiceMod
                       <td>{order.status}</td>
                       <td>
                         <button 
-                          disabled={order.status?.toLowerCase() !== "mới"}
+                          disabled={order.status !== BOOKING_SERVICE_ORDER_STATUS.NEW}
                           onClick={() => {
                             setServiceOrderSelected(order);
                             setEditDialogOpen(true);

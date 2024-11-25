@@ -24,6 +24,27 @@ const serviceItemColumns: GridColDef[] = [
     cellClassName: "datagrid-cell",
   },
   {
+    field: "image",
+    headerName: "Ảnh",
+    flex: 2,
+    headerClassName: "datagrid-header",
+    cellClassName: "datagrid-cell",
+    renderCell: (params) => (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '5px' }}>
+        <img 
+          src={params.row.image} 
+        alt={params.row.name}
+          style={{ 
+            width: '40px', 
+            height: '40px',
+            objectFit: 'cover',
+            borderRadius: '4px'
+          }} 
+        />
+      </div>
+    ),
+  },
+  {
     field: "name",
     headerName: "Tên dịch vụ",
     flex: 3,

@@ -2,12 +2,13 @@ import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import AdminLayout from "../layouts/AdminLayout/AdminLayout";
 import { useAuth } from "../hooks/useAuth";
 import NoPermission from "../pages/NoPermission";
-import AdminRouters, { PublicRoutes, ReceptionRoutes } from "./routes";
+import AdminRouters, { PublicRoutes, ReceptionRoutes, ServiceCounterRoutes } from "./routes";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import { useEffect } from "react";
 import NotFound from "../pages/NotFound";
 import ReceptionLayout from "../layouts/ReceptionLayout/ReceptionLayout";
 import RegisterPage from "../pages/AuthPage/RegisterPage";
+import ServiceCounterLayout from "../pages/ServiceCounter/ServiceCounterLayout";
 
 interface ProtectedRouteProps {
   roles: string[];
@@ -57,6 +58,14 @@ const AppRouters: React.FC = () => {
             </Route>
           ))}
         </Route>
+        {ServiceCounterRoutes.map((route) => (
+          <Route
+            key={route.path}
+            element={<ProtectedRoute roles={route.allowedRoles} linkToNoPermission={"/service-counter/no-permission"} />}
+          >
+            <Route path={route.path} element={route.element} />
+          </Route>
+        ))}
         <Route path="/no-permission" element={<NoPermission />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
