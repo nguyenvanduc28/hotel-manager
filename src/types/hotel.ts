@@ -295,6 +295,7 @@ export interface BookingService {
 export interface BookingServiceOrder {
     id?: number;
     bookingServiceId: number;
+    serviceTypeId?: number;
     orderItems: OrderItem[];
     totalPrice?: number;
     orderCreatedAt?: number;

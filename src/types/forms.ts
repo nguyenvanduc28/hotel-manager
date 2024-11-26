@@ -147,6 +147,7 @@ export interface ServiceItemForm {
 export interface BookingServiceOrderForm {
     id?: number;
     bookingServiceId: number;
+    serviceTypeId?: number;
     orderItems: OrderItem[];
     totalPrice?: number;
     orderCreatedAt?: number;

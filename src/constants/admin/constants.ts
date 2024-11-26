@@ -64,3 +64,9 @@ export enum BOOKING_SERVICE_ORDER_STATUS {
     READY_TO_SERVE = "Sẵn sàng phục vụ",
     SERVICED = "Đã phục vụ",
 }
+
+export enum SERVICE_TYPE {
+    RESTAURANT = 1,
+    BAR = 2,
+    ROOM = 3,
+}
