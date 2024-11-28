@@ -465,6 +465,7 @@ const BookingList = () => {
           onClose={() => handleCloseServiceModal()}
           bookingId={selectedBooking.id || 0}
           bookingServiceId={selectedBooking.servicesUsed?.id || 0}
+          customer={selectedBooking.customer}
         />
       )}
     </Container>

@@ -37,6 +37,10 @@ const ServiceCounterLayout = () => {
 
   useEffect(() => {
     reloadCount();
+    const interval = setInterval(() => {
+      reloadCount();
+    }, 20000);
+    return () => clearInterval(interval);
   }, []);
   return (
     <div className={cx("service-counter-layout")}>
@@ -80,7 +84,7 @@ const ServiceCounterLayout = () => {
 
       <div className={cx("service-counter-layout__content")}>
         {tab === "ORDER" && <Order reloadCount={reloadCount}/>}
-        {tab !== "ORDER" && <ServiceScreen status={tab} reloadCount={reloadCount}/>}
+        {tab !== "ORDER" && <ServiceScreen status={tab} reloadCount={reloadCount} numOfStatus={numOfStatus}/>}
       </div>
     </div>
   );

@@ -3,14 +3,15 @@ import { useAuth } from "../../hooks/useAuth";
 import { BookingServiceOrder } from "../../types/hotel";
 import styles from "./ServiceScreen.module.scss";
 import classNames from "classnames/bind";
-import { getBookingServiceOrderList, updateBookingServiceOrderStatus } from "../../apis/serviceApis";
+import { getBookingServiceOrderList } from "../../apis/serviceApis";
 import { BOOKING_SERVICE_ORDER_STATUS, SERVICE_TYPE } from "../../constants/admin/constants";
 import { useHotel } from "../../hooks/useHotel";
 import moment from "moment";
 import { changeStatusToOrderService } from "../../apis/bookingApis/bookingApis";
+import EditServiceOrderDialog from '../../components/ServiceModal/EditServiceOrderDialog';
 const cx = classNames.bind(styles);
 
-const ServiceScreen = ({status, reloadCount}: {status: string, reloadCount: () => void}) => {
+const ServiceScreen = ({status, reloadCount, numOfStatus}: {status: string, reloadCount: () => void, numOfStatus: { [key: string]: number }}) => {
   const { user } = useAuth();
   const {hotelInfo} = useHotel();
   const serviceTypeId = user?.roles.find(role => role.name === "BAR_COUNTER") 
@@ -22,6 +23,7 @@ const ServiceScreen = ({status, reloadCount}: {status: string, reloadCount: () =
   const [orderList, setOrderList] = useState<BookingServiceOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<BookingServiceOrder | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const fetchOrderList = async () => {
     const response = await getBookingServiceOrderList(status, hotelInfo?.id || 0, serviceTypeId || 0);
@@ -38,14 +40,14 @@ const ServiceScreen = ({status, reloadCount}: {status: string, reloadCount: () =
       : status === BOOKING_SERVICE_ORDER_STATUS.IN_PROGRESS
       ? BOOKING_SERVICE_ORDER_STATUS.READY_TO_SERVE
       : BOOKING_SERVICE_ORDER_STATUS.SERVICED;
-    const response = await changeStatusToOrderService(selectedOrder?.id || 0, nextStatus);
+    await changeStatusToOrderService(selectedOrder?.id || 0, nextStatus);
     fetchOrderList();
     reloadCount();
   }
 
   useEffect(() => {
     fetchOrderList();
-  }, [status, hotelInfo?.id, serviceTypeId]);
+  }, [status, hotelInfo?.id, serviceTypeId, numOfStatus[status]]);
 
   return <div className={cx("service-screen")}>
     <div className={cx("order-list")}>
@@ -66,7 +68,17 @@ const ServiceScreen = ({status, reloadCount}: {status: string, reloadCount: () =
               </div>
 
               <div className={cx("order-actions")}>
-                <button className={cx("order-detail-button")} onClick={() => setSelectedOrder(order)}>Chỉnh sửa</button>
+                <button 
+                  className={cx("order-detail-button")} 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedOrder(order);
+                    setEditDialogOpen(true);
+                  }} 
+                  disabled={order.status === BOOKING_SERVICE_ORDER_STATUS.READY_TO_SERVE || order.status === BOOKING_SERVICE_ORDER_STATUS.SERVICED}
+                >
+                  Chỉnh sửa
+                </button>
               </div>
             </div>
             <div className={cx("order-service-items")}>
@@ -145,6 +157,15 @@ const ServiceScreen = ({status, reloadCount}: {status: string, reloadCount: () =
         )}
       </div>
     ) : null}
+
+    <EditServiceOrderDialog 
+      open={editDialogOpen}
+      onClose={() => setEditDialogOpen(false)}
+      serviceOrderSelected={selectedOrder}
+      onOrderUpdated={fetchOrderList}
+      bookingId={selectedOrder?.bookingServiceId || 0}
+      isChangeServiceType={false}
+    />
   </div>;
 };
 

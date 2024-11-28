@@ -203,11 +203,24 @@ const EmployeeAction: React.FC = () => {
           value={employeeForm.user?.roles?.map(role => role.name) || []}
           onChange={(event) => {
             const selectedRoles = event.target.value as string[];
-            handleChange("roles", selectedRoles.map(value => ROLES_DATA.find(role => role.name === value)));
-        }}
-        renderValue={(selected) => (selected as string[]).join(', ')}
-        sx={{ width: '100%', fontSize: '16px', marginBottom: '2rem', height: '3.5rem' }}
-        >
+            const hasBarCounter = selectedRoles.includes('BAR_COUNTER');
+            const hasRestaurantCounter = selectedRoles.includes('RESTAURANT_COUNTER');
+            
+            if (hasBarCounter && hasRestaurantCounter) {
+              const previousRoles = employeeForm.user?.roles?.map(role => role.name) || [];
+              const keepNewRole = previousRoles.includes('BAR_COUNTER') ? 'RESTAURANT_COUNTER' : 'BAR_COUNTER';
+              const filteredRoles = selectedRoles.filter(role => 
+                role !== 'BAR_COUNTER' && role !== 'RESTAURANT_COUNTER'
+              );
+              const finalRoles = [...filteredRoles, keepNewRole];
+              handleChange("roles", finalRoles.map(value => ROLES_DATA.find(role => role.name === value)));
+            } else {
+              handleChange("roles", selectedRoles.map(value => ROLES_DATA.find(role => role.name === value)));
+            }
+          }}
+          renderValue={(selected) => (selected as string[]).join(', ')}
+          sx={{ width: '100%', fontSize: '16px', marginBottom: '2rem', height: '3.5rem' }}
+          >
           {roleOptions.map((role) => (
             <MenuItem key={role.value} value={role.value}>
               {role.label}

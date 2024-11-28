@@ -43,6 +43,7 @@ import { searchCustomersByName } from "../../../apis/customerApis/customerApis";
 import SelectContainer from "../../../components/Select/SelectContainer";
 import { countries } from "../../../constants/regions";
 import { useHotel } from "../../../hooks/useHotel";
+import { toast } from "react-toastify";
 
 type BookingCreateProps = {};
 
@@ -417,15 +418,43 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
     }));
   };
 
-  // Call API to save customer
+  const validateCustomer = (): string[] => {
+    const errors: string[] = [];
+
+    if (!customerForm.name?.trim()) {
+      errors.push("Vui lòng nhập tên khách hàng");
+    }
+    if (!customerForm.phoneNumber?.trim()) {
+      errors.push("Vui lòng nhập số điện thoại");
+    }
+    if (!customerForm.identityNumber?.trim()) {
+      errors.push("Vui lòng nhập số CMND/CCCD");
+    }
+    if (!customerForm.nationality?.trim()) {
+      errors.push("Vui lòng chọn quốc tịch");
+    }
+
+    return errors;
+  };
+
   const handleSaveCus = async () => {
+    const errors = validateCustomer();
+    
+    if (errors.length > 0) {
+      toast.error(errors.join('\n'));
+      return;
+    }
+
     try {
       await createCustomer(customerForm);
       fetchCustomers("");
+      setOpenModalCus(false);
     } catch (error) {
       console.error("Lỗi khi tạo khách hàng:", error);
+      toast.error("Có lỗi xảy ra khi tạo khách hàng. Vui lòng thử lại.");
     }
   };
+
   const handleChange = (key: keyof BookingForm, value: any) => {
     setBookingForm((prevForm) => ({
       ...prevForm,
@@ -453,19 +482,54 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
     }
   };
 
-  const handleSave = async () => {
-    try {
-      const result = await createBooking(bookingForm);
+  const validateBooking = (): string[] => {
+    const errors: string[] = [];
 
-      console.log("Booking đã được tạo:", bookingForm);
+    // Validate customer information
+    if (!bookingForm.customer.id) {
+      errors.push("Vui lòng chọn khách hàng");
+    }
+
+    // Validate dates
+    if (!bookingForm.checkInDate) {
+      errors.push("Vui lòng chọn ngày nhận phòng");
+    }
+    if (!bookingForm.checkOutDate) {
+      errors.push("Vui lòng chọn ngày trả phòng");
+    }
+
+    // Validate rooms
+    if (!bookingForm.rooms || bookingForm.rooms.length === 0) {
+      errors.push("Vui lòng chọn ít nhất 1 phòng");
+    }
+
+    // Validate number of guests
+    if (!bookingForm.numberOfAdults || bookingForm.numberOfAdults < 1) {
+      errors.push("Số người lớn phải lớn hơn 0");
+    }
+
+    return errors;
+  };
+
+  const handleSave = async () => {
+    const errors = validateBooking();
+    
+    if (errors.length > 0) {
+      toast.error(errors.join('\n'));
+      return;
+    }
+
+    try {
+      await createBooking(bookingForm);
+      toast.success("Tạo booking thành công");
       navigate("/reception/" + RECEPTION_PATHS.BOOKING_LIST);
     } catch (error) {
-      console.error("Lỗi khi tạo booking:", error);
+      toast.error("Có lỗi xảy ra khi tạo booking. Vui lòng thử lại.");
     }
   };
   const handleRowClick = (params: any) => {
     if (bookingForm.rooms.find((item) => item.id == params.row.id))
-      alert("trùng rồi");
+      toast.error("Phòng đã có trong booking");
     else {
       const updatedRooms = [...bookingForm.rooms, params.row];
       handleChange("rooms", updatedRooms);
@@ -638,9 +702,13 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                     className="checkbox"
                     type="checkbox"
                     checked={bookingForm.isGuaranteed}
-                    onChange={(e) =>
-                      handleChange("isGuaranteed", e.target.checked)
-                    }
+                    onChange={(e) => {
+                      const isGuaranteed = e.target.checked;
+                      // Automatically calculate deposit as 20% of total cost when guaranteed
+                      const deposit = isGuaranteed ? (bookingForm.totalCost || 0) * 0.2 : 0;
+                      handleChange("isGuaranteed", isGuaranteed);
+                      handleChange("deposit", deposit);
+                    }}
                   />
                 </label>
               </div>
@@ -658,13 +726,6 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                     handleChange(
                       "deposit",
                       isNaN(parsedValue) ? 0 : parsedValue
-                    );
-
-                    handleChange(
-                      "totalCost",
-                      (bookingForm.totalCost || 0) -
-                        (bookingForm.deposit || 0) +
-                        (isNaN(parsedValue) ? 0 : parsedValue)
                     );
                   }}
                   suffix="vnđ"
