@@ -68,6 +68,11 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
                 isCollapse={isCollapse}
               />
               <MenuItem
+                title="Quản lý giá phòng"
+                link="/admin/room-price"
+                isCollapse={isCollapse}
+              />
+              <MenuItem
                 title="Tiện nghi phòng"
                 link="/admin/room-amenities"
                 isCollapse={isCollapse}

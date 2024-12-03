@@ -1,4 +1,5 @@
 import { ConsumableCategoriesForm, ConsumableForm, EquipmentCategoryForm, EquipmentForm, RoomInfoForm, RoomTypeForm } from "../../types/forms";
+import { RoomPrice } from "../../types/hotel";
 import axiosInstance from "../axiosInstance";
 
 export const createConsumableCategory = async (payload: ConsumableCategoriesForm) => {
@@ -259,6 +260,33 @@ export const getRoomTypes = async () => {
         return response.data;
     } catch (error: unknown) {
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách loại phòng thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const getRoomTypesWithPriceInRange = async (checkInDate: number, checkOutDate: number) => {
+    try {
+        const response = await axiosInstance.get('/admin/rooms/roomtype/price', {
+            params: {
+                checkInDate,
+                checkOutDate
+            }
+        });
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách loại phòng theo khoảng thời gian thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const updatePriceRoomType = async (payload: RoomPrice) => {
+    try {
+        const response = await axiosInstance.put('/admin/rooms/roomtype/price', payload);
+        return response.data;
+    } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Cập nhật giá phòng thất bại';
         console.error(errorMessage);
         throw new Error(errorMessage);
     }

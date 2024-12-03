@@ -4,6 +4,7 @@ export const ADMIN_PATHS = {
   ROOM_EDIT: "room-list/:id",
   ROOM_CREATE: "room-list/create",
   ROOM_TYPE: "room-type",
+  ROOM_PRICE: "room-price",
   ROOM_TYPE_CREATE: "room-type/create",
   ROOM_AMENITIES: "room-amenities",
   ROOM_AMENITY_CATEGORY: "room-amenities/categories",

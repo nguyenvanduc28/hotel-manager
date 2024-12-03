@@ -37,7 +37,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles, linkToNoPermissi
 const AppRouters: React.FC = () => {
   return (
     <Routes>
-      <Route element={<ProtectedRoute roles={["ADMIN", "RECEPTIONIST", "EMPLOYEE", "MANAGER", "SUPER_ADMIN", "DIRECTOR", "ACCOUNTANT", "SUPER_ADMIN", "WAREHOUSE_MANAGER"]} />}>
+      <Route element={<ProtectedRoute roles={["ADMIN", "RECEPTIONIST", "EMPLOYEE", "MANAGER", "SUPER_ADMIN", "DIRECTOR", "ACCOUNTANT", "SUPER_ADMIN", "WAREHOUSE_MANAGER", "BAR_COUNTER", "RESTAURANT_COUNTER", "SERVICE_COUNTER"]} />}>
         <Route path="/admin" element={<AdminLayout />}>
           {AdminRouters.map((route) => (
             <Route

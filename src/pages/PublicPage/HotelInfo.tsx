@@ -112,7 +112,7 @@ const HotelInfo = () => {
                             <div className={cx('description')}>
                                 <h2>Thông tin khách sạn</h2>
                                 <div className={cx('hotel-details')}>
-                                    <p>Số phòng: {hotelInfo.numberOfRooms}</p>
+                                    <p>Số phòng trống hiện tại: {hotelInfo.numberOfRooms}</p>
                                     <p>Giờ nhận phòng: {hotelInfo.checkInTime}</p>
                                     <p>Giờ trả phòng: {hotelInfo.checkOutTime}</p>
                                 </div>
@@ -233,7 +233,16 @@ const HotelInfo = () => {
                                         </div>
                                         <div className={cx('room-price')}>
                                             <div className={cx('price')}>
-                                                {room.roomType?.basePricePerNight?.toLocaleString()} VNĐ/đêm
+                                                {room.roomType?.priceToday && room.roomType.priceToday !== room.roomType.basePricePerNight ? (
+                                                    <>
+                                                        <span className={cx('price-today')}>{room.roomType.priceToday.toLocaleString()} VNĐ/đêm</span>
+                                                        <span className={cx('price-base-line-through')}>
+                                                            {room.roomType.basePricePerNight?.toLocaleString()} VNĐ/đêm
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <span className={cx('price-base')}>{room.roomType?.basePricePerNight?.toLocaleString()} VNĐ/đêm</span>
+                                                )}
                                             </div>
                                             <button 
                                                 className={cx('book-button')}

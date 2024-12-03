@@ -35,6 +35,7 @@ import BookingPublic from "../pages/PublicPage/BookingPublic";
 import AlertBookingSuccess from "../pages/PublicPage/AlertBookingSuccess";
 import EmployeeAction from "../pages/AdminPage/Employees/EmployeeAction";
 import ServiceCounterLayout from "../pages/ServiceCounter/ServiceCounterLayout";
+import RoomPrice from "../pages/AdminPage/RoomPrice/RoomPrice";
 
 export type RouteWrapperProps = {
   path: string;
@@ -67,6 +68,11 @@ const AdminRoutes: RouteWrapperProps[] = [
   {
     path: ADMIN_PATHS.ROOM_TYPE,
     element: <RoomType />,
+    allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
+  },
+  {
+    path: ADMIN_PATHS.ROOM_PRICE,
+    element: <RoomPrice />,
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF_MANAGER],
   },
   {

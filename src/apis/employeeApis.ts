@@ -3,7 +3,7 @@ import { Employee } from '../types/hotel';
 
 export const getAllEmployees = async () => {
     try {
-        const response = await axiosInstance.get('/admin/employee/getall');
+        const response = await axiosInstance.get('/admin/employee/getall2');
         return response.data;
     } catch (error: unknown) {
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy danh sách nhân viên thất bại';
@@ -47,7 +47,7 @@ export const updateEmployee = async (id: number, employeeDto: Employee) => {
 
 export const getEmployeeInfo = async () => {
     try {
-        const response = await axiosInstance.get('/admin/employee/getInfoEmployee');
+        const response = await axiosInstance.get('/admin/employee/get-employee-info');
         return response.data;
     } catch (error: unknown) {
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy thông tin nhân viên thất bại';

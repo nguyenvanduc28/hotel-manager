@@ -107,7 +107,7 @@ const defaultColumns: GridColDef[] = [
     renderHeader: () => <span>Giá phòng/1 đêm</span>,
     renderCell: (params) => (
       <span>
-        {params.row.roomType ? params.row.roomType.basePricePerNight.toLocaleString() : "0"} đ
+        {params.row.roomType ? params.row.roomType.priceToday.toLocaleString() : params.row.roomType.basePricePerNight.toLocaleString()} đ
       </span>
     ),
   },
@@ -404,23 +404,25 @@ const BookingPublic = () => {
         const fetchInitialData = async () => {
             try {
                 const hotel = await getHotelById(parseInt(hotelId || '0'));
-                const room = await getRoomById(parseInt(roomId || '0'));
                 setHotelInfo(hotel);
+
+                const roomAvailable = await getAvailableRooms(parseInt(checkInDate || '0'), parseInt(checkOutDate || '0'), parseInt(hotelId || '0'));
+                setAvailableRooms(roomAvailable);
+                const room = roomAvailable.find((r: RoomInfo) => r.id === parseInt(roomId || '0'));
+                if (!room) {
+                    throw new Error('Phòng không khả dụng trong thời gian này');
+                }
                 setRoomInfo(room);
 
-                // Calculate total nights
                 const nights = moment.unix(parseInt(checkOutDate || '0'))
                     .diff(moment.unix(parseInt(checkInDate || '0')), 'days');
                 setTotalNights(nights);
 
-                // Update booking form with room and total cost
                 setBookingForm(prev => ({
                     ...prev,
                     rooms: [room],
-                    totalCost: (room.roomType?.basePricePerNight || 0) * nights
+                    totalCost: (room.roomType.priceToday || room.roomType.basePricePerNight) * nights
                 }));
-                const roomAvailable = await getAvailableRooms(parseInt(checkInDate || '0'), parseInt(checkOutDate || '0'), parseInt(hotelId || '0'));
-                setAvailableRooms(roomAvailable);
             } catch (error) {
                 toast.error('Không thể tải thông tin đặt phòng');
             }
@@ -616,7 +618,7 @@ const BookingPublic = () => {
                             <div key={room.id} className={cx('room-item')}>
                                 <div className={cx('room-info')}>
                                     <span>Phòng {room.roomNumber} - {room.roomType?.name}</span>
-                                    <span>{room.roomType?.basePricePerNight?.toLocaleString()} VNĐ/đêm</span>
+                                    <span>{room.roomType?.priceToday ? room.roomType?.priceToday.toLocaleString() : room.roomType?.basePricePerNight?.toLocaleString()} VNĐ/đêm</span>
                                 </div>
                                 <Button
                                     icon={<RemoveCircleOutline />}
@@ -626,7 +628,7 @@ const BookingPublic = () => {
                                             ...prev,
                                             rooms: updatedRooms,
                                             totalCost: updatedRooms.reduce((acc, r) => 
-                                                acc + (r.roomType?.basePricePerNight || 0) * totalNights, 0
+                                                acc + (r.roomType?.priceToday || r.roomType?.basePricePerNight || 0) * totalNights, 0
                                             )
                                         }));
                                     }}
@@ -757,7 +759,7 @@ const BookingPublic = () => {
                                 ...prev,
                                 rooms: updatedRooms,
                                 totalCost: updatedRooms.reduce((acc, r) => 
-                                    acc + (r.roomType?.basePricePerNight || 0) * totalNights, 0
+                                    acc + (r.roomType.priceToday || r.roomType.basePricePerNight) * totalNights, 0
                                 )
                             }));
                             setOpenRoomModal(false);

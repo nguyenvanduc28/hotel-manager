@@ -58,6 +58,13 @@ export type WarehouseForm = {
     importPrice?: number;
 }
 
+export type RoomPrice = {
+    id?: number;
+    roomTypeId?: number;
+    date?: number;
+    price?: number;
+}
+
 export type RoomType = {
     id?: number;
     name?: string;
@@ -68,6 +75,8 @@ export type RoomType = {
     sizeRange?: string;
     maxOccupancy?: number;
     basePricePerNight?: number;
+    roomPrices?: RoomPrice[];
+    priceToday?: number;
 }
 
 export type RoomItem = {

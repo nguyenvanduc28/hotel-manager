@@ -95,51 +95,6 @@
     gap: 8px;
 }
 
-.room-card {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 16px;
-}
-
-.room-info {
-    h3 {
-        margin-bottom: 8px;
-    }
-    
-    .room-features {
-        display: flex;
-        gap: 16px;
-        margin-top: 8px;
-        color: #666;
-    }
-}
-
-.room-price {
-    text-align: right;
-    
-    .price {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 8px;
-    }
-    
-    .book-button {
-        background-color: #0071c2;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        
-        &:hover {
-            background-color: #005999;
-        }
-    }
-}
-
 .rooms-section {
     margin-top: 2rem;
     overflow-y: scroll;
@@ -189,7 +144,7 @@
     
     h3 {
         margin: 0 0 0.5rem;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
 
     p {
@@ -204,7 +159,7 @@
     
     span {
         color: #555;
-        font-size: 0.9rem;
+        font-size: 1.2rem;
     }
 }
 
@@ -218,10 +173,24 @@
 }
 
 .price {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #2c5282;
     margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .price-today {
+        color: #f7300d;
+    }
+
+    .price-base-line-through {
+        text-decoration: line-through;
+        font-size: 1.2rem;
+        color: #888;
+        margin-left: 8px;
+    }
 }
 
 .book-button {
