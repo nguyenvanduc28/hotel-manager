@@ -9,7 +9,7 @@ import Inventory from "../pages/AdminPage/Inventory/Inventory";
 import InventoryHistory from "../pages/AdminPage/InventoryHistory/InventoryHistory";
 import ReportSummary from "../pages/AdminPage/Reports/Summary/ReportSummary";
 import ReportServiceRevenue from "../pages/AdminPage/Reports/ServiceRevenue/ReportServiceRevenue";
-import ReportBillRevenue from "../pages/AdminPage/Reports/BillRevenue/ReportBillRevenue";
+import ReportBillRevenue from "../pages/AdminPage/Reports/ReportRoom/ReportRoomRevenue";
 import HotelSetting from "../pages/AdminPage/HotelSetting/HotelSetting";
 import { ROLES } from "../constants/auth/roleConstants";
 import ServiceUsage from "../pages/AdminPage/Services/ServiceUsage";
@@ -36,6 +36,7 @@ import AlertBookingSuccess from "../pages/PublicPage/AlertBookingSuccess";
 import EmployeeAction from "../pages/AdminPage/Employees/EmployeeAction";
 import ServiceCounterLayout from "../pages/ServiceCounter/ServiceCounterLayout";
 import RoomPrice from "../pages/AdminPage/RoomPrice/RoomPrice";
+import ReportRoomRevenue from "../pages/AdminPage/Reports/ReportRoom/ReportRoomRevenue";
 
 export type RouteWrapperProps = {
   path: string;
@@ -151,13 +152,13 @@ const AdminRoutes: RouteWrapperProps[] = [
     allowedRoles: [ROLES.ADMIN, ROLES.REPORT_MANAGER],
   },
   {
-    path: ADMIN_PATHS.REPORT_SERVICE_REVENUE,
-    element: <ReportServiceRevenue />,
+    path: ADMIN_PATHS.REPORT_ROOM_REVENUE,
+    element: <ReportRoomRevenue />,
     allowedRoles: [ROLES.ADMIN, ROLES.REPORT_MANAGER],
   },
   {
-    path: ADMIN_PATHS.REPORT_BILL_REVENUE,
-    element: <ReportBillRevenue />,
+    path: ADMIN_PATHS.REPORT_SERVICE_REVENUE,
+    element: <ReportServiceRevenue />,
     allowedRoles: [ROLES.ADMIN, ROLES.REPORT_MANAGER],
   },
   {

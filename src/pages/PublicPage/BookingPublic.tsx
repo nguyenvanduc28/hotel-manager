@@ -107,7 +107,14 @@ const defaultColumns: GridColDef[] = [
     renderHeader: () => <span>Giá phòng/1 đêm</span>,
     renderCell: (params) => (
       <span>
-        {params.row.roomType ? params.row.roomType.priceToday.toLocaleString() : params.row.roomType.basePricePerNight.toLocaleString()} đ
+        {params.row.roomType?.priceToday && params.row.roomType.priceToday !== params.row.roomType.basePricePerNight ? (
+            <div>
+                <span style={{color: '#f7300d'}}>{params.row.roomType.priceToday.toLocaleString()} đ</span>
+                <span style={{textDecoration: 'line-through', fontSize: '1.2rem', color: '#888', marginLeft: '8px'}}>{params.row.roomType.basePricePerNight?.toLocaleString()} đ</span>
+            </div>
+        ) : (
+            <span>{params.row.roomType?.basePricePerNight?.toLocaleString()} đ</span>
+        )}
       </span>
     ),
   },
@@ -421,7 +428,7 @@ const BookingPublic = () => {
                 setBookingForm(prev => ({
                     ...prev,
                     rooms: [room],
-                    totalCost: (room.roomType.priceToday || room.roomType.basePricePerNight) * nights
+                    totalCost: (room.roomType?.priceToday || room.roomType?.basePricePerNight) * nights
                 }));
             } catch (error) {
                 toast.error('Không thể tải thông tin đặt phòng');
@@ -443,6 +450,12 @@ const BookingPublic = () => {
             // Validate required fields
             if (!customerForm.name || !customerForm.email || !customerForm.phoneNumber) {
                 toast.error('Vui lòng điền đầy đủ thông tin cá nhân');
+                return;
+            }
+
+            // Validate số người lớn
+            if (!bookingForm.numberOfAdults || bookingForm.numberOfAdults < 1) {
+                toast.error('Số người lớn phải lớn hơn 0');
                 return;
             }
 
@@ -613,23 +626,74 @@ const BookingPublic = () => {
                     </div>
 
                     <div className={cx('form-section')}>
+                        <h3>Thông tin đặt phòng</h3>
+                        <div className={cx('form-row')}>
+                            <InputText
+                                value={bookingForm.numberOfAdults?.toString()}
+                                title="Số người lớn *"
+                                placeholder="Nhập số người"
+                                type="number"
+                                onChange={(e) => {
+                                    const parsedValue = parseFloat(e.target.value);
+                                    setBookingForm(prev => ({
+                                        ...prev,
+                                        numberOfAdults: isNaN(parsedValue) ? 0 : parsedValue
+                                    }));
+                                }}
+                                suffix="người"
+                            />
+                            <InputText
+                                value={bookingForm.numberOfChildren?.toString()}
+                                title="Số trẻ em"
+                                placeholder="Nhập số người"
+                                type="number"
+                                onChange={(e) => {
+                                    const parsedValue = parseFloat(e.target.value);
+                                    setBookingForm(prev => ({
+                                        ...prev,
+                                        numberOfChildren: isNaN(parsedValue) ? 0 : parsedValue
+                                    }));
+                                }}
+                                suffix="người"
+                            />
+                        </div>
+                    </div>
+
+                    <div className={cx('form-section')}>
                         <h3>Danh sách phòng đã chọn</h3>
                         {bookingForm.rooms.map((room) => (
                             <div key={room.id} className={cx('room-item')}>
                                 <div className={cx('room-info')}>
                                     <span>Phòng {room.roomNumber} - {room.roomType?.name}</span>
-                                    <span>{room.roomType?.priceToday ? room.roomType?.priceToday.toLocaleString() : room.roomType?.basePricePerNight?.toLocaleString()} VNĐ/đêm</span>
+                                    <span>
+                                        {room.roomType?.priceToday && room.roomType.priceToday !== room.roomType.basePricePerNight ? (
+                                            <div>
+                                                <span style={{color: '#f7300d', fontSize: '1.6rem'}}>{room.roomType.priceToday.toLocaleString()} VNĐ/đêm</span>
+                                                <span style={{textDecoration: 'line-through', fontSize: '1.4rem', color: '#888', marginLeft: '8px'}}>{room.roomType.basePricePerNight?.toLocaleString()} VNĐ/đêm</span>
+                                            </div>
+                                        ) : (
+                                            <span>{room.roomType?.basePricePerNight?.toLocaleString()} VNĐ/đêm</span>
+                                        )}
+                                    </span>
                                 </div>
                                 <Button
                                     icon={<RemoveCircleOutline />}
                                     onClick={() => {
                                         const updatedRooms = bookingForm.rooms.filter(r => r.id !== room.id);
+                                        const totalCost = updatedRooms.reduce((acc, r) => 
+                                            acc + (r.roomType?.priceToday || r.roomType?.basePricePerNight || 0) * totalNights, 0
+                                        );
                                         setBookingForm(prev => ({
                                             ...prev,
                                             rooms: updatedRooms,
-                                            totalCost: updatedRooms.reduce((acc, r) => 
-                                                acc + (r.roomType?.priceToday || r.roomType?.basePricePerNight || 0) * totalNights, 0
-                                            )
+                                            totalCost
+                                        }));
+                                        // tính lại đặt cọc
+                                        const isGuaranteed = bookingForm.isGuaranteed;
+                                        const deposit = isGuaranteed ? (totalCost || 0) * 0.2 : 0;
+                                        setBookingForm(prev => ({
+                                            ...prev,
+                                            deposit
                                         }));
                                     }}
                                     content="Xóa"
@@ -755,12 +819,20 @@ const BookingPublic = () => {
                                 return;
                             }
                             const updatedRooms = [...bookingForm.rooms, params.row];
+                            const totalCost = updatedRooms.reduce((acc, r) => 
+                                acc + (r.roomType.priceToday || r.roomType.basePricePerNight) * totalNights, 0
+                            );
                             setBookingForm(prev => ({
                                 ...prev,
                                 rooms: updatedRooms,
-                                totalCost: updatedRooms.reduce((acc, r) => 
-                                    acc + (r.roomType.priceToday || r.roomType.basePricePerNight) * totalNights, 0
-                                )
+                                totalCost
+                            }));
+                            // tính lại đặt cọc
+                            const isGuaranteed = bookingForm.isGuaranteed;
+                            const deposit = isGuaranteed ? (totalCost || 0) * 0.2 : 0;
+                            setBookingForm(prev => ({
+                                ...prev,
+                                deposit
                             }));
                             setOpenRoomModal(false);
                         }}

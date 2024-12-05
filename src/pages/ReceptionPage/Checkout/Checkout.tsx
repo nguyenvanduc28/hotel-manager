@@ -63,7 +63,7 @@ const Checkout = () => {
       rooms?.reduce(
         (total, room) =>
           total +
-          (room.roomType?.basePricePerNight || 0) *
+          (room.roomType?.priceToday || room.roomType?.basePricePerNight || 0) *
             calculateNightCount(checkIn, checkOut),
         0
       ) || 0
@@ -264,11 +264,8 @@ const Checkout = () => {
                   </span>
                   <div className={cx("room-details")}>
                     <span className={cx("room-detail")}>
-                      Giá cơ bản:{" "}
-                      {room.roomType?.basePricePerNight &&
-                        new Intl.NumberFormat("vi-VN").format(
-                          room.roomType?.basePricePerNight
-                        )}{" "}
+                      Giá phòng:{" "}
+                      {room.roomType?.priceToday ? room.roomType?.priceToday.toLocaleString() : room.roomType?.basePricePerNight?.toLocaleString()}{" "}
                       VND x{" "}
                       {calculateNightCount(
                         booking?.checkInDate,

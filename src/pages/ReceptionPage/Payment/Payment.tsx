@@ -36,7 +36,7 @@ const calculateRoomTotal = (
     rooms?.reduce(
       (total, room) =>
         total +
-        (room.roomType?.basePricePerNight || 0) *
+        (room.roomType?.priceToday || room.roomType?.basePricePerNight || 0) *
           calculateNightCount(checkIn, checkOut),
       0
     ) || 0
@@ -301,7 +301,7 @@ const Payment = () => {
                         </span>
                         <div className={cx("room-details")}>
                           <span className={cx("room-detail")}>
-                            Giá cơ bản: {room.roomType?.basePricePerNight?.toLocaleString()} VND x {calculateNightCount(booking.checkInDate, booking.checkOutDate)} đêm
+                            Giá phòng: {room.roomType?.priceToday ? room.roomType?.priceToday.toLocaleString() : room.roomType?.basePricePerNight?.toLocaleString()} VND x {calculateNightCount(booking.checkInDate, booking.checkOutDate)} đêm
                           </span>
                         </div>
                       </div>

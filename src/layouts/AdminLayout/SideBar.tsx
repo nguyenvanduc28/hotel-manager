@@ -178,13 +178,13 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
                 isCollapse={isCollapse}
               />
               <MenuItem
-                title="Doanh thu dịch vụ"
-                link="/admin/report-service-revenue"
+                title="Theo loại phòng"
+                link="/admin/report-room-revenue"
                 isCollapse={isCollapse}
               />
               <MenuItem
-                title="Theo hóa đơn"
-                link="/admin/report-bill-revenue"
+                title="Theo dịch vụ"
+                link="/admin/report-service-revenue"
                 isCollapse={isCollapse}
               />
             </SubMenu>

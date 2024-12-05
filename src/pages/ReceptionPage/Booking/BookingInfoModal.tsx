@@ -305,12 +305,8 @@ const BookingInfoModal: React.FC<BookingInfoModalProps> = ({
                       </span>
                       <div className={cx("room-details")}>
                         <span className={cx("room-detail")}>
-                          Giá cơ bản:{" "}
-                          {room.roomType?.basePricePerNight &&
-                            new Intl.NumberFormat("vi-VN").format(
-                              room.roomType?.basePricePerNight
-                            )}{" "}
-                          VND x{" "}
+                          Giá:{" "}
+                          {room.roomType?.priceToday ? room.roomType?.priceToday.toLocaleString() : room.roomType?.basePricePerNight?.toLocaleString()} VND x{" "}
                           {bookingData.checkInDate && bookingData.checkOutDate
                             ? moment
                                 .unix(bookingData.checkOutDate)

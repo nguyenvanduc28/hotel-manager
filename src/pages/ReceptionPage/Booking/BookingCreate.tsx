@@ -115,7 +115,7 @@ const defaultColumns: GridColDef[] = [
   },
   {
     field: "price",
-    headerName: "Giá phòng (giá cơ bản/đêm)",
+    headerName: "Giá phòng",
     flex: 1,
     filterable: false,
     headerClassName: "datagrid-header",
@@ -123,14 +123,26 @@ const defaultColumns: GridColDef[] = [
     headerAlign: "left",
     renderHeader: () => <span>Giá phòng/1 đêm</span>,
     renderCell: (params) => {
-      // const price = params ? params.row.roomType.basePricePerNight.toLocaleString() : "0";
-      // const formattedPrice = new Intl.NumberFormat("vi-VN").format(price);
       return (
         <span>
-          {params
-            ? params.row.roomType.basePricePerNight.toLocaleString()
-            : "0"}{" "}
-          đ
+          {params ? (
+            <>
+              {params.row.roomType.priceToday ? (
+                <>
+                  <span style={{ color: "red" }}>{params.row.roomType.priceToday.toLocaleString()} đ</span>
+                  {params.row.roomType.basePricePerNight && (
+                    <span style={{ textDecoration: "line-through", marginLeft: "8px", color: "gray" }}>
+                      {params.row.roomType.basePricePerNight.toLocaleString()} đ
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span>{params.row.roomType.basePricePerNight.toLocaleString()} đ</span>
+              )}
+            </>
+          ) : (
+            "0 đ"
+          )}
         </span>
       );
     },
@@ -536,10 +548,13 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
 
       const newTotalCost =
         updatedRooms.reduce((acc, item) => {
-          return acc + (item.roomType?.basePricePerNight || 0) * totalNights;
-        }, 0) + bookingForm.deposit;
+          return acc + (item.roomType?.priceToday || item.roomType?.basePricePerNight || 0) * totalNights;
+        }, 0);
+      
+      const deposit = bookingForm.isGuaranteed ? (newTotalCost * 0.2) : 0;
 
       handleChange("totalCost", newTotalCost);
+      handleChange("deposit", deposit);
 
       setOpenModal(false);
     }
@@ -555,9 +570,13 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
 
     const newTotalCost =
       updatedRooms.reduce((acc, item) => {
-        return acc + (item.roomType?.basePricePerNight || 0) * totalNights;
-      }, 0) + (bookingForm.deposit || 0);
+        return acc + (item.roomType?.priceToday || item.roomType?.basePricePerNight || 0) * totalNights;
+      }, 0);
+      
+    const deposit = bookingForm.isGuaranteed ? (newTotalCost * 0.2) : 0;
+
     handleChange("totalCost", newTotalCost);
+    handleChange("deposit", deposit);
   };
   return (
     <Container fullscreen title="Thêm Booking">
@@ -766,12 +785,13 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                     </div>
                     <div className={cx("item-right-box")}>
                       <span className={cx("item-right-title")}>
-                        Giá cơ bản:
+                        Giá:
                       </span>
                       <span className={cx("item-right-value")}>
-                        {room.roomType?.basePricePerNight &&
-                          room.roomType?.basePricePerNight.toLocaleString() +
-                            " đ/đêm"}
+                        {room.roomType?.priceToday
+                          ? room.roomType?.priceToday.toLocaleString()
+                          : room.roomType?.basePricePerNight?.toLocaleString()}
+                        {" đ/đêm"}
                       </span>
                     </div>
                   </div>
@@ -894,8 +914,8 @@ const BookingCreate: React.FC<BookingCreateProps> = () => {
                     </span>
                     <div className={cx("room-details")}>
                       <span className={cx("room-detail")}>
-                        Giá cơ bản:{" "}
-                        {room.roomType?.basePricePerNight &&
+                        Giá:{" "}
+                        {room.roomType?.priceToday ? room.roomType?.priceToday.toLocaleString() : room.roomType?.basePricePerNight &&
                           room.roomType?.basePricePerNight.toLocaleString()}
                         {" đ x " + totalNights + " đêm"}
                       </span>
