@@ -319,3 +319,39 @@ export interface OrderItem {
     quantity: number;
     totalPrice: number;
 }
+
+export interface GeneralReport {
+    totalRevenue: number; // Tổng doanh thu
+    totalBookings: number; // Tổng số lượt đặt phòng
+    totalCustomers: number; // Tổng số khách hàng
+    averageRevenuePerBooking: number; // Doanh thu trung bình trên mỗi đơn đặt phòng
+    totalCompletedBookings: number; // Tổng số đơn đặt phòng đã hoàn thành
+    totalCanceledBookings: number; // Tổng số đơn đặt phòng đã hủy
+    serviceRevenue: number; // Doanh thu từ dịch vụ
+    roomRevenue: number; // Doanh thu từ phòng
+    consumableRevenue: number; // Doanh thu từ tiêu dùng nội bộ
+}
+
+export interface PopularServiceItem {
+    serviceItem: ServiceItem;
+    usageCount: number; // Số lần sử dụng
+}
+
+export interface ServiceReport {
+    serviceTypeId: number;
+    serviceTypeName: string;
+    totalRevenue: number; // Tổng doanh thu
+    usageCount: number; // Số lần sử dụng
+    timePeriodStart: number; // Thời gian bắt đầu (dạng timestamp)
+    timePeriodEnd: number; // Thời gian kết thúc (dạng timestamp)
+    popularServiceItems: PopularServiceItem[];
+}
+
+export interface RoomTypeReport {
+    roomTypeId: number; // ID loại phòng
+    roomTypeName: string; // Tên loại phòng
+    totalRevenue: number; // Tổng doanh thu từ loại phòng
+    totalBookings: number; // Tổng số lượt đặt phòng từ loại phòng
+    timePeriodStart: number; // Thời gian bắt đầu (dạng timestamp)
+    timePeriodEnd: number; // Thời gian kết thúc (dạng timestamp)
+  }
