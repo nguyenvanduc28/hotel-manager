@@ -56,7 +56,7 @@ export const verifyToken = async (payload: VerifyTokenPayload) => {
     }
 };
 
-export const registerApi = async (payload: RegisterPayload) => {
+export const registerAdmin = async (payload: RegisterPayload) => {
     try {
         const response = await axiosInstance.post('/admin/auth/register-admin', payload);
         return response.data;

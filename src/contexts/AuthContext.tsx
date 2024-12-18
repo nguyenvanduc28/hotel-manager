@@ -2,7 +2,7 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "../types/auth";
 import { useNavigate } from "react-router-dom";
 import { login as loginApi, verifyToken } from "../apis/authApis/authApis"; 
-import { register as registerApi } from "../apis/authApis/authApis";
+import { register as registerApi, registerAdmin as registerAdminApi } from "../apis/authApis/authApis";
 import { Employee, Role } from "../types/hotel";
 import { getEmployeeInfo } from "../apis/employeeApis";
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   register: (username: string, password: string, roles: Role[]) => Promise<void>;
+  registerForAdmin: (username: string, password: string, roles: Role[]) => Promise<void>;
   employeeInfo: Employee | null;
 }
 
@@ -64,6 +65,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (user.roles.some((role: Role) => role.name === "RECEPTIONIST")) {
         navigate("/reception/booking/list");
+      } else if (user.roles.some((role: Role) => role.name === "RESTAURANT_COUNTER")) {
+        navigate("/service-counter");
+      } else if (user.roles.some((role: Role) => role.name === "BAR_COUNTER")) {
+        navigate("/service-counter");
+      } else if (user.roles.some((role: Role) => role.name === "SERVICE_COUNTER")) {
+        navigate("/service-counter");
       } else {
         navigate("/admin");
       }
@@ -116,9 +123,28 @@ const register = async (username: string, password: string, roles: Role[]) => {
     setLoading(false);
   }
 };
+const registerForAdmin = async (username: string, password: string, roles: Role[]) => {
+  setLoading(true);
+  try {
+    const data = await registerAdminApi({ username, password, roles });
+    
+    const { token, user } = data;
+    const userWithToken = { ...user, token };
 
+    setUser(userWithToken);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userWithToken));
+
+    navigate("/admin/hotel-setting");
+  } catch (error) {
+    console.error("Đăng ký thất bại:", error);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, register, employeeInfo }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, register, registerForAdmin, employeeInfo }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -12,7 +12,7 @@ import { getServiceCount } from "../../apis/serviceApis";
 const cx = classNames.bind(styles);
 
 const ServiceCounterLayout = () => {
-  const { user, employeeInfo } = useAuth();
+  const { user, employeeInfo, logout } = useAuth();
   const [tab, setTab] = useState<string>(BOOKING_SERVICE_ORDER_STATUS.NEW);
   const [numOfStatus, setNumOfStatus] = useState<{ [key: string]: number }>({
     [BOOKING_SERVICE_ORDER_STATUS.NEW]: 0,
@@ -76,7 +76,7 @@ const ServiceCounterLayout = () => {
               {employeeInfo?.name} - {user?.roles[0].name}
             </span>
             <div className={cx("service-counter-layout__header-right-logout")}>
-              <Logout sx={{ fontSize: "2.4rem" }}/>
+              <Logout sx={{ fontSize: "2.4rem" }} onClick={logout}/>
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ import classNames from "classnames/bind";
 const cx = classNames.bind(styles);
 
 const RegisterPage = () => {
-  const { register } = useAuth();
+  const { registerForAdmin } = useAuth();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -30,7 +30,7 @@ const RegisterPage = () => {
 
 
     try {
-      await register(username, password, [{id: 1, name: "ADMIN"}]);
+      await registerForAdmin(username, password, [{id: 1, name: "ADMIN"}]);
     } catch (err) {
       setError("Đăng ký thất bại. Vui lòng thử lại.");
       setOpenSnackbar(true);

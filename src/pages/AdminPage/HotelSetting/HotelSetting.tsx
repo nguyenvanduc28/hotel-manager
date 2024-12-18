@@ -630,7 +630,7 @@ const HotelSetting = () => {
             icon={<SaveOutlinedIcon />}
             content="Lưu"
             onClick={handleSave}
-            disabled={isUploading || !hasChanges()}
+            // disabled={!isUploading || !hasChanges()}
           />
         </div>
       </div>
