@@ -17,11 +17,13 @@ import {
   getRoomTypes,
   getEquipmentAvailable,
   getConsumablesAvailable,
+  getRoomByIdForAdmin,
 } from "../../../apis/roomApis/roomApis";
 import { useNavigate, useParams } from "react-router-dom";
 import { Consumables, Equipments, RoomType } from "../../../types/hotel";
 import { useFormValidation } from "../../../hooks/useFormValidation";
 import { uploadMultipleImages } from "../../../apis/imageApis/imageApis";
+import { toast } from "react-toastify";
 
 type RoomListEditProps = {};
 
@@ -111,7 +113,9 @@ const RoomEdit: React.FC<RoomListEditProps> = () => {
   const fetchRoomData = async () => {
     if (id) {
       try {
-        const roomData = await getRoomById(parseInt(id));
+        const roomData = await getRoomByIdForAdmin(parseInt(id));
+        console.log(roomData);
+        
         setOriginalRoomData(roomData);
         setRoomForm(roomData);
       } catch (error) {

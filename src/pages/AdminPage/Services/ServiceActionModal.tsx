@@ -99,7 +99,7 @@ const ServiceActionModal: React.FC<ServiceActionModalProps> = ({
 
   const handleSave = async () => {
     try {
-      if (!serviceItem) {
+      if (serviceItem?.id === 0) {
         await createServiceItem(serviceForm);
       } else {
         await updateServiceItem(serviceForm);
@@ -119,7 +119,7 @@ const ServiceActionModal: React.FC<ServiceActionModalProps> = ({
       fullWidth
     >
       <DialogTitle className={cx("dialog-title")}>
-        {serviceItem ? "Sửa dịch vụ" : "Thêm dịch vụ"}
+        {serviceItem?.id !== 0 ? "Sửa dịch vụ" : "Thêm dịch vụ"}
         <IconButton
           aria-label="close"
           onClick={onClose}

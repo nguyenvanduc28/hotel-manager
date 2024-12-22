@@ -4,10 +4,11 @@ import { BOOKING_SERVICE_ORDER_STATUS, SERVICE_TYPE } from "../../constants/admi
 import { Avatar } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { AddBoxOutlined, Logout } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Order from "./Order";
 import ServiceScreen from "./ServiceScreen";
-import { getServiceCount } from "../../apis/serviceApis";
+import { getServiceCount, getServiceTypeList } from "../../apis/serviceApis";
+import { ServiceType } from "../../types/hotel";
 
 const cx = classNames.bind(styles);
 
@@ -19,21 +20,48 @@ const ServiceCounterLayout = () => {
     [BOOKING_SERVICE_ORDER_STATUS.IN_PROGRESS]: 0,
     [BOOKING_SERVICE_ORDER_STATUS.READY_TO_SERVE]: 0,
   });
-  const serviceTypeId = user?.roles.find(role => role.name === "BAR_COUNTER") 
-    ? SERVICE_TYPE.BAR 
-    : user?.roles.find(role => role.name === "RESTAURANT_COUNTER")
-    ? SERVICE_TYPE.RESTAURANT
-    : undefined;
+  const [serviceTypeList, setServiceTypes] = useState<ServiceType[]>([]);
+  const [serviceTypeId, setServiceTypeId] = useState(0);
 
-  const reloadCount = () => {
-    getServiceCount(serviceTypeId || 0).then((res) => {
+  useEffect(() => {
+    const fetchServiceTypes = async () => {
+      try {
+        const types = await getServiceTypeList();
+        setServiceTypes(types);
+
+        if (user?.roles.find(role => role.name === "BAR_COUNTER")) {
+          console.log("BAR_COUNTER");
+          
+          const svId = types.find((sv: ServiceType) => sv.name === "Quầy Bar").id;
+          console.log(svId);
+          
+          setServiceTypeId(svId);
+        }
+        if (user?.roles.find(role => role.name === "RESTAURANT_COUNTER")) {
+          console.log("RESTAURANT_COUNTER");
+          
+          const svId = types.find((sv: ServiceType) => sv.name === "Nhà hàng").id;
+          console.log(svId);
+          
+          setServiceTypeId(svId);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách loại dịch vụ:", error);
+      }
+    };
+    fetchServiceTypes();
+  }, []);
+  const reloadCount = useCallback(() => {
+    console.log(serviceTypeId);
+    
+    getServiceCount(serviceTypeId).then((res) => {
       setNumOfStatus({
         [BOOKING_SERVICE_ORDER_STATUS.NEW]: res.numOfNewOrder,
         [BOOKING_SERVICE_ORDER_STATUS.IN_PROGRESS]: res.numOfInProgressOrder,
         [BOOKING_SERVICE_ORDER_STATUS.READY_TO_SERVE]: res.numOfReadyToServeOrder,
       });
     });
-  }
+  }, [serviceTypeId])
 
   useEffect(() => {
     reloadCount();
@@ -41,7 +69,8 @@ const ServiceCounterLayout = () => {
       reloadCount();
     }, 20000);
     return () => clearInterval(interval);
-  }, []);
+  }, [serviceTypeId]);
+  
   return (
     <div className={cx("service-counter-layout")}>
       <div className={cx("service-counter-layout__header")}>

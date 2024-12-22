@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { BookingServiceOrder } from "../../types/hotel";
+import { BookingServiceOrder, ServiceType } from "../../types/hotel";
 import styles from "./ServiceScreen.module.scss";
 import classNames from "classnames/bind";
-import { getBookingServiceOrderList } from "../../apis/serviceApis";
+import { getBookingServiceOrderList, getServiceTypeList } from "../../apis/serviceApis";
 import { BOOKING_SERVICE_ORDER_STATUS, SERVICE_TYPE } from "../../constants/admin/constants";
 import { useHotel } from "../../hooks/useHotel";
 import moment from "moment";
@@ -14,11 +14,37 @@ const cx = classNames.bind(styles);
 const ServiceScreen = ({status, reloadCount, numOfStatus}: {status: string, reloadCount: () => void, numOfStatus: { [key: string]: number }}) => {
   const { user } = useAuth();
   const {hotelInfo} = useHotel();
-  const serviceTypeId = user?.roles.find(role => role.name === "BAR_COUNTER") 
-    ? SERVICE_TYPE.BAR 
-    : user?.roles.find(role => role.name === "RESTAURANT_COUNTER")
-    ? SERVICE_TYPE.RESTAURANT
-    : undefined;
+  const [serviceTypeList, setServiceTypes] = useState<ServiceType[]>([]);
+  const [serviceTypeId, setServiceTypeId] = useState(0);
+
+  useEffect(() => {
+    const fetchServiceTypes = async () => {
+      try {
+        const types = await getServiceTypeList();
+        setServiceTypes(types);
+
+        if (user?.roles.find(role => role.name === "BAR_COUNTER")) {
+          console.log("BAR_COUNTER");
+          
+          const svId = types.find((sv: ServiceType) => sv.name === "Quầy Bar").id;
+          console.log(svId);
+          
+          setServiceTypeId(svId);
+        }
+        if (user?.roles.find(role => role.name === "RESTAURANT_COUNTER")) {
+          console.log("RESTAURANT_COUNTER");
+          
+          const svId = types.find((sv: ServiceType) => sv.name === "Nhà hàng").id;
+          console.log(svId);
+          
+          setServiceTypeId(svId);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách loại dịch vụ:", error);
+      }
+    };
+    fetchServiceTypes();
+  }, []);
 
   const [orderList, setOrderList] = useState<BookingServiceOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);

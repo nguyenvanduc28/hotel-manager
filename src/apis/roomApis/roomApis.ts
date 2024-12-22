@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { ConsumableCategoriesForm, ConsumableForm, EquipmentCategoryForm, EquipmentForm, RoomInfoForm, RoomTypeForm } from "../../types/forms";
 import { RoomPrice } from "../../types/hotel";
 import axiosInstance from "../axiosInstance";
@@ -159,6 +160,18 @@ export const getRoomById = async (id: number) => {
         const response = await axiosInstance.get(`/admin/rooms/${id}`);
         return response.data;
     } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy thông tin phòng thất bại';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const getRoomByIdForAdmin = async (id: number) => {
+    try {
+        const response = await axiosInstance.get(`/admin/rooms/detail/${id}`);
+        return response.data;
+    } catch (error: unknown) {
+        toast.error("Không tìm thấy thông tin phòng")
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Lấy thông tin phòng thất bại';
         console.error(errorMessage);
         throw new Error(errorMessage);

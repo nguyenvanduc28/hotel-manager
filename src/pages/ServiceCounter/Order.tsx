@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useHotel } from "../../hooks/useHotel";
-import { getServiceItemList } from "../../apis/serviceApis";
-import { ServiceItem, OrderItem, Customer } from "../../types/hotel";
+import { getServiceItemList, getServiceTypeList } from "../../apis/serviceApis";
+import { ServiceItem, OrderItem, Customer, ServiceType } from "../../types/hotel";
 import { SERVICE_TYPE } from "../../constants/admin/constants";
 import styles from "./Order.module.scss";
 import classNames from "classnames/bind";
@@ -36,13 +36,37 @@ const Order = ({reloadCount}: {reloadCount: () => void}) => {
     bookingId: 0
   });
   const [bookingCode, setBookingCode] = useState("");
+  const [serviceTypeList, setServiceTypes] = useState<ServiceType[]>([]);
+  const [serviceTypeId, setServiceTypeId] = useState(0);
 
-  const serviceTypeId = user?.roles.find(role => role.name === "BAR_COUNTER") 
-    ? SERVICE_TYPE.BAR 
-    : user?.roles.find(role => role.name === "RESTAURANT_COUNTER")
-    ? SERVICE_TYPE.RESTAURANT
-    : undefined;
+  useEffect(() => {
+    const fetchServiceTypes = async () => {
+      try {
+        const types = await getServiceTypeList();
+        setServiceTypes(types);
 
+        if (user?.roles.find(role => role.name === "BAR_COUNTER")) {
+          console.log("BAR_COUNTER");
+          
+          const svId = types.find((sv: ServiceType) => sv.name === "Quầy Bar").id;
+          console.log(svId);
+          
+          setServiceTypeId(svId);
+        }
+        if (user?.roles.find(role => role.name === "RESTAURANT_COUNTER")) {
+          console.log("RESTAURANT_COUNTER");
+          
+          const svId = types.find((sv: ServiceType) => sv.name === "Nhà hàng").id;
+          console.log(svId);
+          
+          setServiceTypeId(svId);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách loại dịch vụ:", error);
+      }
+    };
+    fetchServiceTypes();
+  }, []);
   useEffect(() => {
     const fetchServiceItems = async () => {
       if (serviceTypeId) {
