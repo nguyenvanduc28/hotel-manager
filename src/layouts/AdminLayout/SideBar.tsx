@@ -17,6 +17,7 @@ import {
   PersonOutlineOutlined,
   ReceiptOutlined,
   RoomServiceOutlined,
+  SettingsInputComponentOutlined,
 } from "@mui/icons-material";
 import { ROLES } from "../../constants/auth/roleConstants";
 import { useAuth } from "../../hooks/useAuth";
@@ -25,15 +26,16 @@ type SideBarProps = {
   isCollapse?: boolean;
 };
 const cx = classNames.bind(styles);
-const hasRequiredRole = (userRoles: Role[] | undefined, requiredRoles: string[]): boolean => {
+const hasRequiredRole = (
+  userRoles: Role[] | undefined,
+  requiredRoles: string[]
+): boolean => {
   if (!userRoles) return false;
-  return userRoles?.some(role => 
-    requiredRoles.includes(role.name)
-  );
+  return userRoles?.some((role) => requiredRoles.includes(role.name));
 };
 
 const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className={cx("sidebar")}>
@@ -111,7 +113,11 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           )}
 
           {/* Customer Management - Admin and Customer Manager */}
-          {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.RECEPTIONIST, ROLES.CUSTOMER_MANAGER]) && (
+          {hasRequiredRole(user?.roles, [
+            ROLES.ADMIN,
+            ROLES.RECEPTIONIST,
+            ROLES.CUSTOMER_MANAGER,
+          ]) && (
             <SubMenu
               title="Khách hàng"
               icon={<PersonOutlineOutlined />}
@@ -126,17 +132,21 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           )}
 
           {/* Services - Admin, Service Manager, and Service Counter */}
-          {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.SERVICE_MANAGER, ROLES.SERVICE_COUNTER]) && (
+          {hasRequiredRole(user?.roles, [
+            ROLES.ADMIN,
+            ROLES.SERVICE_MANAGER,
+            ROLES.SERVICE_COUNTER,
+          ]) && (
             <SubMenu
               title="Dịch vụ"
               icon={<RoomServiceOutlined />}
               isCollapse={isCollapse}
             >
-              <MenuItem
+              {/* <MenuItem
                 title="Danh sách sử dụng"
                 link="/admin/service-usage"
                 isCollapse={isCollapse}
-              />
+              /> */}
               <MenuItem
                 title="Danh sách dịch vụ"
                 link="/admin/services"
@@ -146,7 +156,7 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           )}
 
           {/* Inventory - Admin and Warehouse Manager */}
-          {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.WAREHOUSE_MANAGER]) && (
+          {/* {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.WAREHOUSE_MANAGER]) && (
             <SubMenu
               title="Kho hàng"
               icon={<Inventory2Outlined />}
@@ -163,10 +173,13 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
                 isCollapse={isCollapse}
               />
             </SubMenu>
-          )}
+          )} */}
 
           {/* Reports - Admin and Report Manager */}
-          {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.REPORT_MANAGER]) && (
+          {hasRequiredRole(user?.roles, [
+            ROLES.ADMIN,
+            ROLES.REPORT_MANAGER,
+          ]) && (
             <SubMenu
               title="Báo cáo"
               icon={<AssessmentOutlined />}
@@ -191,7 +204,10 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
           )}
 
           {/* Invoices - Admin and Invoice Manager */}
-          {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.INVOICE_MANAGER]) && (
+          {hasRequiredRole(user?.roles, [
+            ROLES.ADMIN,
+            ROLES.INVOICE_MANAGER,
+          ]) && (
             <SubMenu
               title="Hóa đơn"
               icon={<ReceiptOutlined />}
@@ -204,13 +220,25 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
               />
             </SubMenu>
           )}
+
+          {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.RECEPTIONIST]) && (
+            <MenuItem
+              title="QUẦY LỄ TÂN"
+              icon={<SettingsInputComponentOutlined />}
+              link="/reception"
+              isCollapse={isCollapse}
+            />
+          )}
         </Menu>
       </div>
 
       {/* Hotel Settings - Admin and Hotel Info Manager */}
       <div className={cx("hotel-setting")}>
         <Menu isCollapse={isCollapse}>
-          {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.HOTEL_INFO_MANAGER]) && (
+          {hasRequiredRole(user?.roles, [
+            ROLES.ADMIN,
+            ROLES.HOTEL_INFO_MANAGER,
+          ]) && (
             <MenuItem
               title="Thông tin khách sạn"
               icon={<BusinessOutlined />}
