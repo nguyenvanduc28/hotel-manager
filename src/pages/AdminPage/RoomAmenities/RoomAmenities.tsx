@@ -295,8 +295,6 @@ const RoomAmenities = () => {
           onClick={handleAddAmenity}
         />
       }
-      linkToBack="/admin"
-      titleToBack="Quay trở lại trang admin"
     >
       <div className={cx("amenities-box")}>
         <div className={cx("optionbar")}>

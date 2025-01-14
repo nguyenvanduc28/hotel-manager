@@ -130,18 +130,18 @@ const hiddenColumns: GridColDef[] = [
     headerAlign: "left",
     renderCell: (params) => <span>{params.row.description}</span>,
   },
-  {
-    field: "lastCleaned",
-    headerName: "Dọn dẹp lần cuối",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) =>
-      params.row.lastCleaned
-        ? moment.unix(params.row.lastCleaned).format("YYYY-MM-DD")
-        : "",
-  },
+  // {
+  //   field: "lastCleaned",
+  //   headerName: "Dọn dẹp lần cuối",
+  //   flex: 1,
+  //   headerClassName: "datagrid-header",
+  //   cellClassName: "datagrid-cell",
+  //   headerAlign: "left",
+  //   renderCell: (params) =>
+  //     params.row.lastCleaned
+  //       ? moment.unix(params.row.lastCleaned).format("YYYY-MM-DD")
+  //       : "",
+  // },
   {
     field: "isSmokingAllowed",
     headerName: "Cho phép hút thuốc",
@@ -444,8 +444,9 @@ const BookingPublic = () => {
             [key]: value
         }));
     };
-
+    const [loading, setLoading] = useState(false);
     const handleSubmit = async () => {
+      setLoading(true);
         try {
             // Validate required fields
             if (!customerForm.name || !customerForm.email || !customerForm.phoneNumber) {
@@ -473,6 +474,8 @@ const BookingPublic = () => {
             navigate(PUBLIC_PATHS.ALERT_BOOKING_SUCCESS);
         } catch (error) {
             toast.error('Đặt phòng thất bại');
+        } finally {
+          setLoading(false);
         }
     };
 
@@ -774,6 +777,7 @@ const BookingPublic = () => {
                             icon={<SaveOutlined />}
                             content="Xác nhận đặt phòng"
                             onClick={handleSubmit}
+                            disabled={loading}
                         />
                     </div>
                 </div>

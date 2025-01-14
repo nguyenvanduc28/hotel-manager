@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else if (user.roles.some((role: Role) => role.name === "SERVICE_COUNTER")) {
         navigate("/service-counter");
       } else {
-        navigate("/admin");
+        navigate("/admin/bookings");
       }
     } catch (error) {
       toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");

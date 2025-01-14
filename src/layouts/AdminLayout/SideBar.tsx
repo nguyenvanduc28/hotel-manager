@@ -43,14 +43,14 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
       <div className={cx("menubox")}>
         <Menu title="Quản lý" isCollapse={isCollapse}>
           {/* Dashboard - Admin only */}
-          {hasRequiredRole(user?.roles, [ROLES.ADMIN]) && (
+          {/* {hasRequiredRole(user?.roles, [ROLES.ADMIN]) && (
             <MenuItem
               title="Tổng quan"
               icon={<DashboardOutlined />}
               link="/admin/dashboard"
               isCollapse={isCollapse}
             />
-          )}
+          )} */}
 
           {/* Room Management - Admin and Receptionist */}
           {hasRequiredRole(user?.roles, [ROLES.ADMIN, ROLES.RECEPTIONIST]) && (
@@ -225,7 +225,7 @@ const SideBar: React.FC<SideBarProps> = ({ isCollapse = false }) => {
             <MenuItem
               title="QUẦY LỄ TÂN"
               icon={<SettingsInputComponentOutlined />}
-              link="/reception"
+              link="/reception/booking/list"
               isCollapse={isCollapse}
             />
           )}

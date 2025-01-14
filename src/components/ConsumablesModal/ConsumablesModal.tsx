@@ -164,7 +164,7 @@ const ConsumablesModal = ({ open, onClose, rooms, onSave, consumablesSelected }:
                       <Button
                         style={{fontSize: "11px"}}
                         variant="contained"
-                        disabled={isSelected}
+                        disabled={isSelected || item.quantity === 0}
                         onClick={() => {
                           const newItem = {
                             name: item.name,

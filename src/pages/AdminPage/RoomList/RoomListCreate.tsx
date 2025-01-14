@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { Consumables, Equipments, RoomType } from "../../../types/hotel";
 import { useFormValidation } from "../../../hooks/useFormValidation";
 import { uploadMultipleImages } from "../../../apis/imageApis/imageApis";
+import { toast } from "react-toastify";
 
 type RoomListCreateProps = {};
 
@@ -166,7 +167,16 @@ const RoomListCreate: React.FC<RoomListCreateProps> = ({}) => {
     if (!e.target.files) return;
     
     const filesArray = Array.from(e.target.files);
+    const MAX_SIZE = 1;
+    console.log(filesArray);
     
+    const invalidFiles = filesArray.filter(file => file.size > MAX_SIZE * 1024 * 1024);
+
+    const mess = "Dung lượng ảnh không được vượt quá "+MAX_SIZE+"mb";
+    if (invalidFiles.length > 0) {
+      toast.error(mess);
+      return;
+    }
     // Create preview URLs
     const previews = filesArray.map(file => URL.createObjectURL(file));
     setPreviewImages(prev => [...prev, ...previews]);

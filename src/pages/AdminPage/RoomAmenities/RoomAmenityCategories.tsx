@@ -152,8 +152,6 @@ const RoomAmenityCategories = () => {
   return (
     <Container
       title="Danh mục tiện nghi"
-      linkToBack="/admin"
-      titleToBack="Quay trở lại trang admin"
       button={
         <Button
           icon={<AddCircleOutlineIcon />}

@@ -111,18 +111,18 @@ const hiddenColumns: GridColDef[] = [
     headerAlign: "left",
     renderCell: (params) => <span>{params.row.description}</span>,
   },
-  {
-    field: "lastCleaned",
-    headerName: "Dọn dẹp lần cuối",
-    flex: 1,
-    headerClassName: "datagrid-header",
-    cellClassName: "datagrid-cell",
-    headerAlign: "left",
-    renderCell: (params) =>
-      params.row.lastCleaned
-        ? moment.unix(params.row.lastCleaned).format("YYYY-MM-DD")
-        : "",
-  },
+  // {
+  //   field: "lastCleaned",
+  //   headerName: "Dọn dẹp lần cuối",
+  //   flex: 1,
+  //   headerClassName: "datagrid-header",
+  //   cellClassName: "datagrid-cell",
+  //   headerAlign: "left",
+  //   renderCell: (params) =>
+  //     params.row.lastCleaned
+  //       ? moment.unix(params.row.lastCleaned).format("YYYY-MM-DD")
+  //       : "",
+  // },
   {
     field: "isSmokingAllowed",
     headerName: "Cho phép hút thuốc",
