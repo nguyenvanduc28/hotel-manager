@@ -14,6 +14,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <ButtonBase
+    
       sx={{
         background: "linear-gradient(180deg, #4697fe, #08f)",
         borderColor: "#08f",
